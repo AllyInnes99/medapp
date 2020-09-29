@@ -1,15 +1,19 @@
 # Plan
 
-* PROJECT TITLE
-* YOUR NAME
-* STUDENT ID
-* SUPERVISOR NAME
-
-Week-by-week plan for the whole project. Update this as you go along.
+* Android Prescription Management System
+* Alastair Innes
+* 2317070I
+* David F Manlove
 
 ## Winter semester
 
 * **Week 1**
+
+- [ ] Conduct research on existing apps and try and identify features
+- [ ] Compare features to try and identify important things that are missing
+- [ ] Configure Android Studio environment for development 
+- [ ] Organise repository  
+
 * **Week 2**
 * **Week 3**
 * **Week 4**
