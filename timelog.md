@@ -7,7 +7,7 @@
 
 ## Week 1
 
-## 20 Oct 2019
+## 29 Sep 2020
 
 * *0.5* intial meeting with supervisor to start project
 
