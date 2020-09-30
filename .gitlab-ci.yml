@@ -59,14 +59,16 @@ lintDebug:
   interruptible: true
   stage: build
   script:
-    - ./src/PrescriptionApp/gradlew -Pci --console=plain :app:lintDebug -PbuildDir=lint
+    - cd src/PrescriptionApp
+    - ./gradlew -Pci --console=plain :app:lintDebug -PbuildDir=lint
 
 # Make Project
 assembleDebug:
   interruptible: true
   stage: build
   script:
-    - ./src/PrescriptionApp/gradlew assembleDebug
+    - cd src/PrescriptionApp
+    - ./gradlew assembleDebug
   artifacts:
     paths:
       - app/build/outputs/
@@ -76,4 +78,5 @@ debugTests:
   interruptible: true
   stage: test
   script:
-    - ./src/PrescriptionApp/gradlew -Pci --console=plain :app:testDebug
+    - cd src/PrescriptionApp
+    - ./gradlew -Pci --console=plain :app:testDebug
