@@ -7,14 +7,12 @@
 
 ## Winter semester
 
-* **Week 1**
-
+* **Week 1** 
+* **Week 2**
 - [ ] Conduct research on existing apps and try and identify features
 - [ ] Compare features to try and identify important things that are missing
 - [ ] Configure Android Studio environment for development 
-- [ ] Organise repository  
-
-* **Week 2**
+- [ ] Organise repository 
 * **Week 3**
 * **Week 4**
 * **Week 5**
