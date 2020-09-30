@@ -11,3 +11,7 @@
 
 * *0.5* intial meeting with supervisor to start project
 
+## 30 Sep 2020
+
+* *1* Conducted research on existing products
+
