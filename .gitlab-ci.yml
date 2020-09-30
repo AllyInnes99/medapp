@@ -51,7 +51,7 @@ before_script:
   - sdkmanager --sdk_root=${ANDROID_HOME} "build-tools;${ANDROID_BUILD_TOOLS}"
 
   # Not necessary, but just for surity
-  - chmod +x ./gradlew
+  - chmod +x .src/PrescriptionApp/gradlew
 
 # Basic android and gradle stuff
 # Check linting
@@ -59,14 +59,14 @@ lintDebug:
   interruptible: true
   stage: build
   script:
-    - ./gradlew -Pci --console=plain :app:lintDebug -PbuildDir=lint
+    - .src/PrescriptionApp/gradlew -Pci --console=plain :app:lintDebug -PbuildDir=lint
 
 # Make Project
 assembleDebug:
   interruptible: true
   stage: build
   script:
-    - ./gradlew assembleDebug
+    - .src/PrescriptionApp/gradlew assembleDebug
   artifacts:
     paths:
       - app/build/outputs/
@@ -76,4 +76,4 @@ debugTests:
   interruptible: true
   stage: test
   script:
-    - ./gradlew -Pci --console=plain :app:testDebug
+    - .src/PrescriptionApp/gradlew -Pci --console=plain :app:testDebug
