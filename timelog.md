@@ -14,4 +14,5 @@
 ## 30 Sep 2020
 
 * *1* Conducted research on existing products
+* *1* Created user personas to show use-cases
 
