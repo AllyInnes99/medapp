@@ -15,4 +15,5 @@
 
 * *1* Conducted research on existing products
 * *1* Created user personas to show use-cases
+* *1.5* Drawn example paper-prototypes of application UI
 
