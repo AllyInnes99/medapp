@@ -13,6 +13,7 @@
 - [ ] Compare features to try and identify important things that are missing
 - [ ] Configure Android Studio environment for development 
 - [ ] Organise repository 
+- [ ] Create actors and user stories 
 * **Week 3**
 * **Week 4**
 * **Week 5**
