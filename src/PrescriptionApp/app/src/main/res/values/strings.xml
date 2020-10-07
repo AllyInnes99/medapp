@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Prescription App</string>
+    <string name="MedicationQuantity">Quantity</string>
+    <string name="MedicationTaken">Taken</string>
+    <string name="MedicationName">"Medication Name "</string>
 </resources>
