@@ -3,4 +3,6 @@
     <string name="MedicationQuantity">Quantity</string>
     <string name="MedicationTaken">Taken</string>
     <string name="MedicationName">"Medication Name "</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
 </resources>
