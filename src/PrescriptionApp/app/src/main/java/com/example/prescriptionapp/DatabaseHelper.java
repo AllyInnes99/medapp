@@ -2,8 +2,12 @@ package com.example.prescriptionapp;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -48,8 +52,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return isMedicationAdded(insert);
     }
 
+    public List<MedicationModel> selectAll(){
+        List<MedicationModel> returnList = new ArrayList<>();
+        String queryString = "SELECT * FROM " + MEDICATION_TABLE;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(queryString, null);
+        if (cursor.moveToFirst()){
+            do {
+                int medicationID = cursor.getInt(0);
+                String medicationName = cursor.getString(1);
+                int medicationQuantity = cursor.getInt(2);
+                boolean isTaken = cursor.getInt(3) == 1;
+
+                MedicationModel model = new MedicationModel(medicationID, medicationName, medicationQuantity, isTaken);
+
+
+            } while(cursor.moveToFirst());
+        }
+        cursor.close();
+        db.close();
+        return returnList;
+    }
+
     private boolean isMedicationAdded(long insert) {
-        return insert != -1;
+        return insert >= 0;
     }
 
 

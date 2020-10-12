@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        recyclerView = findViewById(R.id.recyclerView);
         btn_add = findViewById(R.id.floating_add_button);
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
