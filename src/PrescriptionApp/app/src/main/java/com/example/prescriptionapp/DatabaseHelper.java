@@ -64,9 +64,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 int medicationID = cursor.getInt(0);
                 String medicationName = cursor.getString(1);
                 int medicationQuantity = cursor.getInt(2);
-
-                // Boolean values are stored as integer in SQLite, so convert int into bool
-                boolean isTaken = cursor.getInt(3) == 1;
+                boolean isTaken = SQLiteIntToBool(cursor.getInt(3));
                 MedicationModel model = new MedicationModel(medicationID, medicationName, medicationQuantity, isTaken);
                 returnList.add(model);
 
@@ -79,6 +77,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return returnList;
     }
 
+    /**
+     * SQLite databases represent boolean variable as integers, with 0 for false and 1 for true
+     * To convert back into boolean for the model, check for equality with 1
+     * @param b - the integer representing the boolean
+     * @return true or false, depending on if b is 1 or 0
+     */
+    private boolean SQLiteIntToBool(int b) {
+        return b == 1;
+    }
+
+    /**
+     * When using the insert method on a SQLiteDatabase instance, a long value is returned that
+     * denotes if the data was added to the db successfully. If the value returned is negative,
+     * that therefore means that the data has not been inserted properly
+     * @param insert - long value that represents the success
+     * @return false if negative, true otherwise
+     */
     private boolean isMedicationAdded(long insert) {
         return insert >= 0;
     }
