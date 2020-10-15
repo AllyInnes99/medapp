@@ -22,7 +22,6 @@ public class MainActivity extends AppCompatActivity {
     // references to controls on the layout
     ListView listView;
     FloatingActionButton btn_add;
-    Button button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,20 +30,12 @@ public class MainActivity extends AppCompatActivity {
 
         listView = findViewById(R.id.list_view);
         btn_add = findViewById(R.id.floating_add_button);
-        button = findViewById(R.id.button);
         List<MedicationModel> models;
 
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
                 startActivity(new Intent(MainActivity.this, AddMedicationActivity.class));
-            }
-        });
-
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v){
-                displayMedication();
             }
         });
     }
