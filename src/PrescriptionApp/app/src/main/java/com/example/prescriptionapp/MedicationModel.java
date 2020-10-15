@@ -7,8 +7,6 @@ public class MedicationModel {
     private int quantity;
     private boolean isTaken;
 
-    // Constructors
-
     /**
      * Initialise a MedicationModel object
      * @param id - unique identifier of medication

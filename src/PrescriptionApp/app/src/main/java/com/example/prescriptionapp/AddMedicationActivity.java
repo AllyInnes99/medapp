@@ -32,20 +32,18 @@ public class AddMedicationActivity extends AppCompatActivity {
             public void onClick(View v){
 
                 MedicationModel model;
-
                 try {
                     String medicationName =  et_name.getText().toString();
                     model = new MedicationModel(0,  medicationName, Integer.parseInt(et_quantity.getText().toString()), sw_isTaken.isChecked());
                     Toast.makeText(AddMedicationActivity.this, model.toString(), Toast.LENGTH_SHORT).show();
+                    DatabaseHelper databaseHelper = new DatabaseHelper(AddMedicationActivity.this);
+                    boolean success = databaseHelper.addMedication(model);
+                    Toast.makeText(AddMedicationActivity.this, "success = " + success, Toast.LENGTH_SHORT).show();
                 }
                 catch (Exception e){
                     Toast.makeText(AddMedicationActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
                     model = new MedicationModel(-1, "error", 0, false);
                 }
-                DatabaseHelper databaseHelper = new DatabaseHelper(AddMedicationActivity.this);
-                boolean success = databaseHelper.addMedication(model);
-                Toast.makeText(AddMedicationActivity.this, "success = " + success, Toast.LENGTH_SHORT).show();
-
             }
 
         });

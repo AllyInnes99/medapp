@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,20 +55,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public List<MedicationModel> selectAll(){
         List<MedicationModel> returnList = new ArrayList<>();
-        String queryString = "SELECT * FROM " + MEDICATION_TABLE;
+        String rawQuery = "SELECT * FROM " + MEDICATION_TABLE;
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(queryString, null);
+        Cursor cursor = db.rawQuery(rawQuery, null);
+
         if (cursor.moveToFirst()){
             do {
                 int medicationID = cursor.getInt(0);
                 String medicationName = cursor.getString(1);
                 int medicationQuantity = cursor.getInt(2);
+
+                // Boolean values are stored as integer in SQLite, so convert int into bool
                 boolean isTaken = cursor.getInt(3) == 1;
-
                 MedicationModel model = new MedicationModel(medicationID, medicationName, medicationQuantity, isTaken);
+                returnList.add(model);
 
-
-            } while(cursor.moveToFirst());
+            } while(cursor.moveToNext());
+        }
+        else {
         }
         cursor.close();
         db.close();
