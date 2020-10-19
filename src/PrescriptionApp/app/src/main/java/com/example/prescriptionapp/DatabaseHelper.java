@@ -41,6 +41,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
+    /**
+     * Method that finds the target medication model in database, and if found it is deleted.
+     * @param model - object that represents the medication that is to be removed.
+     * @return true if model is found and deleted successfully, false if not
+     */
+    public boolean deleteMedication(MedicationModel model) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String queryString = "DELETE FROM " + MEDICATION_TABLE + "WHERE " + COLUMN_ID + " = " + model.getId();
+        Cursor cursor = db.rawQuery(queryString, null);
+        return cursor.moveToFirst();
+    }
+
     public boolean addMedication(MedicationModel medicationModel) {
 
         SQLiteDatabase db = this.getWritableDatabase();

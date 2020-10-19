@@ -9,14 +9,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHolder> {
 
     private Context context;
-    private ArrayList<MedicationModel> medicationModels;
+    private List<MedicationModel> medicationModels;
 
-    CustomAdapter(Context context, ArrayList medicationModels) {
+    CustomAdapter(Context context, List<MedicationModel> medicationModels) {
         this.context = context;
         this.medicationModels = medicationModels;
     }
@@ -41,7 +41,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
 
     @Override
     public int getItemCount() {
-        return 0;
+        return medicationModels.size();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {

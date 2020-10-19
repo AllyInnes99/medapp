@@ -1,24 +1,30 @@
 package com.example.prescriptionapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     // references to controls on the layout
-    ListView listView;
     FloatingActionButton btn_add;
+    RecyclerView recyclerView;
     CustomAdapter customAdapter;
-    DatabaseHelper databaseHelper = new DatabaseHelper(MainActivity.this);;
+    DatabaseHelper databaseHelper = new DatabaseHelper(MainActivity.this);
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         btn_add = findViewById(R.id.floating_add_button);
-        listView = findViewById(R.id.listView);
+        recyclerView = findViewById(R.id.recycler_view);
 
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -35,20 +41,23 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        display();
+        displayRecycler();
     }
 
 
     @Override
     protected void onResume() {
         super.onResume();
-        display();
+        displayRecycler();
 
     }
 
-    private void display() {
+    private void displayRecycler() {
+
         List<MedicationModel> models = databaseHelper.selectAll();
-        ArrayAdapter medicationArrayAdapter = new ArrayAdapter<MedicationModel>(MainActivity.this, android.R.layout.simple_list_item_1, models);
-        listView.setAdapter(medicationArrayAdapter);
+        customAdapter = new CustomAdapter(MainActivity.this, models);
+        recyclerView.setAdapter(customAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
     }
+
 }

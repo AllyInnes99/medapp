@@ -7,7 +7,7 @@
     tools:context=".AddMedicationActivity">
 
     <EditText
-        android:id="@+id/et_quantity"
+        android:id="@+id/edit_quantity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -17,10 +17,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_name" />
+        app:layout_constraintTop_toBottomOf="@+id/edit_name" />
 
     <EditText
-        android:id="@+id/et_name"
+        android:id="@+id/edit_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
@@ -39,7 +39,7 @@
         android:text="@string/MedicationTaken"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_quantity" />
+        app:layout_constraintTop_toBottomOf="@+id/edit_quantity" />
 
     <Button
         android:id="@+id/button_confirm"

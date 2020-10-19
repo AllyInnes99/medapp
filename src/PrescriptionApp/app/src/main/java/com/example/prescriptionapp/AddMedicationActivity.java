@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class AddMedicationActivity extends AppCompatActivity {
@@ -23,8 +22,8 @@ public class AddMedicationActivity extends AppCompatActivity {
 
         btn_add = findViewById(R.id.button_confirm);
         btn_cancel = findViewById(R.id.button_cancel);
-        et_name = findViewById(R.id.et_name);
-        et_quantity = findViewById(R.id.et_quantity);
+        et_name = findViewById(R.id.edit_name);
+        et_quantity = findViewById(R.id.edit_quantity);
         sw_isTaken = findViewById(R.id.sw_isTaken);
 
         btn_add.setOnClickListener(new View.OnClickListener() {

@@ -7,7 +7,8 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -16,12 +17,12 @@
 
             <TextView
                 android:id="@+id/med_id_txt"
-                android:layout_width="17dp"
-                android:layout_height="28dp"
+                android:layout_width="44dp"
+                android:layout_height="47dp"
                 android:text="1"
+                android:textColor="#000"
                 android:textSize="40sp"
                 android:textStyle="bold"
-                android:textColor="#000"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -41,8 +42,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="316dp"
                 android:layout_marginLeft="316dp"
+                android:layout_marginTop="4dp"
                 android:text="TextView"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toEndOf="@+id/med_id_txt"
                 app:layout_constraintTop_toTopOf="parent" />
 
