@@ -1,17 +1,12 @@
 package com.example.prescriptionapp;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Switch;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -22,15 +17,16 @@ public class MainActivity extends AppCompatActivity {
     // references to controls on the layout
     ListView listView;
     FloatingActionButton btn_add;
+    CustomAdapter customAdapter;
+    DatabaseHelper databaseHelper = new DatabaseHelper(MainActivity.this);;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        listView = findViewById(R.id.list_view);
         btn_add = findViewById(R.id.floating_add_button);
-        List<MedicationModel> models;
+        listView = findViewById(R.id.listView);
 
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -38,14 +34,21 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, AddMedicationActivity.class));
             }
         });
+
+        display();
     }
 
-    private void displayMedication() {
-        DatabaseHelper databaseHelper = new DatabaseHelper(MainActivity.this);
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        display();
+
+    }
+
+    private void display() {
         List<MedicationModel> models = databaseHelper.selectAll();
-        Toast.makeText(MainActivity.this, models.toString(), Toast.LENGTH_SHORT ).show();
-
+        ArrayAdapter medicationArrayAdapter = new ArrayAdapter<MedicationModel>(MainActivity.this, android.R.layout.simple_list_item_1, models);
+        listView.setAdapter(medicationArrayAdapter);
     }
-
-
 }
