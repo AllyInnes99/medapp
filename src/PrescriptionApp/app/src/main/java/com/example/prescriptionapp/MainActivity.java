@@ -49,9 +49,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         displayRecycler();
-
     }
 
+    
+    /**
+     * Helper method used to populate the recycler view with the data from the database
+     */
     private void displayRecycler() {
 
         List<MedicationModel> models = databaseHelper.selectAll();

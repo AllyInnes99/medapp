@@ -11,7 +11,7 @@ public class MedicationModel {
      * Initialise a MedicationModel object
      * @param id - unique identifier of medication
      * @param name - the name of the medication
-     * @param quantity - how much mediacation has been taken
+     * @param quantity - how much medication has been taken
      * @param isTaken - if the medication has been taken or not
      */
     public MedicationModel(int id, String name, int quantity, boolean isTaken) {
