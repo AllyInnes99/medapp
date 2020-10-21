@@ -18,7 +18,8 @@ public class AddMedicationActivity extends AppCompatActivity {
     Button btn_add, btn_cancel;
     EditText et_name, et_quantity;
     Spinner dropdown;
-    private final String[] items = new String[] {"Test", "Hello"};
+    final String[] medTypes = new String[] {"tablet", "pill", "injection", "powder", "suppository",
+                                            "drops", "inhalers", "topical"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,13 +32,13 @@ public class AddMedicationActivity extends AppCompatActivity {
         et_quantity = findViewById(R.id.edit_quantity);
         dropdown = findViewById(R.id.spinner1);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, items);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, medTypes);
         dropdown.setAdapter(adapter);
         dropdown.setOnItemSelectedListener((new AdapterView.OnItemSelectedListener() {
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(AddMedicationActivity.this, items[position], Toast.LENGTH_SHORT ).show();
+                Toast.makeText(AddMedicationActivity.this, medTypes[position], Toast.LENGTH_SHORT ).show();
             }
 
             @Override
