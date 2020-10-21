@@ -31,39 +31,41 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Switch
-        android:id="@+id/sw_isTaken"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/MedicationTaken"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_quantity" />
-
     <Button
         android:id="@+id/button_confirm"
         style="@style/Widget.AppCompat.Button.Colored"
-        android:backgroundTint="#0000FF"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="156dp"
+        android:layout_marginBottom="284dp"
+        android:backgroundTint="#0000FF"
         android:text="@string/confirm"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.312"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sw_isTaken" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/button_cancel"
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
-        android:layout_marginTop="156dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="284dp"
         android:backgroundTint="#FF0000"
         android:text="@string/cancel"
-        app:layout_constraintStart_toEndOf="@+id/button_confirm"
-        app:layout_constraintTop_toBottomOf="@+id/sw_isTaken" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/button_confirm" />
+
+    <Spinner
+        android:id="@+id/spinner1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:drawable/btn_dropdown"
+        android:spinnerMode="dropdown"
+        android:layout_marginTop="36dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edit_quantity" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

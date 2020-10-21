@@ -14,7 +14,6 @@ public class UpdateActivity extends AppCompatActivity {
     Switch edit_taken;
     Button update_button;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

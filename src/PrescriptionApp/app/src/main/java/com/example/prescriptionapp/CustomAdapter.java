@@ -33,7 +33,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
     @Override
     public void onBindViewHolder(@NonNull CustomAdapter.MyViewHolder holder, int position) {
         MedicationModel model = medicationModels.get(position);
-        holder.med_id_txt.setText(String.valueOf(model.getId()));
+        holder.med_id_txt.setText(String.valueOf(model.getMedicationId()));
         holder.med_name_txt.setText(String.valueOf(model.getName()));
         holder.med_qty_txt.setText(String.valueOf(model.getQuantity()));
         holder.med_taken_txt.setText(String.valueOf(model.isTaken()));
@@ -56,7 +56,6 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
             med_name_txt = itemView.findViewById(R.id.med_name_txt);
             med_qty_txt = itemView.findViewById(R.id.med_qty_txt);
             med_taken_txt = itemView.findViewById(R.id.med_taken_txt);
-            mainLayout = itemView.findViewById(R.id.)
         }
     }
 

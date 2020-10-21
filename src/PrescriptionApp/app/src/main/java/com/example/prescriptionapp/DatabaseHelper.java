@@ -5,14 +5,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- */
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private Context context;
@@ -20,10 +16,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
 
     public static final String MEDICATION_TABLE = "MEDICATION_TABLE";
-    public static final String COLUMN_ID = "ID";
-    public static final String COLUMN_MEDICATION_NAME = "MEDICATION_NAME";
-    public static final String COLUMN_QUANTITY = "QUANTITY";
-    public static final String COLUMN_IS_TAKEN = "IS_TAKEN";
+    public static final String COL_MEDICATION_ID = "MEDICATION_ID";
+    public static final String COL_MEDICATION_NAME = "MEDICATION_NAME";
+    public static final String COL_QUANTITY = "QUANTITY";
+    public static final String COL_IS_TAKEN = "IS_TAKEN";
+
+    public static final String APPLICATION_TABLE = "APPLICATION_TABLE";
+    public static final String COLUMN_APPLICATION_ID = "APPLICATION_ID";
+    public static final String COLUMN_TIME_HOUR = "TIME_HOUR";
+    public static final String COLUMN_TIME_MINUTE = "TIME_MINUTE";
+    public static final String COLUMN_DOSAGE = "DOSAGE";
+    public static final String COLUMN_DAY = "DAY";
+    public static final String COLUMN_AMOUNT = "AMOUNT";
+    public static final String COLUMN_TAKEN = "IS_TAKEN";
+
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -32,11 +38,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        String createTableStatement = "CREATE TABLE " + MEDICATION_TABLE + " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                                                                                + COLUMN_MEDICATION_NAME + " TEXT, "
-                                                                                + COLUMN_QUANTITY + " INT, "
-                                                                                + COLUMN_IS_TAKEN + " BOOL)";
-        db.execSQL(createTableStatement);
+        String createMedTableStatement = onCreateHelper(MEDICATION_TABLE) + " ("
+                                        + COL_MEDICATION_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                                        + COL_MEDICATION_NAME + " TEXT, "
+                                        + COL_QUANTITY + " INT, "
+                                        + COL_IS_TAKEN + " BOOL)";
+
+        String createAppTableStatement = onCreateHelper(APPLICATION_TABLE) + " ("
+                                        + COLUMN_APPLICATION_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                                        + COL_MEDICATION_ID + " INT, "
+                                        + COLUMN_TIME_HOUR + " INT, "
+                                        + COLUMN_TIME_MINUTE + " INT, "
+                                        + COLUMN_DOSAGE + " REAL, "
+                                        + COLUMN_DAY + " TEXT, "
+                                        + COLUMN_AMOUNT + " INT, "
+                                        + COLUMN_TAKEN + " BOOL,"
+                                        + "FOREIGN KEY (" + COL_MEDICATION_ID
+                                        + ") REFERENCES " + MEDICATION_TABLE
+                                        + "(" + COL_MEDICATION_ID + "))";
+
+        db.execSQL(createMedTableStatement);
+        db.execSQL(createAppTableStatement);
+    }
+
+    private String onCreateHelper(String tableName) {
+        return "CREATE TABLE " + tableName;
     }
 
     @Override
@@ -51,24 +77,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public boolean deleteMedication(MedicationModel model) {
         SQLiteDatabase db = this.getWritableDatabase();
-        String queryString = "DELETE FROM " + MEDICATION_TABLE + "WHERE " + COLUMN_ID + " = " + model.getId();
+        String queryString = "DELETE FROM " + MEDICATION_TABLE + "WHERE " + COL_MEDICATION_ID + " = " + model.getMedicationId();
         Cursor cursor = db.rawQuery(queryString, null);
         return cursor.moveToFirst();
     }
 
+
+    /**
+     * Method that adds a row to the medication table from medication object
+     * @param medicationModel
+     * @return
+     */
     public boolean addMedication(MedicationModel medicationModel) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put(COLUMN_MEDICATION_NAME, medicationModel.getName());
-        cv.put(COLUMN_QUANTITY, medicationModel.getQuantity());
-        cv.put(COLUMN_IS_TAKEN, medicationModel.isTaken());
+        cv.put(COL_MEDICATION_NAME, medicationModel.getName());
+        cv.put(COL_QUANTITY, medicationModel.getQuantity());
+        cv.put(COL_IS_TAKEN, medicationModel.isTaken());
 
         long insert = db.insert(MEDICATION_TABLE, null, cv);
         return isMedicationAdded(insert);
     }
 
-    public List<MedicationModel> selectAll(){
+    /**
+     * Method that performs a "select all" query on the medication table
+     * @return List of every medication entry in the table
+     */
+    public List<MedicationModel> selectAllMedication(){
         List<MedicationModel> returnList = new ArrayList<>();
         String rawQuery = "SELECT * FROM " + MEDICATION_TABLE;
         SQLiteDatabase db = this.getReadableDatabase();
