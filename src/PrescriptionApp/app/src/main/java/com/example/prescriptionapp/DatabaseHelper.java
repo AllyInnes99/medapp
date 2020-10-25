@@ -19,10 +19,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_MEDICATION_ID = "MEDICATION_ID";
     public static final String COL_MEDICATION_NAME = "MEDICATION_NAME";
     public static final String COL_QUANTITY = "QUANTITY";
-    public static final String COL_IS_TAKEN = "IS_TAKEN";
+
 
     public static final String APPLICATION_TABLE = "APPLICATION_TABLE";
     public static final String COLUMN_APPLICATION_ID = "APPLICATION_ID";
+    public static final String COL_IS_TAKEN = "IS_TAKEN";
     public static final String COLUMN_TIME_HOUR = "TIME_HOUR";
     public static final String COLUMN_TIME_MINUTE = "TIME_MINUTE";
     public static final String COLUMN_DOSAGE = "DOSAGE";
@@ -94,7 +95,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         cv.put(COL_MEDICATION_NAME, medicationModel.getName());
         cv.put(COL_QUANTITY, medicationModel.getQuantity());
-        cv.put(COL_IS_TAKEN, medicationModel.isTaken());
 
         long insert = db.insert(MEDICATION_TABLE, null, cv);
         return isMedicationAdded(insert);
@@ -116,8 +116,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String medicationName = cursor.getString(1);
                 int medicationQuantity = cursor.getInt(2);
                 boolean isTaken = SQLiteIntToBool(cursor.getInt(3));
-                MedicationModel model = new MedicationModel(medicationID, medicationName, medicationQuantity, isTaken);
-                returnList.add(model);
+                //MedicationModel model = new MedicationModel(medicationID, medicationName, medicationQuantity, isTaken);
+                //returnList.add(model);
 
             } while(cursor.moveToNext());
         }

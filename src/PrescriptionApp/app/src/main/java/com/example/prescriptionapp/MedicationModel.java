@@ -1,6 +1,7 @@
 package com.example.prescriptionapp;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,26 +10,22 @@ public class MedicationModel implements Serializable {
     private int medicationId;
     private String name;
     private int quantity;
-    private boolean isTaken;
     private int refillAt;
+    private boolean isTaken;
     private String type;
     private String dayFrequency;
     private String measurement;
     private List<ApplicationModel> applications;
     private String profile;
 
-    public MedicationModel(int id, String name, int quantity, boolean isTaken) {
-        this.medicationId = id;
-        this.name = name;
-        this.quantity = quantity;
-        this.isTaken = isTaken;
-    }
 
-    public MedicationModel(String name, int quantity, String type, String measurement){
+    public MedicationModel(String name, int quantity, String type, String measurement, String dayFrequency) {
         this.name = name;
         this.quantity = quantity;
         this.type = type;
         this.measurement = measurement;
+        this.dayFrequency = dayFrequency;
+        this.applications = new ArrayList<>();
     }
 
 

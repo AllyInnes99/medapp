@@ -10,18 +10,19 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.Toast;
 
 public class AddMedicationActivity extends AppCompatActivity {
 
     Button btn_add, btn_cancel;
     EditText et_name, et_quantity;
-    Spinner medTypeDropdown, measurementDropdown;
-    String selectedType, selectedMeasurement;
-    final String[] medTypes = new String[] {"tablet", "pill", "injection", "powder", "suppository",
+    Spinner medTypeDropdown, measurementDropdown, frequencyDropdown;
+    String selectedType, selectedMeasurement, selectedFrequency;
+    final String[] medTypes = new String[] {"tablet", "pill", "injection", "powder",
                                             "drops", "inhalers", "topical"};
     final String[] measurements = new String[] {"g", "mg", "ml", "l"};
+    final String[] frequencies = {"Daily", "Weekly"};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +34,7 @@ public class AddMedicationActivity extends AppCompatActivity {
         et_quantity = findViewById(R.id.edit_quantity);
         medTypeDropdown = findViewById(R.id.spinner1);
         measurementDropdown = findViewById(R.id.spinner2);
+        frequencyDropdown = findViewById(R.id.spinner2);
 
         ArrayAdapter<String> medTypeAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, medTypes);
         medTypeDropdown.setAdapter(medTypeAdapter);
@@ -48,7 +50,7 @@ public class AddMedicationActivity extends AppCompatActivity {
             }
         }));
 
-        final ArrayAdapter<String> measurementAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, measurements);
+        ArrayAdapter<String> measurementAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, measurements);
         measurementDropdown.setAdapter(measurementAdapter);
         measurementDropdown.setOnItemSelectedListener((new AdapterView.OnItemSelectedListener() {
             @Override
@@ -62,19 +64,46 @@ public class AddMedicationActivity extends AppCompatActivity {
             }
         }));
 
+        ArrayAdapter<String> freqAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, frequencies);
+        measurementDropdown.setAdapter(freqAdapter);
+        measurementDropdown.setOnItemSelectedListener((new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedFrequency = frequencies[position];
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        }));
+
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
 
                 MedicationModel model;
+                Intent intent;
                 try {
                     String medicationName =  et_name.getText().toString();
+                    if(!validateMedicationName(medicationName)) {
+                        throw new Exception("Invalid medication name");
+                    }
                     int quantity = Integer.parseInt(et_quantity.getText().toString());
-                    model = new MedicationModel(medicationName, quantity, selectedType, selectedMeasurement);
-                    Intent intent = new Intent(AddMedicationActivity.this, AddMedication2Activity.class);
+                    model = new MedicationModel(medicationName, quantity, selectedType, selectedMeasurement, selectedFrequency);
+
+                    switch(selectedFrequency) {
+                        case "Daily":
+                            intent = new Intent(AddMedicationActivity.this, AddDailyActivity.class);
+                            break;
+                        case "Weekly":
+                            intent = new Intent(AddMedicationActivity.this, AddWeeklyActivity.class);
+                            break;
+                        default:
+                            throw new Exception("Invalid frequency");
+                    }
                     intent.putExtra("MedModel", model);
                     startActivity(intent);
-
 
                     /**
                     Toast.makeText(AddMedicationActivity.this, model.toString(), Toast.LENGTH_SHORT).show();
@@ -83,9 +112,12 @@ public class AddMedicationActivity extends AppCompatActivity {
                     Toast.makeText(AddMedicationActivity.this, "success = " + success, Toast.LENGTH_SHORT).show();
                     */
                 }
+                catch (NumberFormatException e) {
+                    Toast.makeText(AddMedicationActivity.this, "Invalid number for quantity", Toast.LENGTH_SHORT).show();
+                }
                 catch (Exception e){
                     Toast.makeText(AddMedicationActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
-                    model = new MedicationModel(-1, "error", 0, false);
+                    finish();
                 }
             }
         });
@@ -99,6 +131,11 @@ public class AddMedicationActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Helper method that validates if the name of the medication is valid
+     * @param medicationName - String of the med name
+     * @return true if valid, false otherwise
+     */
     public boolean validateMedicationName(String medicationName) {
         return !medicationName.isEmpty();
     }

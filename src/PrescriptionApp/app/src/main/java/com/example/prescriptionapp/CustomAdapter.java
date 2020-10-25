@@ -26,7 +26,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
     @Override
     public CustomAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.my_row, parent, false);
+        View view = inflater.inflate(R.layout.medication_row, parent, false);
         return new MyViewHolder(view);
     }
 
@@ -36,7 +36,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
         holder.med_id_txt.setText(String.valueOf(model.getMedicationId()));
         holder.med_name_txt.setText(String.valueOf(model.getName()));
         holder.med_qty_txt.setText(String.valueOf(model.getQuantity()));
-        holder.med_taken_txt.setText(String.valueOf(model.isTaken()));
+        //holder.med_taken_txt.setText(String.valueOf(model.isTaken()));
 
     }
 
