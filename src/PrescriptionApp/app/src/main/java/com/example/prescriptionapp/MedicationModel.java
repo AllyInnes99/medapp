@@ -1,9 +1,10 @@
 package com.example.prescriptionapp;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MedicationModel {
+public class MedicationModel implements Serializable {
 
     private int medicationId;
     private String name;
@@ -16,13 +17,6 @@ public class MedicationModel {
     private List<ApplicationModel> applications;
     private String profile;
 
-    /**
-     * Initialise a MedicationModel object
-     * @param id - unique identifier of medication
-     * @param name - the name of the medication
-     * @param quantity - how much medication has been taken
-     * @param isTaken - if the medication has been taken or not
-     */
     public MedicationModel(int id, String name, int quantity, boolean isTaken) {
         this.medicationId = id;
         this.name = name;
@@ -30,20 +24,14 @@ public class MedicationModel {
         this.isTaken = isTaken;
     }
 
+    public MedicationModel(String name, int quantity, String type, String measurement){
+        this.name = name;
+        this.quantity = quantity;
+        this.type = type;
+        this.measurement = measurement;
+    }
 
 
-    /**
-     * Initialise a MedicationModel object
-     * @param medicationId - unique identifier of medication
-     * @param name - the name of the medication
-     * @param quantity - how much medication has been taken
-     * @param isTaken - if the medication has been taken or no
-     * @param refillAt - value for when quantity hits for a refill reminder
-     * @param type - if the medication is a tablet, pill, etc.
-     * @param dayFrequency - if the medication is to be daily, weekly or custom
-     * @param measurement - what the medication is measured in
-     * @param profile - profile for who the medication is for
-     */
     public MedicationModel(int medicationId, String name, int quantity, boolean isTaken,
                            int refillAt, String type, String dayFrequency, String measurement,
                            String profile) {
