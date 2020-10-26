@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
     // references to controls on the layout
     FloatingActionButton btn_add;
     RecyclerView recyclerView;
-    CustomAdapter customAdapter;
+    MedicationAdapter medicationAdapter;
     DatabaseHelper databaseHelper = new DatabaseHelper(MainActivity.this);
 
 
@@ -53,8 +53,8 @@ public class MainActivity extends AppCompatActivity {
     private void displayRecycler() {
 
         List<MedicationModel> models = databaseHelper.selectAllMedication();
-        customAdapter = new CustomAdapter(MainActivity.this, models);
-        recyclerView.setAdapter(customAdapter);
+        medicationAdapter = new MedicationAdapter(MainActivity.this, models);
+        recyclerView.setAdapter(medicationAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
     }
 

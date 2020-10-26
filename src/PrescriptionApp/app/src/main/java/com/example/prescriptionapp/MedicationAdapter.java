@@ -12,26 +12,26 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHolder> {
+public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.MyViewHolder> {
 
     private Context context;
     private List<MedicationModel> medicationModels;
 
-    CustomAdapter(Context context, List<MedicationModel> medicationModels) {
+    MedicationAdapter(Context context, List<MedicationModel> medicationModels) {
         this.context = context;
         this.medicationModels = medicationModels;
     }
 
     @NonNull
     @Override
-    public CustomAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public MedicationAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.medication_row, parent, false);
         return new MyViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CustomAdapter.MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MedicationAdapter.MyViewHolder holder, int position) {
         MedicationModel model = medicationModels.get(position);
         holder.med_id_txt.setText(String.valueOf(model.getMedicationId()));
         holder.med_name_txt.setText(String.valueOf(model.getName()));

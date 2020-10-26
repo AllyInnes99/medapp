@@ -19,11 +19,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_MEDICATION_ID = "MEDICATION_ID";
     public static final String COL_MEDICATION_NAME = "MEDICATION_NAME";
     public static final String COL_QUANTITY = "QUANTITY";
+    public static final String COL_FREQUENCY = "FREQUENCY";
+    public static final String COL_MEASUREMENT = "MEASUREMENT";
+    public static final String COL_TYPE = "TYPE";
+    public static final String COL_REFILL = "REFILL_AT";
 
 
     public static final String APPLICATION_TABLE = "APPLICATION_TABLE";
     public static final String COLUMN_APPLICATION_ID = "APPLICATION_ID";
-    public static final String COL_IS_TAKEN = "IS_TAKEN";
     public static final String COLUMN_TIME_HOUR = "TIME_HOUR";
     public static final String COLUMN_TIME_MINUTE = "TIME_MINUTE";
     public static final String COLUMN_DOSAGE = "DOSAGE";
@@ -43,7 +46,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                         + COL_MEDICATION_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                                         + COL_MEDICATION_NAME + " TEXT, "
                                         + COL_QUANTITY + " INT, "
-                                        + COL_IS_TAKEN + " BOOL)";
+                                        + COL_FREQUENCY + " TEXT,"
+                                        + COL_MEASUREMENT + " TEXT,"
+                                        + COL_TYPE + " TEXT,"
+                                        + COL_REFILL + " INT)";
 
         String createAppTableStatement = onCreateHelper(APPLICATION_TABLE) + " ("
                                         + COLUMN_APPLICATION_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -87,7 +93,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * Method that adds a row to the medication table from medication object
      * @param medicationModel
-     * @return
+     * @return true if added successfully, false otherwise
      */
     public boolean addMedication(MedicationModel medicationModel) {
 
@@ -95,6 +101,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         cv.put(COL_MEDICATION_NAME, medicationModel.getName());
         cv.put(COL_QUANTITY, medicationModel.getQuantity());
+        cv.put(COL_FREQUENCY, medicationModel.getDayFrequency());
+        cv.put(COL_MEASUREMENT, medicationModel.getMeasurement());
+        cv.put(COL_TYPE, medicationModel.getType());
+        cv.put(COL_REFILL, medicationModel.getRefillAt());
 
         long insert = db.insert(MEDICATION_TABLE, null, cv);
         return isMedicationAdded(insert);

@@ -4,15 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddMedication2Activity">
-
-    <Spinner
-        android:id="@+id/freqDropdown"
-        android:layout_width="409dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="168dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    tools:context=".AddApplicationActivity">
 
 </androidx.constraintlayout.widget.ConstraintLayout>

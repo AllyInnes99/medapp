@@ -19,6 +19,7 @@
         app:srcCompat="@drawable/ic_add" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="415dp"
         android:layout_height="534dp"
         app:layout_constraintEnd_toEndOf="parent"

@@ -11,7 +11,6 @@ public class MedicationModel implements Serializable {
     private String name;
     private int quantity;
     private int refillAt;
-    private boolean isTaken;
     private String type;
     private String dayFrequency;
     private String measurement;
@@ -29,13 +28,12 @@ public class MedicationModel implements Serializable {
     }
 
 
-    public MedicationModel(int medicationId, String name, int quantity, boolean isTaken,
+    public MedicationModel(int medicationId, String name, int quantity,
                            int refillAt, String type, String dayFrequency, String measurement,
                            String profile) {
         this.medicationId = medicationId;
         this.name = name;
         this.quantity = quantity;
-        this.isTaken = isTaken;
         this.refillAt = refillAt;
         this.type = type;
         this.dayFrequency = dayFrequency;
@@ -95,20 +93,6 @@ public class MedicationModel implements Serializable {
      */
     public void setQuantity(int quantity) {
         this.quantity = quantity;
-    }
-
-    /**
-     * @return if the medication has been taken or not
-     */
-    public boolean isTaken() {
-        return isTaken;
-    }
-
-    /**
-     * @param taken set whether or not the medication has been taken
-     */
-    public void setTaken(boolean taken) {
-        isTaken = taken;
     }
 
     public int getRefillAt() {

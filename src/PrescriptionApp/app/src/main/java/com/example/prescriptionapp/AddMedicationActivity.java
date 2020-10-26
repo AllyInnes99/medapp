@@ -15,7 +15,7 @@ import android.widget.Toast;
 public class AddMedicationActivity extends AppCompatActivity {
 
     Button btn_add, btn_cancel;
-    EditText et_name, et_quantity;
+    EditText et_name, et_quantity, et_refill;
     Spinner medTypeDropdown, measurementDropdown, frequencyDropdown;
     String selectedType, selectedMeasurement, selectedFrequency;
     final String[] medTypes = new String[] {"tablet", "pill", "injection", "powder",
@@ -32,9 +32,10 @@ public class AddMedicationActivity extends AppCompatActivity {
         btn_cancel = findViewById(R.id.button_cancel);
         et_name = findViewById(R.id.edit_name);
         et_quantity = findViewById(R.id.edit_quantity);
+        et_refill = findViewById(R.id.edit_refill);
         medTypeDropdown = findViewById(R.id.spinner1);
         measurementDropdown = findViewById(R.id.spinner2);
-        frequencyDropdown = findViewById(R.id.spinner2);
+        frequencyDropdown = findViewById(R.id.spinner3);
 
         ArrayAdapter<String> medTypeAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, medTypes);
         medTypeDropdown.setAdapter(medTypeAdapter);
@@ -64,12 +65,12 @@ public class AddMedicationActivity extends AppCompatActivity {
             }
         }));
 
-        ArrayAdapter<String> freqAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, frequencies);
-        measurementDropdown.setAdapter(freqAdapter);
-        measurementDropdown.setOnItemSelectedListener((new AdapterView.OnItemSelectedListener() {
+        ArrayAdapter<String> frequencyAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, frequencies);
+        frequencyDropdown.setAdapter(frequencyAdapter);
+        frequencyDropdown.setOnItemSelectedListener((new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedFrequency = frequencies[position];
+                selectedMeasurement = frequencies[position];
             }
 
             @Override
@@ -77,6 +78,7 @@ public class AddMedicationActivity extends AppCompatActivity {
 
             }
         }));
+
 
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,27 +92,31 @@ public class AddMedicationActivity extends AppCompatActivity {
                         throw new Exception("Invalid medication name");
                     }
                     int quantity = Integer.parseInt(et_quantity.getText().toString());
+                    int refill = Integer.parseInt(et_refill.getText().toString());
                     model = new MedicationModel(medicationName, quantity, selectedType, selectedMeasurement, selectedFrequency);
 
-                    switch(selectedFrequency) {
-                        case "Daily":
-                            intent = new Intent(AddMedicationActivity.this, AddDailyActivity.class);
-                            break;
-                        case "Weekly":
-                            intent = new Intent(AddMedicationActivity.this, AddWeeklyActivity.class);
-                            break;
-                        default:
-                            throw new Exception("Invalid frequency");
-                    }
-                    intent.putExtra("MedModel", model);
-                    startActivity(intent);
+
 
                     /**
                     Toast.makeText(AddMedicationActivity.this, model.toString(), Toast.LENGTH_SHORT).show();
                     DatabaseHelper databaseHelper = new DatabaseHelper(AddMedicationActivity.this);
                     boolean success = databaseHelper.addMedication(model);
                     Toast.makeText(AddMedicationActivity.this, "success = " + success, Toast.LENGTH_SHORT).show();
-                    */
+
+                     switch(selectedFrequency) {
+                     case "Daily":
+                     intent = new Intent(AddMedicationActivity.this, AddDailyActivity.class);
+                     break;
+                     case "Weekly":
+                     intent = new Intent(AddMedicationActivity.this, AddWeeklyActivity.class);
+                     break;
+                     default:
+                     throw new Exception("Invalid frequency");
+                     }
+                     intent.putExtra("MedModel", model);
+                     startActivity(intent);
+
+                     */
                 }
                 catch (NumberFormatException e) {
                     Toast.makeText(AddMedicationActivity.this, "Invalid number for quantity", Toast.LENGTH_SHORT).show();
