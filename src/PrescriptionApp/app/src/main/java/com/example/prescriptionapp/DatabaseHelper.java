@@ -22,17 +22,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_FREQUENCY = "FREQUENCY";
     public static final String COL_MEASUREMENT = "MEASUREMENT";
     public static final String COL_TYPE = "TYPE";
+    public static final String COL_PROFILE = "PROFILE";
     public static final String COL_REFILL = "REFILL_AT";
 
 
     public static final String APPLICATION_TABLE = "APPLICATION_TABLE";
-    public static final String COLUMN_APPLICATION_ID = "APPLICATION_ID";
-    public static final String COLUMN_TIME_HOUR = "TIME_HOUR";
-    public static final String COLUMN_TIME_MINUTE = "TIME_MINUTE";
-    public static final String COLUMN_DOSAGE = "DOSAGE";
-    public static final String COLUMN_DAY = "DAY";
-    public static final String COLUMN_AMOUNT = "AMOUNT";
-    public static final String COLUMN_TAKEN = "IS_TAKEN";
+    public static final String COL_APPLICATION_ID = "APPLICATION_ID";
+    public static final String COL_TIME_HOUR = "TIME_HOUR";
+    public static final String COL_TIME_MINUTE = "TIME_MINUTE";
+    public static final String COL_DOSAGE = "DOSAGE";
+    public static final String COL_DAY = "DAY";
+    public static final String COL_AMOUNT = "AMOUNT";
+    public static final String COL_TAKEN = "IS_TAKEN";
 
 
     public DatabaseHelper(Context context) {
@@ -47,19 +48,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                         + COL_MEDICATION_NAME + " TEXT, "
                                         + COL_QUANTITY + " INT, "
                                         + COL_FREQUENCY + " TEXT,"
-                                        + COL_MEASUREMENT + " TEXT,"
-                                        + COL_TYPE + " TEXT,"
+                                        + COL_MEASUREMENT + " TEXT, "
+                                        + COL_TYPE + " TEXT, "
+                                        + COL_PROFILE + " TEXT, "
                                         + COL_REFILL + " INT)";
 
         String createAppTableStatement = onCreateHelper(APPLICATION_TABLE) + " ("
-                                        + COLUMN_APPLICATION_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                                        + COL_APPLICATION_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                                         + COL_MEDICATION_ID + " INT, "
-                                        + COLUMN_TIME_HOUR + " INT, "
-                                        + COLUMN_TIME_MINUTE + " INT, "
-                                        + COLUMN_DOSAGE + " REAL, "
-                                        + COLUMN_DAY + " TEXT, "
-                                        + COLUMN_AMOUNT + " INT, "
-                                        + COLUMN_TAKEN + " BOOL,"
+                                        + COL_TIME_HOUR + " INT, "
+                                        + COL_TIME_MINUTE + " INT, "
+                                        + COL_DOSAGE + " REAL, "
+                                        + COL_DAY + " TEXT, "
+                                        + COL_AMOUNT + " INT, "
+                                        + COL_TAKEN + " BOOL,"
                                         + "FOREIGN KEY (" + COL_MEDICATION_ID
                                         + ") REFERENCES " + MEDICATION_TABLE
                                         + "(" + COL_MEDICATION_ID + "))";
@@ -89,7 +91,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return cursor.moveToFirst();
     }
 
-
     /**
      * Method that adds a row to the medication table from medication object
      * @param medicationModel
@@ -104,6 +105,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COL_FREQUENCY, medicationModel.getDayFrequency());
         cv.put(COL_MEASUREMENT, medicationModel.getMeasurement());
         cv.put(COL_TYPE, medicationModel.getType());
+        cv.put(COL_PROFILE, medicationModel.getProfile());
         cv.put(COL_REFILL, medicationModel.getRefillAt());
 
         long insert = db.insert(MEDICATION_TABLE, null, cv);
@@ -125,9 +127,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 int medicationID = cursor.getInt(0);
                 String medicationName = cursor.getString(1);
                 int medicationQuantity = cursor.getInt(2);
-                boolean isTaken = SQLiteIntToBool(cursor.getInt(3));
-                //MedicationModel model = new MedicationModel(medicationID, medicationName, medicationQuantity, isTaken);
-                //returnList.add(model);
+                String freq = cursor.getString(3);
+                String measurement = cursor.getString(4);
+                String type = cursor.getString(5);
+                String profile = cursor.getString(6);
+                int refill = cursor.getInt(7);
+                MedicationModel model = new MedicationModel(medicationID, medicationName, medicationQuantity, refill,
+                                                            freq,  measurement, type, profile);
+                returnList.add(model);
 
             } while(cursor.moveToNext());
         }
@@ -139,7 +146,59 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * SQLite databases represent boolean variable as integers, with 0 for false and 1 for true
+     * Method that gets all of the applications that belong to a specific medication, by use of
+     * the MedicationID foreign key
+     * @param model - the medication model that we are trying to get the applications for
+     * @return a list of application models
+     */
+    public List<ApplicationModel> selectApplicationFromMedication(MedicationModel model) {
+        int medID = model.getMedicationId();
+        String rawQuery = "SELECT * FROM " + APPLICATION_TABLE + " WHERE " + COL_MEDICATION_ID  + " = " + medID;
+        return selectApplicationHelper(rawQuery);
+    }
+
+    /**
+     * Method that gets all the applications that are to be taken on a specific day
+     * @param day - String denoting the day of the week
+     * @return a list of applications to be taken on the given day
+     */
+    public List<ApplicationModel> selectApplicationFromDay(String day) {
+        String rawQuery = "SELECT * FROM " + APPLICATION_TABLE + " WHERE " + COL_DAY + " = " + day;
+        return selectApplicationHelper(rawQuery);
+    }
+
+    /**
+     * Helper method to obtain a list of application models via provided query
+     * @param rawQuery - SQL query to be made on db
+     * @return list of application models as a result of the query
+     */
+    private List<ApplicationModel> selectApplicationHelper(String rawQuery) {
+        List<ApplicationModel> returnList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(rawQuery, null);
+
+        if(cursor.moveToFirst()) {
+            do {
+                int applicationID = cursor.getInt(0);
+                int medID = cursor.getInt(1);
+                int timeHour = cursor.getInt(2);
+                int timeMinute = cursor.getInt(3);
+                double dosage = cursor.getDouble(4);
+                String day = cursor.getString(5);
+                int amount = cursor.getInt(6);
+                boolean isTaken = SQLiteIntToBool(cursor.getInt(7));
+
+                ApplicationModel m = new ApplicationModel(applicationID, medID, timeMinute,
+                        timeHour, dosage, day, amount, isTaken);
+                returnList.add(m);
+
+            } while(cursor.moveToNext());
+        }
+        return returnList;
+    }
+
+    /**
+     * SQLite databases represent boolean variable as integers, with 0 for false and 1 for true.
      * To convert back into boolean for the model, check for equality with 1
      * @param b - the integer representing the boolean
      * @return true or false, depending on if b is 1 or 0
@@ -158,6 +217,5 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private boolean isMedicationAdded(long insert) {
         return insert >= 0;
     }
-
 
 }

@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private void displayRecycler() {
 
         List<MedicationModel> models = databaseHelper.selectAllMedication();
+        Toast.makeText(MainActivity.this, models.toString(), Toast.LENGTH_SHORT).show();
         medicationAdapter = new MedicationAdapter(MainActivity.this, models);
         recyclerView.setAdapter(medicationAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));

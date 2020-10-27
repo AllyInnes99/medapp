@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -93,7 +94,12 @@ public class AddMedicationActivity extends AppCompatActivity {
                     }
                     int quantity = Integer.parseInt(et_quantity.getText().toString());
                     int refill = Integer.parseInt(et_refill.getText().toString());
-                    model = new MedicationModel(medicationName, quantity, selectedType, selectedMeasurement, selectedFrequency);
+                    model = new MedicationModel(0, medicationName, quantity,refill, selectedType,
+                                                selectedFrequency, selectedMeasurement, "me");
+                    DatabaseHelper databaseHelper = new DatabaseHelper(AddMedicationActivity.this);
+                    boolean success = databaseHelper.addMedication(model);
+                    Toast.makeText(AddMedicationActivity.this, "success = " + success, Toast.LENGTH_SHORT).show();
+
 
 
 
