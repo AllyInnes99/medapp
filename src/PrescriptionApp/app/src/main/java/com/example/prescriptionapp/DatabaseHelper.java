@@ -15,6 +15,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "MedicationApp.db";
     public static final int DATABASE_VERSION = 1;
 
+    // Const variables for the medication table
     public static final String MEDICATION_TABLE = "MEDICATION_TABLE";
     public static final String COL_MEDICATION_ID = "MEDICATION_ID";
     public static final String COL_MEDICATION_NAME = "MEDICATION_NAME";
@@ -25,7 +26,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_PROFILE = "PROFILE";
     public static final String COL_REFILL = "REFILL_AT";
 
-
+    // Const variables for the application table
     public static final String APPLICATION_TABLE = "APPLICATION_TABLE";
     public static final String COL_APPLICATION_ID = "APPLICATION_ID";
     public static final String COL_TIME_HOUR = "TIME_HOUR";
@@ -70,25 +71,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(createAppTableStatement);
     }
 
-    private String onCreateHelper(String tableName) {
-        return "CREATE TABLE " + tableName;
-    }
-
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
     }
 
     /**
-     * Method that finds the target medication model in database, and if found it is deleted.
-     * @param model - object that represents the medication that is to be removed.
-     * @return true if model is found and deleted successfully, false if not
+     * Helper function that prepends "CREATE TABLE" to a table name to be used when creating tables
+     * @param tableName - the table to be created
+     * @return String with the create table prepending the table name
      */
-    public boolean deleteMedication(MedicationModel model) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        String queryString = "DELETE FROM " + MEDICATION_TABLE + "WHERE " + COL_MEDICATION_ID + " = " + model.getMedicationId();
-        Cursor cursor = db.rawQuery(queryString, null);
-        return cursor.moveToFirst();
+    private String onCreateHelper(String tableName) {
+        return "CREATE TABLE " + tableName;
     }
 
     /**
@@ -107,9 +101,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COL_TYPE, medicationModel.getType());
         cv.put(COL_PROFILE, medicationModel.getProfile());
         cv.put(COL_REFILL, medicationModel.getRefillAt());
-
         long insert = db.insert(MEDICATION_TABLE, null, cv);
-        return isMedicationAdded(insert);
+        return isAdded(insert);
+    }
+
+    public boolean addApplication(ApplicationModel applModel) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        //Split time String into int hour and int min
+        String[] time = applModel.getTime().split(":");
+
+        cv.put(COL_MEDICATION_ID, applModel.getMedicationId());
+        cv.put(COL_TIME_HOUR, Integer.parseInt(time[0]));
+        cv.put(COL_TIME_MINUTE, Integer.parseInt(time[1]));
+        cv.put(COL_DOSAGE, applModel.getDosage());
+        cv.put(COL_DAY, applModel.getDay());
+        cv.put(COL_AMOUNT, applModel.getAmount());
+        cv.put(COL_TAKEN, applModel.isTaken());
+        long insert = db.insert(APPLICATION_TABLE, null, cv);
+        return isAdded(insert);
     }
 
     /**
@@ -198,6 +209,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
+     * Method that finds the target medication model in database, and if found it is deleted.
+     * @param model - object that represents the medication that is to be removed.
+     * @return true if model is found and deleted successfully, false if not
+     */
+    public boolean deleteMedication(MedicationModel model) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String queryString = "DELETE FROM " + MEDICATION_TABLE + "WHERE " + COL_MEDICATION_ID + " = " + model.getMedicationId();
+        List<ApplicationModel> applicationModels = selectApplicationFromMedication(model);
+        for(ApplicationModel appl: applicationModels){
+            deleteApplication(appl);
+        }
+        Cursor cursor = db.rawQuery(queryString, null);
+        return cursor.moveToFirst();
+    }
+    /**
+     * Method that finds the target application model in database, and if found it is deleted.
+     * @param model - object that represents the application that is to be removed.
+     * @return true if model is found and deleted successfully, false if not
+     */
+    public boolean deleteApplication(ApplicationModel model){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String queryString = "DELETE FROM " + APPLICATION_TABLE + "WHERE " + COL_APPLICATION_ID + " = " + model.getApplicationId();
+        Cursor cursor = db.rawQuery(queryString, null);
+        return cursor.moveToFirst();
+    }
+
+    /**
      * SQLite databases represent boolean variable as integers, with 0 for false and 1 for true.
      * To convert back into boolean for the model, check for equality with 1
      * @param b - the integer representing the boolean
@@ -214,7 +252,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param insert - long value that represents the success
      * @return false if negative, true otherwise
      */
-    private boolean isMedicationAdded(long insert) {
+    private boolean isAdded(long insert) {
         return insert >= 0;
     }
 

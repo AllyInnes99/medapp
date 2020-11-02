@@ -96,4 +96,12 @@ public class ApplicationModel {
     public void setTaken(boolean taken) {
         isTaken = taken;
     }
+
+    public int getMedicationId() {
+        return medicationId;
+    }
+
+    public void setMedicationId(int medicationId) {
+        this.medicationId = medicationId;
+    }
 }

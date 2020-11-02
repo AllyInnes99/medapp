@@ -37,19 +37,6 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/med_taken_txt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="316dp"
-                android:layout_marginLeft="316dp"
-                android:layout_marginTop="4dp"
-                android:text="TextView"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toEndOf="@+id/med_id_txt"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
                 android:id="@+id/med_qty_txt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

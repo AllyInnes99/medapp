@@ -15,12 +15,10 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    // references to controls on the layout
     FloatingActionButton btn_add;
     RecyclerView recyclerView;
     MedicationAdapter medicationAdapter;
     DatabaseHelper databaseHelper = new DatabaseHelper(MainActivity.this);
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

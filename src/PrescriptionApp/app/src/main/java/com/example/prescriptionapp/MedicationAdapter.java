@@ -36,8 +36,6 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.My
         holder.med_id_txt.setText(String.valueOf(model.getMedicationId()));
         holder.med_name_txt.setText(String.valueOf(model.getName()));
         holder.med_qty_txt.setText(String.valueOf(model.getQuantity()));
-        //holder.med_taken_txt.setText(String.valueOf(model.isTaken()));
-
     }
 
     @Override
@@ -55,7 +53,6 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.My
             med_id_txt = itemView.findViewById(R.id.med_id_txt);
             med_name_txt = itemView.findViewById(R.id.med_name_txt);
             med_qty_txt = itemView.findViewById(R.id.med_qty_txt);
-            med_taken_txt = itemView.findViewById(R.id.med_taken_txt);
         }
     }
 

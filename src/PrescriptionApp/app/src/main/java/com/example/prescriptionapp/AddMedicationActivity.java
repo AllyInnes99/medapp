@@ -99,35 +99,15 @@ public class AddMedicationActivity extends AppCompatActivity {
                     DatabaseHelper databaseHelper = new DatabaseHelper(AddMedicationActivity.this);
                     boolean success = databaseHelper.addMedication(model);
                     Toast.makeText(AddMedicationActivity.this, "success = " + success, Toast.LENGTH_SHORT).show();
+                    intent = new Intent(AddMedicationActivity.this, AddDailyActivity.class);
+                    intent.putExtra("MedModel", model);
+                    startActivity(intent);
 
-
-
-
-                    /**
-                    Toast.makeText(AddMedicationActivity.this, model.toString(), Toast.LENGTH_SHORT).show();
-                    DatabaseHelper databaseHelper = new DatabaseHelper(AddMedicationActivity.this);
-                    boolean success = databaseHelper.addMedication(model);
-                    Toast.makeText(AddMedicationActivity.this, "success = " + success, Toast.LENGTH_SHORT).show();
-
-                     switch(selectedFrequency) {
-                     case "Daily":
-                     intent = new Intent(AddMedicationActivity.this, AddDailyActivity.class);
-                     break;
-                     case "Weekly":
-                     intent = new Intent(AddMedicationActivity.this, AddWeeklyActivity.class);
-                     break;
-                     default:
-                     throw new Exception("Invalid frequency");
-                     }
-                     intent.putExtra("MedModel", model);
-                     startActivity(intent);
-
-                     */
                 }
                 catch (NumberFormatException e) {
                     Toast.makeText(AddMedicationActivity.this, "Invalid number for quantity", Toast.LENGTH_SHORT).show();
                 }
-                catch (Exception e){
+                catch (Exception e) {
                     Toast.makeText(AddMedicationActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
                     finish();
                 }
