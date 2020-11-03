@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -71,7 +70,7 @@ public class AddMedicationActivity extends AppCompatActivity {
         frequencyDropdown.setOnItemSelectedListener((new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedMeasurement = frequencies[position];
+                selectedFrequency = frequencies[position];
             }
 
             @Override
@@ -88,18 +87,20 @@ public class AddMedicationActivity extends AppCompatActivity {
                 MedicationModel model;
                 Intent intent;
                 try {
+                    DatabaseHelper databaseHelper = new DatabaseHelper(AddMedicationActivity.this);
                     String medicationName =  et_name.getText().toString();
                     if(!validateMedicationName(medicationName)) {
                         throw new Exception("Invalid medication name");
                     }
                     int quantity = Integer.parseInt(et_quantity.getText().toString());
                     int refill = Integer.parseInt(et_refill.getText().toString());
-                    model = new MedicationModel(0, medicationName, quantity,refill, selectedType,
+                    int id = databaseHelper.countMedication() + 1;
+
+                    model = new MedicationModel(medicationName, quantity,refill, selectedType,
                                                 selectedFrequency, selectedMeasurement, "me");
-                    DatabaseHelper databaseHelper = new DatabaseHelper(AddMedicationActivity.this);
                     boolean success = databaseHelper.addMedication(model);
                     Toast.makeText(AddMedicationActivity.this, "success = " + success, Toast.LENGTH_SHORT).show();
-                    intent = new Intent(AddMedicationActivity.this, AddDailyActivity.class);
+                    intent = new Intent(AddMedicationActivity.this, DailyActivity.class);
                     intent.putExtra("MedModel", model);
                     startActivity(intent);
 

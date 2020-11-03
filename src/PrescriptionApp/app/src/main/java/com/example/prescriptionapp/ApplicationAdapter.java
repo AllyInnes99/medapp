@@ -33,9 +33,9 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         ApplicationModel model = applicationModels.get(position);
-        holder.appl_dosage_txt.setText(String.valueOf(model.getDosage()));
-        holder.appl_time_txt.setText(String.valueOf(model.getTime()));
-        holder.appl_amount_txt.setText(String.valueOf(model.getAmount()));
+        holder.appl_dosage_txt.setText("Dosage: " + model.getDosage());
+        holder.appl_time_txt.setText("Time: " + model.getTime());
+        holder.appl_amount_txt.setText("Amount: " + model.getAmount());
 
     }
 

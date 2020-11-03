@@ -4,11 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-public class AddWeeklyActivity extends AppCompatActivity {
+public class AddWeeklyApplication extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_weekly);
+        setContentView(R.layout.activity_add_weekly_application);
     }
 }

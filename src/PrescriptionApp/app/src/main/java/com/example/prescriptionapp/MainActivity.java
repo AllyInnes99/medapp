@@ -24,7 +24,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         btn_add = findViewById(R.id.floating_add_button);
         recyclerView = findViewById(R.id.recycler_view);
 
@@ -52,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
     private void displayRecycler() {
 
         List<MedicationModel> models = databaseHelper.selectAllMedication();
-        Toast.makeText(MainActivity.this, models.toString(), Toast.LENGTH_SHORT).show();
         medicationAdapter = new MedicationAdapter(MainActivity.this, models);
         recyclerView.setAdapter(medicationAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));

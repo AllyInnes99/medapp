@@ -2,22 +2,18 @@ package com.example.prescriptionapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Dialog;
-import android.app.DialogFragment;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import java.sql.Time;
 import java.util.Calendar;
 
-public class AddApplicationActivity extends AppCompatActivity {
+public class AddDailyApplication extends AppCompatActivity {
 
     Button btn_time, btn_add;
     EditText et_time, et_dosage, et_amount;
@@ -37,7 +33,8 @@ public class AddApplicationActivity extends AppCompatActivity {
         et_dosage = findViewById(R.id.et_dosage);
         et_amount = findViewById(R.id.et_amount);
         btn_time = findViewById(R.id.btn_time);
-        databaseHelper = new DatabaseHelper(AddApplicationActivity.this);
+        btn_add = findViewById(R.id.btnAdd);
+        databaseHelper = new DatabaseHelper(AddDailyApplication.this);
 
         btn_time.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,12 +45,12 @@ public class AddApplicationActivity extends AppCompatActivity {
                 currentMinutes = calendar.get(Calendar.MINUTE);
 
                 // launch time picker dialog
-                TimePickerDialog timePickerDialog = new TimePickerDialog(AddApplicationActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                TimePickerDialog timePickerDialog = new TimePickerDialog(AddDailyApplication.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                         et_time.setText(hourOfDay + ":" + minute);
                     }
-                }, currentHour, currentMinutes, true);
+                }, currentHour, currentMinutes, false);
                 timePickerDialog.show();
             }
         });
@@ -87,17 +84,9 @@ public class AddApplicationActivity extends AppCompatActivity {
 
                 }
                 catch (Exception e) {
-                    Toast.makeText(AddApplicationActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddDailyApplication.this, e.toString(), Toast.LENGTH_SHORT).show();
                 }
-
-
-                finish();
             }
         });
-
-
     }
-
-
-
 }

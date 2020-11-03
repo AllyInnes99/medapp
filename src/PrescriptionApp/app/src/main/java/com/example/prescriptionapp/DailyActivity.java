@@ -7,57 +7,66 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
-public class AddDailyActivity extends AppCompatActivity {
+public class DailyActivity extends AppCompatActivity {
 
     MedicationModel model;
     RecyclerView recyclerView;
-    FloatingActionButton floatingActionButton;
+    FloatingActionButton floatingActionButton, nextButton;
     ApplicationAdapter applicationAdapter;
     List<ApplicationModel> temp;
+    DatabaseHelper databaseHelper = new DatabaseHelper(DailyActivity.this);
 
     private static final int LIMIT = 5;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_daily);
+        setContentView(R.layout.activity_daily);
 
         model = (MedicationModel) getIntent().getSerializableExtra("MedModel");
         recyclerView = findViewById(R.id.recyclerView);
         floatingActionButton = findViewById(R.id.addApplicationButton);
-        temp = new ArrayList<>();
-        //displayRecycler();
+        nextButton = findViewById(R.id.nextButton);
+
+        displayRecycler();
 
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(AddDailyActivity.this, AddApplicationActivity.class);
+                Intent intent = new Intent(DailyActivity.this, AddDailyApplication.class);
                 intent.putExtra("MedModel", model);
                 startActivity(intent);
             }
         });
 
+        nextButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(DailyActivity.this, MainActivity.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(i);
+            }
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        //temp = (List<ApplicationModel>) getIntent().getSerializableExtra("Applications");
-        //displayRecycler();
+        displayRecycler();
     }
 
     private void displayRecycler() {
-        applicationAdapter = new ApplicationAdapter(AddDailyActivity.this, temp);
+        List<ApplicationModel> applModels = databaseHelper.selectApplFromMedicationAndDay(model);
+        applicationAdapter = new ApplicationAdapter(DailyActivity.this, applModels);
         recyclerView.setAdapter(applicationAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(AddDailyActivity.this));
+        recyclerView.setLayoutManager(new LinearLayoutManager(DailyActivity.this));
     }
-
-
 
 }

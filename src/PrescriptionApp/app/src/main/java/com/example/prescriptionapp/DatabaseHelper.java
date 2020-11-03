@@ -46,25 +46,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         String createMedTableStatement = onCreateHelper(MEDICATION_TABLE) + " ("
                                         + COL_MEDICATION_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                                        + COL_MEDICATION_NAME + " TEXT, "
-                                        + COL_QUANTITY + " INT, "
-                                        + COL_FREQUENCY + " TEXT,"
-                                        + COL_MEASUREMENT + " TEXT, "
-                                        + COL_TYPE + " TEXT, "
-                                        + COL_PROFILE + " TEXT, "
+                                        + COL_MEDICATION_NAME + " TEXT, " + COL_QUANTITY + " INT, "
+                                        + COL_FREQUENCY + " TEXT," + COL_MEASUREMENT + " TEXT, "
+                                        + COL_TYPE + " TEXT, " + COL_PROFILE + " TEXT, "
                                         + COL_REFILL + " INT)";
 
         String createAppTableStatement = onCreateHelper(APPLICATION_TABLE) + " ("
                                         + COL_APPLICATION_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                                        + COL_MEDICATION_ID + " INT, "
-                                        + COL_TIME_HOUR + " INT, "
-                                        + COL_TIME_MINUTE + " INT, "
-                                        + COL_DOSAGE + " REAL, "
-                                        + COL_DAY + " TEXT, "
-                                        + COL_AMOUNT + " INT, "
-                                        + COL_TAKEN + " BOOL,"
-                                        + "FOREIGN KEY (" + COL_MEDICATION_ID
-                                        + ") REFERENCES " + MEDICATION_TABLE
+                                        + COL_MEDICATION_ID + " INT, " + COL_TIME_HOUR + " INT, "
+                                        + COL_TIME_MINUTE + " INT, " + COL_DOSAGE + " REAL, "
+                                        + COL_DAY + " TEXT, " + COL_AMOUNT + " INT, " + COL_TAKEN + " BOOL,"
+                                        + "FOREIGN KEY (" + COL_MEDICATION_ID + ") REFERENCES " + MEDICATION_TABLE
                                         + "(" + COL_MEDICATION_ID + "))";
 
         db.execSQL(createMedTableStatement);
@@ -105,6 +97,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return isAdded(insert);
     }
 
+    /**
+     * Method that adds a row to the application table from an application object
+     * @param applModel - object to be added as a row in db
+     * @return true if added successfully, false otherwise
+     */
     public boolean addApplication(ApplicationModel applModel) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -178,6 +175,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return selectApplicationHelper(rawQuery);
     }
 
+    public List<ApplicationModel> selectApplFromMedicationAndDay(MedicationModel model) {
+        int medID = model.getMedicationId();
+
+        String rawQuery = "SELECT * FROM " + APPLICATION_TABLE + " WHERE (" + COL_DAY + " = 'Monday'"
+                            + " AND " + COL_MEDICATION_ID + " = " + medID + ")";
+        return selectApplicationHelper(rawQuery);
+    }
+
     /**
      * Helper method to obtain a list of application models via provided query
      * @param rawQuery - SQL query to be made on db
@@ -234,6 +239,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(queryString, null);
         return cursor.moveToFirst();
     }
+
+    /**
+     * Method that returns the number of medications in the medication table
+     * @return int that is the no. of rows in MEDICATION_TABLE
+     */
+    public int countMedication(){
+        String queryString = "SELECT COUNT (*) FROM " + MEDICATION_TABLE;
+        return countRowHelper(queryString);
+    }
+
+    public int countApplicationFromMed(MedicationModel model){
+        String queryString = "SELECT COUNT (*) FROM " + APPLICATION_TABLE
+                                + "WHERE " + COL_MEDICATION_ID + " = " + model.getMedicationId();
+        return countRowHelper(queryString);
+    }
+
+    private int countRowHelper(String queryString){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(queryString, null);
+        cursor.moveToFirst();
+        int count = cursor.getInt(0);
+        cursor.close();
+        return count;
+    }
+
 
     /**
      * SQLite databases represent boolean variable as integers, with 0 for false and 1 for true.

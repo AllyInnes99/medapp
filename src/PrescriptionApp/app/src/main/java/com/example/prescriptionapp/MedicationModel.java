@@ -16,22 +16,37 @@ public class MedicationModel implements Serializable {
     private String measurement;
     private List<ApplicationModel> applications;
     private String profile;
+    private static int id = 0;
 
 
-    public MedicationModel(String name, int quantity, String type, String measurement, String dayFrequency) {
-        this.name = name;
-        this.quantity = quantity;
-        this.type = type;
-        this.measurement = measurement;
-        this.dayFrequency = dayFrequency;
-        this.applications = new ArrayList<>();
-    }
-
-
+    /**
+     *
+     * @param medicationId
+     * @param name
+     * @param quantity
+     * @param refillAt
+     * @param type
+     * @param dayFrequency
+     * @param measurement
+     * @param profile
+     */
     public MedicationModel(int medicationId, String name, int quantity,
                            int refillAt, String type, String dayFrequency, String measurement,
                            String profile) {
         this.medicationId = medicationId;
+        this.name = name;
+        this.quantity = quantity;
+        this.refillAt = refillAt;
+        this.type = type;
+        this.dayFrequency = dayFrequency;
+        this.measurement = measurement;
+        this.applications = new ArrayList<>();
+        this.profile = profile;
+    }
+
+    public MedicationModel(String name, int quantity, int refillAt, String type,
+                           String dayFrequency, String measurement, String profile) {
+        this.medicationId = ++id;
         this.name = name;
         this.quantity = quantity;
         this.refillAt = refillAt;
