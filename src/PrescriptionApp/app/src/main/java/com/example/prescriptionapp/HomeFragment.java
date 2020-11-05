@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -28,9 +27,10 @@ public class HomeFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    FloatingActionButton btn_add;
+    FloatingActionButton btnAdd;
     RecyclerView recyclerView;
     MedicationAdapter medicationAdapter;
+    ApplicationAdapter applicationAdapter;
     DatabaseHelper databaseHelper = new DatabaseHelper(getContext());
 
     public HomeFragment() {
@@ -58,54 +58,42 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-        }
-
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-
         super.onActivityCreated(savedInstanceState);
         databaseHelper = new DatabaseHelper(getActivity());
-        displayRecycler();
+        displayApplRecycler();
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-        btn_add = view.findViewById(R.id.floating_add_button);
-        recyclerView = view.findViewById(R.id.recycler_view);
+        btnAdd = view.findViewById(R.id.floating_add_button_home);
+        recyclerView = view.findViewById(R.id.recycler_view_home);
 
-        btn_add.setOnClickListener(new View.OnClickListener() {
+        btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
                 startActivity(new Intent(getActivity(), AddMedicationActivity.class));
             }
         });
-
         return view;
-
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        displayRecycler();
+        displayApplRecycler();
     }
 
-    /**
-     * Helper method used to populate the recycler view with the data from the database
-     */
-    private void displayRecycler() {
-
-        List<MedicationModel> models = databaseHelper.selectAllMedication();
-        medicationAdapter = new MedicationAdapter(getActivity(), models);
-        recyclerView.setAdapter(medicationAdapter);
+    private void displayApplRecycler() {
+        List<ApplicationModel> models = databaseHelper.selectTodaysApplAndNotTaken();
+        applicationAdapter = new ApplicationAdapter(getActivity(), models);
+        recyclerView.setAdapter(applicationAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
     }
 
 }

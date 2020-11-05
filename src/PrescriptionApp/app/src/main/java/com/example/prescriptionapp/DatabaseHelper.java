@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -36,6 +38,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_AMOUNT = "AMOUNT";
     public static final String COL_TAKEN = "IS_TAKEN";
 
+    Calendar calendar = Calendar.getInstance();
+    List<String> days = Arrays.asList(
+            new String[] {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"});
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -66,7 +71,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
+
     }
+
 
     /**
      * Helper function that prepends "CREATE TABLE" to a table name to be used when creating tables
@@ -125,8 +132,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @return List of every medication entry in the table
      */
     public List<MedicationModel> selectAllMedication(){
-        List<MedicationModel> returnList = new ArrayList<>();
         String rawQuery = "SELECT * FROM " + MEDICATION_TABLE;
+        return selectMedicationHelper(rawQuery);
+    }
+
+    private List<MedicationModel> selectMedicationHelper(String rawQuery) {
+        List<MedicationModel> returnList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(rawQuery, null);
 
@@ -141,7 +152,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String profile = cursor.getString(6);
                 int refill = cursor.getInt(7);
                 MedicationModel model = new MedicationModel(medicationID, medicationName, medicationQuantity, refill,
-                                                            freq,  measurement, type, profile);
+                        freq,  measurement, type, profile);
                 returnList.add(model);
 
             } while(cursor.moveToNext());
@@ -180,6 +191,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         String rawQuery = "SELECT * FROM " + APPLICATION_TABLE + " WHERE (" + COL_DAY + " = 'Monday'"
                             + " AND " + COL_MEDICATION_ID + " = " + medID + ")";
+        return selectApplicationHelper(rawQuery);
+    }
+
+    public List<ApplicationModel> selectTodaysApplAndNotTaken() {
+
+        // Get the day as a string
+        String day = days.get(calendar.get(Calendar.DAY_OF_WEEK) + 1);
+
+        // In query, we check taken == 0 as this is how false is represented in SQLite
+        String rawQuery = "SELECT * FROM " + APPLICATION_TABLE + " WHERE (" + COL_DAY + " = '" + day +
+                "' AND " + COL_TAKEN + " = 0 )";
         return selectApplicationHelper(rawQuery);
     }
 

@@ -12,7 +12,7 @@
         tools:context=".MainActivity">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/floating_add_button"
+            android:id="@+id/floating_add_button_home"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="36dp"
@@ -27,7 +27,7 @@
             tools:ignore="MissingConstraints" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view"
+            android:id="@+id/recycler_view_home"
             android:layout_width="415dp"
             android:layout_height="532dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -35,11 +35,6 @@
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.296" /><![CDATA[
-
-        />
-
-
-    ]]>
+            app:layout_constraintVertical_bias="0.296" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

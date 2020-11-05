@@ -24,8 +24,6 @@ public class MainActivity extends AppCompatActivity {
 
     BottomNavigationView bottomNavigationView;
     NavController navController;
-    DatabaseHelper databaseHelper = new DatabaseHelper(MainActivity.this);
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,13 +35,9 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
     }
 
-
     @Override
     protected void onResume() {
         super.onResume();
     }
-
-
-
 
 }
