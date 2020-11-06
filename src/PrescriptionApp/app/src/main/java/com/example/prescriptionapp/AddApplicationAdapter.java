@@ -6,20 +6,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.MyViewHolder> {
+public class AddApplicationAdapter extends RecyclerView.Adapter<AddApplicationAdapter.MyViewHolder> {
 
     private Context context;
     private List<ApplicationModel> applicationModels;
     DatabaseHelper databaseHelper;
 
-    ApplicationAdapter(Context context, List<ApplicationModel> applicationModels) {
+    AddApplicationAdapter(Context context, List<ApplicationModel> applicationModels) {
         this.context = context;
         this.applicationModels = applicationModels;
         this.databaseHelper = new DatabaseHelper(context);
@@ -29,26 +28,17 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.application_row, parent, false);
-        return new MyViewHolder(view);
+        View view = inflater.inflate(R.layout.add_application_row, parent, false);
+        return new AddApplicationAdapter.MyViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
-        final ApplicationModel model = applicationModels.get(position);
+    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+        ApplicationModel model = applicationModels.get(position);
         final MedicationModel medModel = databaseHelper.selectMedicationFromApplication(model);
         holder.appl_amount_txt.setText("Amount to take: " + model.getAmount());
         holder.appl_time_txt.setText("Time: " + model.getTime());
         holder.appl_med_txt.setText("Med name: " + medModel.getName());
-
-        holder.button.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                databaseHelper.takeMedication(model, medModel);
-                String msg = "You have taken " + model.getAmount() + " of " + medModel.getName();
-                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     @Override
@@ -59,13 +49,12 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView appl_med_txt, appl_amount_txt, appl_time_txt;
-        Button button;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             appl_med_txt = itemView.findViewById(R.id.appl_med_txt);
             appl_amount_txt = itemView.findViewById(R.id.appl_amount_txt);
             appl_time_txt = itemView.findViewById(R.id.appl_time_txt);
-            button = itemView.findViewById(R.id.buttonTake);
         }
     }
+
 }

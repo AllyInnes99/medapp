@@ -282,10 +282,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void takeMedication(ApplicationModel applModel, MedicationModel medModel) {
         ContentValues cvMed = new ContentValues(1);
         ContentValues cvAppl = new ContentValues(1);
+
         int newQuantity = medModel.getQuantity() - applModel.getAmount();
         cvMed.put(COL_QUANTITY, newQuantity);
+        updateMedication(medModel, cvMed);
+
         cvAppl.put(COL_TAKEN, true);
         updateApplication(applModel, cvAppl);
+    }
+
+    /**
+     * Function that takes values to be updated in a row in MEDICATION_TABLE and makes the changes
+     * @param medModel - the application to be targeted
+     * @param cv - the values to be updated
+     */
+    public void updateMedication(MedicationModel medModel, ContentValues cv) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.update(MEDICATION_TABLE, cv, COL_MEDICATION_ID + "= "
+                + medModel.getMedicationId(), null);
     }
 
     /**

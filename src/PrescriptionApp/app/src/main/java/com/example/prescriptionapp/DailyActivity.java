@@ -19,8 +19,7 @@ public class DailyActivity extends AppCompatActivity {
     MedicationModel model;
     RecyclerView recyclerView;
     FloatingActionButton floatingActionButton, nextButton;
-    ApplicationAdapter applicationAdapter;
-    List<ApplicationModel> temp;
+    AddApplicationAdapter applicationAdapter;
     DatabaseHelper databaseHelper = new DatabaseHelper(DailyActivity.this);
 
     private static final int LIMIT = 5;
@@ -64,7 +63,7 @@ public class DailyActivity extends AppCompatActivity {
 
     private void displayRecycler() {
         List<ApplicationModel> applModels = databaseHelper.selectApplFromMedicationAndDay(model);
-        applicationAdapter = new ApplicationAdapter(DailyActivity.this, applModels);
+        applicationAdapter = new AddApplicationAdapter(DailyActivity.this, applModels);
         recyclerView.setAdapter(applicationAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(DailyActivity.this));
     }

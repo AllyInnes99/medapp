@@ -109,9 +109,7 @@ public class ApplicationModel implements Comparable<ApplicationModel>{
     public int compareTo(ApplicationModel o) {
         String thisTime = this.getTime();
         String otherTime = o.getTime();
-        if(thisTime.equals(null) || otherTime.equals(null)){
-            return 0;
-        }
+        if(thisTime.equals(null) || otherTime.equals(null)) return 0;
         return thisTime.compareTo(otherTime);
     }
 }
