@@ -4,7 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,10 +16,12 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
 
     private Context context;
     private List<ApplicationModel> applicationModels;
+    DatabaseHelper databaseHelper;
 
     ApplicationAdapter(Context context, List<ApplicationModel> applicationModels) {
         this.context = context;
         this.applicationModels = applicationModels;
+        this.databaseHelper = new DatabaseHelper(context);
     }
 
     @NonNull
@@ -31,11 +33,19 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        ApplicationModel model = applicationModels.get(position);
-        holder.appl_dosage_txt.setText("Dosage: " + model.getDosage());
+    public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
+        final ApplicationModel model = applicationModels.get(position);
+        final MedicationModel medModel = databaseHelper.selectMedicationFromApplication(model);
+        holder.appl_amount_txt.setText("Amount to take: " + model.getAmount());
         holder.appl_time_txt.setText("Time: " + model.getTime());
-        holder.appl_amount_txt.setText("Amount: " + model.getAmount());
+        holder.appl_med_txt.setText("Med name: " + medModel.getName());
+
+        holder.button.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
     }
 
@@ -46,16 +56,15 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView appl_amount_txt, appl_dosage_txt, appl_time_txt;
-
+        TextView appl_med_txt, appl_amount_txt, appl_time_txt;
+        Button button;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
+            appl_med_txt = itemView.findViewById(R.id.appl_med_txt);
             appl_amount_txt = itemView.findViewById(R.id.appl_amount_txt);
-            appl_dosage_txt = itemView.findViewById(R.id.appl_dosage_txt);
             appl_time_txt = itemView.findViewById(R.id.appl_time_txt);
+            button = itemView.findViewById(R.id.buttonTake);
 
         }
     }
-
-
 }

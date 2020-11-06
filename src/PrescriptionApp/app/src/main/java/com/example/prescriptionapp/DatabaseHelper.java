@@ -136,6 +136,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return selectMedicationHelper(rawQuery);
     }
 
+    public MedicationModel selectMedicationFromApplication(ApplicationModel model) {
+        String rawQuery = "SELECT * FROM " + MEDICATION_TABLE
+                        + " WHERE " + COL_MEDICATION_ID + " = " + model.getMedicationId();
+        return selectMedicationHelper(rawQuery).get(0);
+    }
+
+    /**
+     * Helper method used to obtain list of medication objects from db
+     * @param rawQuery - the query to be executed on db
+     * @return - list of med objs representing rows in db matching query
+     */
     private List<MedicationModel> selectMedicationHelper(String rawQuery) {
         List<MedicationModel> returnList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -197,7 +208,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public List<ApplicationModel> selectTodaysApplAndNotTaken() {
 
         // Get the day as a string
-        String day = days.get(calendar.get(Calendar.DAY_OF_WEEK) + 1);
+        String day = days.get(calendar.get(Calendar.DAY_OF_WEEK));
 
         // In query, we check taken == 0 as this is how false is represented in SQLite
         String rawQuery = "SELECT * FROM " + APPLICATION_TABLE + " WHERE (" + COL_DAY + " = '" + day +
@@ -260,6 +271,32 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String queryString = "DELETE FROM " + APPLICATION_TABLE + "WHERE " + COL_APPLICATION_ID + " = " + model.getApplicationId();
         Cursor cursor = db.rawQuery(queryString, null);
         return cursor.moveToFirst();
+    }
+
+    /**
+     * Method that is called for when the medication is to be taken, updating the total quantity of
+     * the medication according to the amount to be taken, and setting the application to be taken
+     * @param applModel - the application model mirroring the row to have isTaken set to true
+     * @param medModel - the medication model mirroring the row to have quantity updated
+     */
+    public void takeMedication(ApplicationModel applModel, MedicationModel medModel) {
+        ContentValues cvMed = new ContentValues(1);
+        ContentValues cvAppl = new ContentValues(1);
+        int newQuantity = medModel.getQuantity() - applModel.getAmount();
+        cvMed.put(COL_QUANTITY, newQuantity);
+        cvAppl.put(COL_TAKEN, true);
+        updateApplication(applModel, cvAppl);
+    }
+
+    /**
+     * Function that takes values to be updated in a row in APPLICATION_TABLE and makes the changes
+     * @param applModel - the application to be targeted
+     * @param cv - the values to be updated
+     */
+    public void updateApplication(ApplicationModel applModel, ContentValues cv) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.update(APPLICATION_TABLE, cv, COL_APPLICATION_ID + "= "
+                                        + applModel.getApplicationId(), null);
     }
 
     /**

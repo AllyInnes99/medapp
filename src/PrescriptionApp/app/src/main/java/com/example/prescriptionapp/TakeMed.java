@@ -8,7 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
 
-public class UpdateActivity extends AppCompatActivity {
+public class TakeMed extends AppCompatActivity {
 
     EditText edit_name, edit_quantity;
     Switch edit_taken;
@@ -17,12 +17,9 @@ public class UpdateActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_update);
+        setContentView(R.layout.activity_take_med);
 
-        edit_name = findViewById(R.id.edit_name);
-        edit_quantity = findViewById(R.id.edit_quantity);
-        edit_taken = findViewById(R.id.edit_taken);
-        update_button = findViewById(R.id.update_button);
+
 
         update_button.setOnClickListener(new View.OnClickListener() {
 
