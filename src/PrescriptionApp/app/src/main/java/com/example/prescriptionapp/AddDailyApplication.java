@@ -17,7 +17,6 @@ public class AddDailyApplication extends AppCompatActivity {
 
     Button btn_time, btn_add;
     EditText et_time, et_dosage, et_amount;
-    TimePickerDialog timePickerDialog;
     int currentHour, currentMinutes;
     MedicationModel medModel;
     DatabaseHelper databaseHelper;
@@ -60,7 +59,6 @@ public class AddDailyApplication extends AppCompatActivity {
             public void onClick(View v) {
 
                 ApplicationModel applModel;
-                Intent intent;
                 String [] days = {"Monday", "Tuesday", "Wednesday", "Thursday",
                                     "Friday", "Saturday", "Sunday"};
 

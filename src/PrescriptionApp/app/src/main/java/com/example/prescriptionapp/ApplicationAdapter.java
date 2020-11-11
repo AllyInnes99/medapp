@@ -39,7 +39,7 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
         final MedicationModel medModel = databaseHelper.selectMedicationFromApplication(model);
         holder.appl_amount_txt.setText("Amount to take: " + model.getAmount());
         holder.appl_time_txt.setText("Time: " + model.getTime());
-        holder.appl_med_txt.setText("Med name: " + medModel.getName());
+        holder.appl_med_txt.setText("Name: " + medModel.getName());
 
         holder.button.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -47,6 +47,7 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
                 databaseHelper.takeMedication(model, medModel);
                 String msg = "You have taken " + model.getAmount() + " of " + medModel.getName();
                 Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+
             }
         });
     }

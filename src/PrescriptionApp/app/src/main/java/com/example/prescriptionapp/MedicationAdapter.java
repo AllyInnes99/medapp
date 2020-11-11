@@ -1,6 +1,7 @@
 package com.example.prescriptionapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.My
 
     private Context context;
     private List<MedicationModel> medicationModels;
+    private MedicationModel medModel;
 
     MedicationAdapter(Context context, List<MedicationModel> medicationModels) {
         this.context = context;
@@ -32,10 +34,18 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.My
 
     @Override
     public void onBindViewHolder(@NonNull MedicationAdapter.MyViewHolder holder, int position) {
-        MedicationModel model = medicationModels.get(position);
+        final MedicationModel model = medicationModels.get(position);
         holder.med_id_txt.setText(String.valueOf(model.getMedicationId()));
         holder.med_name_txt.setText(String.valueOf(model.getName()));
         holder.med_qty_txt.setText(String.valueOf(model.getQuantity()));
+        holder.mainLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, UpdateMedActivity.class);
+                intent.putExtra("MedModel", model);
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -53,6 +63,7 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.My
             med_id_txt = itemView.findViewById(R.id.med_id_txt);
             med_name_txt = itemView.findViewById(R.id.med_name_txt);
             med_qty_txt = itemView.findViewById(R.id.med_qty_txt);
+            mainLayout = itemView.findViewById(R.id.mainLayout);
         }
     }
 

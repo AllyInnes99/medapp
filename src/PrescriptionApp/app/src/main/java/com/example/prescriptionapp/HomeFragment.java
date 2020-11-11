@@ -82,6 +82,7 @@ public class HomeFragment extends Fragment {
                 startActivity(new Intent(getActivity(), AddMedicationActivity.class));
             }
         });
+        
         return view;
     }
 

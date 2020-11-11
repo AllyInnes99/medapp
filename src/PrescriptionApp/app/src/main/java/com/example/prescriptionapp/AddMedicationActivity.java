@@ -100,10 +100,21 @@ public class AddMedicationActivity extends AppCompatActivity {
                                                 selectedFrequency, selectedMeasurement, "me");
                     boolean success = databaseHelper.addMedication(model);
                     Toast.makeText(AddMedicationActivity.this, "success = " + success, Toast.LENGTH_SHORT).show();
-                    intent = new Intent(AddMedicationActivity.this, DailyActivity.class);
+
+                    // Determine the next activity based off the frequency selected
+                    switch(selectedFrequency){
+                        case "Daily":
+                            intent = new Intent(AddMedicationActivity.this, DailyActivity.class);
+                            break;
+                        case "Weekly":
+                            intent = new Intent(AddMedicationActivity.this, WeeklyActivity.class);
+                            break;
+                        default:
+                            throw new IllegalStateException("Unexpected value: " + selectedFrequency);
+                    }
+
                     intent.putExtra("MedModel", model);
                     startActivity(intent);
-
                 }
                 catch (NumberFormatException e) {
                     Toast.makeText(AddMedicationActivity.this, "Invalid number for quantity", Toast.LENGTH_SHORT).show();

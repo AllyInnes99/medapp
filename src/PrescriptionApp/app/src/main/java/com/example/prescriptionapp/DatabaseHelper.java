@@ -205,6 +205,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return selectApplicationHelper(rawQuery);
     }
 
+    public List<ApplicationModel> selectApplFromMedication(MedicationModel model) {
+        int medID = model.getMedicationId();
+
+        String rawQuery = "SELECT * FROM " + APPLICATION_TABLE + " WHERE "
+                                + COL_MEDICATION_ID + " = " + medID;
+        return selectApplicationHelper(rawQuery);
+    }
+
     public List<ApplicationModel> selectTodaysApplAndNotTaken() {
 
         // Get the day as a string
@@ -358,5 +366,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private boolean isAdded(long insert) {
         return insert >= 0;
     }
+
 
 }
