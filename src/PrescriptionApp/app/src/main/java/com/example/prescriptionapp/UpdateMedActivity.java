@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import java.util.Arrays;
 import java.util.List;
@@ -44,8 +45,8 @@ public class UpdateMedActivity extends AppCompatActivity {
         et_refill.setText(Integer.toString(model.getRefillAt()));
 
         ArrayAdapter<String> medTypeAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, medTypes);
-        medTypeDropdown.setSelection(medTypes.indexOf(model.getType()));
         medTypeDropdown.setAdapter(medTypeAdapter);
+        medTypeDropdown.setSelection(medTypes.indexOf(model.getType()), true);
         medTypeDropdown.setOnItemSelectedListener((new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -59,8 +60,9 @@ public class UpdateMedActivity extends AppCompatActivity {
         }));
 
         ArrayAdapter<String> measurementAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, measurements);
-        measurementDropdown.setSelection(measurements.indexOf(model.getMeasurement()));
         measurementDropdown.setAdapter(measurementAdapter);
+        Toast.makeText(UpdateMedActivity.this, model.getMeasurement(), Toast.LENGTH_SHORT).show();
+        measurementDropdown.setSelection(measurements.indexOf(model.getMeasurement()), true);
         measurementDropdown.setOnItemSelectedListener((new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {

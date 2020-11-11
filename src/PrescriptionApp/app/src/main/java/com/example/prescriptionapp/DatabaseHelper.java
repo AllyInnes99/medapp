@@ -163,7 +163,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String profile = cursor.getString(6);
                 int refill = cursor.getInt(7);
                 MedicationModel model = new MedicationModel(medicationID, medicationName, medicationQuantity, refill,
-                        freq,  measurement, type, profile);
+                        type,  freq, measurement, profile);
                 returnList.add(model);
 
             } while(cursor.moveToNext());
