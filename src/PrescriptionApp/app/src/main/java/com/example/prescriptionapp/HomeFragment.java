@@ -1,5 +1,6 @@
 package com.example.prescriptionapp;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -30,10 +31,11 @@ public class HomeFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     FloatingActionButton btnAdd;
+    Activity activity;
     RecyclerView recyclerView;
-    MedicationAdapter medicationAdapter;
     ApplicationAdapter applicationAdapter;
     DatabaseHelper databaseHelper = new DatabaseHelper(getContext());
+    List<ApplicationModel> models;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -83,6 +85,7 @@ public class HomeFragment extends Fragment {
             }
         });
         
+        
         return view;
     }
 
@@ -96,10 +99,15 @@ public class HomeFragment extends Fragment {
      * Method that is used to display the rec
      */
     private void displayApplRecycler() {
-        List<ApplicationModel> models = databaseHelper.selectTodaysApplAndNotTaken();
+        models = databaseHelper.selectTodaysApplAndNotTaken();
         Collections.sort(models);
         applicationAdapter = new ApplicationAdapter(getActivity(), models);
         recyclerView.setAdapter(applicationAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+    }
+
+    private void updateRecycler(int pos){
+        models.remove(pos);
+        applicationAdapter.notifyDataSetChanged();
     }
 }

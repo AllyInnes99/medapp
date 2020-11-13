@@ -28,7 +28,7 @@ public class AddMedicationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_medication);
 
-        btn_add = findViewById(R.id.button_confirm);
+        btn_add = findViewById(R.id.button_update);
         btn_cancel = findViewById(R.id.button_cancel);
         et_name = findViewById(R.id.edit_name);
         et_quantity = findViewById(R.id.edit_quantity);
@@ -89,12 +89,11 @@ public class AddMedicationActivity extends AppCompatActivity {
                 try {
                     DatabaseHelper databaseHelper = new DatabaseHelper(AddMedicationActivity.this);
                     String medicationName =  et_name.getText().toString();
-                    if(!validateMedicationName(medicationName)) {
+                    if(!MedicationModel.validateMedicationName(medicationName)) {
                         throw new Exception("Invalid medication name");
                     }
                     int quantity = Integer.parseInt(et_quantity.getText().toString());
                     int refill = Integer.parseInt(et_refill.getText().toString());
-                    int id = databaseHelper.countMedication() + 1;
 
                     model = new MedicationModel(medicationName, quantity,refill, selectedType,
                                                 selectedFrequency, selectedMeasurement, "me");
@@ -135,13 +134,6 @@ public class AddMedicationActivity extends AppCompatActivity {
 
     }
 
-    /**
-     * Helper method that validates if the name of the medication is valid
-     * @param medicationName - String of the med name
-     * @return true if valid, false otherwise
-     */
-    public boolean validateMedicationName(String medicationName) {
-        return !medicationName.isEmpty();
-    }
+
     
 }

@@ -261,7 +261,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public boolean deleteMedication(MedicationModel model) {
         SQLiteDatabase db = this.getWritableDatabase();
-        String queryString = "DELETE FROM " + MEDICATION_TABLE + "WHERE " + COL_MEDICATION_ID + " = " + model.getMedicationId();
+        String queryString = "DELETE FROM " + MEDICATION_TABLE + " WHERE " + COL_MEDICATION_ID + " = " + model.getMedicationId();
         List<ApplicationModel> applicationModels = selectApplicationFromMedication(model);
         for(ApplicationModel appl: applicationModels){
             deleteApplication(appl);
@@ -276,7 +276,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public boolean deleteApplication(ApplicationModel model){
         SQLiteDatabase db = this.getWritableDatabase();
-        String queryString = "DELETE FROM " + APPLICATION_TABLE + "WHERE " + COL_APPLICATION_ID + " = " + model.getApplicationId();
+        String queryString = "DELETE FROM " + APPLICATION_TABLE + " WHERE " + COL_APPLICATION_ID + " = " + model.getApplicationId();
         Cursor cursor = db.rawQuery(queryString, null);
         return cursor.moveToFirst();
     }
@@ -293,18 +293,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         int newQuantity = medModel.getQuantity() - applModel.getAmount();
         cvMed.put(COL_QUANTITY, newQuantity);
-        updateMedication(medModel, cvMed);
+        updateMedicationRow(medModel, cvMed);
 
         cvAppl.put(COL_TAKEN, true);
         updateApplication(applModel, cvAppl);
     }
+
+    public void updateMedication(MedicationModel model) {
+        ContentValues cv = new ContentValues();
+
+        cv.put(COL_MEDICATION_NAME, model.getName());
+        cv.put(COL_QUANTITY, model.getQuantity());
+        cv.put(COL_FREQUENCY, model.getDayFrequency());
+        cv.put(COL_MEASUREMENT, model.getMeasurement());
+        cv.put(COL_TYPE, model.getType());
+        cv.put(COL_PROFILE, model.getProfile());
+        cv.put(COL_REFILL, model.getRefillAt());
+        updateMedicationRow(model, cv);
+    }
+
+
 
     /**
      * Function that takes values to be updated in a row in MEDICATION_TABLE and makes the changes
      * @param medModel - the application to be targeted
      * @param cv - the values to be updated
      */
-    public void updateMedication(MedicationModel medModel, ContentValues cv) {
+    public void updateMedicationRow(MedicationModel medModel, ContentValues cv) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.update(MEDICATION_TABLE, cv, COL_MEDICATION_ID + "= "
                 + medModel.getMedicationId(), null);

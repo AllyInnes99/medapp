@@ -47,7 +47,6 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
                 databaseHelper.takeMedication(model, medModel);
                 String msg = "You have taken " + model.getAmount() + " of " + medModel.getName();
                 Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
-
             }
         });
     }

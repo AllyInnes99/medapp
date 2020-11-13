@@ -3,6 +3,7 @@ package com.example.prescriptionapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -16,11 +17,13 @@ import java.util.List;
 
 public class UpdateMedActivity extends AppCompatActivity {
 
-    Button btn_add, btn_cancel;
+    Button btn_update, btn_delete;
     EditText et_name, et_quantity, et_refill;
     Spinner medTypeDropdown, measurementDropdown;
     String selectedType, selectedMeasurement;
     MedicationModel model;
+    DatabaseHelper databaseHelper = new DatabaseHelper(UpdateMedActivity.this);
+
     final List<String> medTypes = Arrays.asList(new String[] {"tablet", "pill", "injection", "powder",
                                                                 "drops", "inhalers", "topical"});
     final List<String> measurements = Arrays.asList(new String[] {"g", "mg", "ml", "l"});
@@ -30,8 +33,8 @@ public class UpdateMedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_med);
 
-        btn_add = findViewById(R.id.button_confirm);
-        btn_cancel = findViewById(R.id.button_cancel);
+        btn_update = findViewById(R.id.button_update);
+        btn_delete = findViewById(R.id.button_cancel);
         et_name = findViewById(R.id.edit_name);
         et_quantity = findViewById(R.id.edit_quantity);
         et_refill = findViewById(R.id.edit_refill);
@@ -61,7 +64,6 @@ public class UpdateMedActivity extends AppCompatActivity {
 
         ArrayAdapter<String> measurementAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, measurements);
         measurementDropdown.setAdapter(measurementAdapter);
-        Toast.makeText(UpdateMedActivity.this, model.getMeasurement(), Toast.LENGTH_SHORT).show();
         measurementDropdown.setSelection(measurements.indexOf(model.getMeasurement()), true);
         measurementDropdown.setOnItemSelectedListener((new AdapterView.OnItemSelectedListener() {
             @Override
@@ -75,6 +77,43 @@ public class UpdateMedActivity extends AppCompatActivity {
             }
         }));
 
+        btn_update.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try{
+                    String medicationName =  et_name.getText().toString();
+                    if(!MedicationModel.validateMedicationName(medicationName)) {
+                        throw new Exception("Invalid medication name");
+                    }
+                    int quantity = Integer.parseInt(et_quantity.getText().toString());
+                    int refill = Integer.parseInt(et_refill.getText().toString());
+
+                    model.setName(medicationName);
+                    model.setQuantity(quantity);
+                    model.setRefillAt(refill);
+                    model.setMeasurement(selectedMeasurement);
+                    model.setType(selectedType);
+
+                    databaseHelper.updateMedication(model);
+                    Toast.makeText(UpdateMedActivity.this, "Successfully updated medication", Toast.LENGTH_SHORT).show();
+                    finish();
+
+                }
+                catch(Exception e){
+                    Toast.makeText(UpdateMedActivity.this, e.toString(), Toast.LENGTH_SHORT);
+                }
+
+            }
+        });
+
+        btn_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v){
+                databaseHelper.deleteMedication(model);
+                Toast.makeText(UpdateMedActivity.this, "Successfully deleted medication", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        });
 
     }
 }

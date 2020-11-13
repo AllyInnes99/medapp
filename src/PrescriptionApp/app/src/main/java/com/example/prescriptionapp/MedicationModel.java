@@ -57,6 +57,15 @@ public class MedicationModel implements Serializable {
     }
 
     /**
+     * Helper method that validates if the name of the medication is valid
+     * @param medicationName - String of the med name
+     * @return true if valid, false otherwise
+     */
+    public static boolean validateMedicationName(String medicationName) {
+        return !medicationName.isEmpty();
+    }
+
+    /**
      * @return a String that prints the contents of a medication object
      */
     @Override
