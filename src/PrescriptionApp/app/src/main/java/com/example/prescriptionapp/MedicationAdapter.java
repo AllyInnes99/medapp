@@ -7,10 +7,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.MyViewHolder> {
@@ -35,9 +37,8 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.My
     @Override
     public void onBindViewHolder(@NonNull MedicationAdapter.MyViewHolder holder, int position) {
         final MedicationModel model = medicationModels.get(position);
-        holder.med_id_txt.setText(String.valueOf(model.getMedicationId()));
-        holder.med_name_txt.setText(String.valueOf(model.getName()));
-        holder.med_qty_txt.setText(String.valueOf(model.getQuantity()));
+        holder.med_name_txt.setText("Medication: " + model.getName());
+        holder.med_qty_txt.setText("Quantity: " + model.getQuantity());
         holder.mainLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,11 +61,33 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.My
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            med_id_txt = itemView.findViewById(R.id.med_id_txt);
             med_name_txt = itemView.findViewById(R.id.med_name_txt);
             med_qty_txt = itemView.findViewById(R.id.med_qty_txt);
             mainLayout = itemView.findViewById(R.id.mainLayout);
         }
+    }
+
+    /**
+     * Method to be used when filtering
+     * @param query
+     */
+    public void filter(String query){
+        DatabaseHelper dbHelper = new DatabaseHelper(context);
+        List<MedicationModel> copy = dbHelper.selectAllMedication();
+        medicationModels.clear();
+        if(query.isEmpty()){
+            medicationModels.addAll(copy);
+        }
+        else {
+            query = query.toLowerCase();
+            for(MedicationModel model: copy) {
+                if(model.getName().toLowerCase().contains(query)){
+                    medicationModels.add(model);
+                }
+            }
+            Toast.makeText(context, Integer.toString(medicationModels.size()), Toast.LENGTH_SHORT).show();
+        }
+        notifyDataSetChanged();
     }
 
 }

@@ -11,6 +11,7 @@ import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -32,6 +33,7 @@ public class MedFragment extends Fragment {
     RecyclerView recyclerView;
     FloatingActionButton btnAdd;
     MedicationAdapter medicationAdapter;
+    SearchView searchView;
 
     public MedFragment() {
         // Required empty public constructor
@@ -67,11 +69,26 @@ public class MedFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_med, container, false);
         btnAdd = view.findViewById(R.id.floating_add_button_med);
         recyclerView = view.findViewById(R.id.recycler_view_med);
+        searchView = view.findViewById(R.id.searchView);
 
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
                 startActivity(new Intent(getActivity(), AddMedicationActivity.class));
+            }
+        });
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                medicationAdapter.filter(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                medicationAdapter.filter(newText);
+                return true;
             }
         });
         return view;

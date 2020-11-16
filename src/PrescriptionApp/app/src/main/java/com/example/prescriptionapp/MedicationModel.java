@@ -31,17 +31,6 @@ public class MedicationModel implements Serializable {
         this.profile = profile;
     }
 
-    /**
-     *
-     * @param medicationId
-     * @param name
-     * @param quantity
-     * @param refillAt
-     * @param type
-     * @param dayFrequency
-     * @param measurement
-     * @param profile
-     */
     public MedicationModel(int medicationId, String name, int quantity,
                            int refillAt, String type, String dayFrequency, String measurement,
                            String profile) {
