@@ -89,5 +89,35 @@ public class MainActivity extends AppCompatActivity {
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), interval, pendingIntent);
     }
 
+    /**
+     * Helper function that is called on creation to start the refresh cycle for medication
+     * I.e., isTaken in each application will be set to false in every appl in db at the start of
+     * a new week
+     */
+    private void setRefreshAlarm() {
+        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+
+        // Start refresh from the next Monday
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+
+        Calendar now = Calendar.getInstance();
+        now.set(Calendar.SECOND, 0);
+        now.set(Calendar.MILLISECOND, 0);
+
+        if(c.before(now)) {
+            c.add(Calendar.DATE, 7);
+        }
+
+        int id = (int) c.getTimeInMillis();
+        long interval = 7 * 24 * 60 * 60 * 1000;
+        Intent intent = new Intent(MainActivity.this, RefreshReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, id, intent, PendingIntent.FLAG_UPDATE_CURRENT );
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), interval, pendingIntent);
+    }
 
 }

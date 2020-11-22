@@ -15,8 +15,7 @@ public class AlertReceiver extends BroadcastReceiver {
         MedicationModel medModel = databaseHelper.selectMedicationFromApplication(applModel);
 
         String title = "Medication Reminder";
-        String msg = "Please take " + applModel.getAmount() + " of " + medModel.getName();
-
+        String msg = "Take " + applModel.getAmount() + " of " + medModel.getName();
 
         Notification notification = new NotificationCompat.Builder(context, App.MED_TAKING_CHANNEL)
                 .setSmallIcon(R.drawable.ic_healing)
