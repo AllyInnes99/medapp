@@ -1,6 +1,11 @@
 package com.example.prescriptionapp;
 
-public class ApplicationModel implements Comparable<ApplicationModel>{
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class ApplicationModel implements Comparable<ApplicationModel>, Serializable {
 
     private int applicationId;
     private int medicationId;
@@ -9,6 +14,10 @@ public class ApplicationModel implements Comparable<ApplicationModel>{
     private String day;
     private int amount;
     private boolean isTaken;
+    private static String[] days = {"Sunday", "Monday", "Tuesday", "Wednesday",
+                                    "Thursday", "Friday", "Saturday"};
+    private static List<String> dayList = Arrays.asList(days);
+
 
     /**
      * Initialise an ApplicationModel instance
@@ -39,6 +48,9 @@ public class ApplicationModel implements Comparable<ApplicationModel>{
         this.isTaken = isTaken;
     }
 
+    public String[] timeToHourAndMin(){
+        return this.getTime().split(":");
+    }
 
     private String intTimeToString(int time) {
         String returnString = Integer.toString(time);
@@ -48,6 +60,9 @@ public class ApplicationModel implements Comparable<ApplicationModel>{
         return returnString;
     }
 
+    public int dayToInt() {
+        return dayList.indexOf(this.day);
+    }
 
     public int getApplicationId() {
         return applicationId;

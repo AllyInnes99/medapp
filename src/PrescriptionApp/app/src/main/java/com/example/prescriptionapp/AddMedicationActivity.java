@@ -2,9 +2,11 @@ package com.example.prescriptionapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ActionMenuView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -97,8 +99,6 @@ public class AddMedicationActivity extends AppCompatActivity {
 
                     model = new MedicationModel(medicationName, quantity,refill, selectedType,
                                                 selectedFrequency, selectedMeasurement, "me");
-                    boolean success = databaseHelper.addMedication(model);
-                    Toast.makeText(AddMedicationActivity.this, "success = " + success, Toast.LENGTH_SHORT).show();
 
                     // Determine the next activity based off the frequency selected
                     switch(selectedFrequency){

@@ -38,12 +38,8 @@ public class App extends Application {
             notificationManager.createNotificationChannel(medChannel);
             notificationManager.createNotificationChannel(refillChannel);
 
-
-
         }
 
-
     }
-
 
 }

@@ -68,6 +68,9 @@ public class AddDailyApplication extends AppCompatActivity {
                     double dosage = Double.parseDouble(et_dosage.getText().toString());
                     int amount = Integer.parseInt(et_amount.getText().toString());
 
+                    // add the medication model created previously
+                    databaseHelper.addMedication(medModel);
+
                     // Add an application model for each day of the week
                     for(String day: days){
                         applModel = new ApplicationModel(0, medID, time, dosage, day, amount, false);

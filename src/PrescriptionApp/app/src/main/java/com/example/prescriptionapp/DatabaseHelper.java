@@ -189,6 +189,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
+     * Method that gets all of the applications set up in the database
+     * @return a list of application models
+     */
+    public List<ApplicationModel> selectAllApplications() {
+        String rawQuery = "SELECT * FROM " + APPLICATION_TABLE;
+        return selectApplicationHelper(rawQuery);
+    }
+
+
+    /**
      * Method that gets all the applications that are to be taken on a specific day
      * @param day - String denoting the day of the week
      * @return a list of applications to be taken on the given day
