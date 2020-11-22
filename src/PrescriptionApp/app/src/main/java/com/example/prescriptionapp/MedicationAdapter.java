@@ -85,7 +85,6 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.My
                     medicationModels.add(model);
                 }
             }
-            Toast.makeText(context, Integer.toString(medicationModels.size()), Toast.LENGTH_SHORT).show();
         }
         notifyDataSetChanged();
     }

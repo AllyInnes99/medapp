@@ -1,5 +1,6 @@
 package com.example.prescriptionapp;
 
+import android.app.AlarmManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -299,6 +300,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         updateApplication(applModel, cvAppl);
     }
 
+    /**
+     * Method that is called weekly that refreshes the every application in the db so that its
+     * IS_TAKEN column is reset to false
+     */
+    public void refreshApplications(){
+        ContentValues cv = new ContentValues();
+        cv.put(COL_TAKEN, false);
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.update(APPLICATION_TABLE, cv, null, null);
+    }
     public void updateMedication(MedicationModel model) {
         ContentValues cv = new ContentValues();
 
@@ -311,8 +322,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COL_REFILL, model.getRefillAt());
         updateMedicationRow(model, cv);
     }
-
-
 
     /**
      * Function that takes values to be updated in a row in MEDICATION_TABLE and makes the changes

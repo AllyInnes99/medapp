@@ -1,5 +1,6 @@
 package com.example.prescriptionapp;
 
+import android.app.NotificationManager;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -23,7 +24,7 @@ public class SettingFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
+    
     public SettingFragment() {
         // Required empty public constructor
     }
@@ -61,4 +62,6 @@ public class SettingFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_setting, container, false);
     }
+
+
 }

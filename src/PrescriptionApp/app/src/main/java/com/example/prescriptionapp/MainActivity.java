@@ -41,6 +41,12 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
     }
 
+    public void sendOnChannel1(View v){
 
+    }
+
+    public void sendOnChannel2(View v){
+
+    }
 
 }
