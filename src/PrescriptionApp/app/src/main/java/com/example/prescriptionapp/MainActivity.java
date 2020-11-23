@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         navController = Navigation.findNavController(this, R.id.navFragment);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
-        testAlarm();
+        setRefreshAlarm();
     }
 
     @Override
@@ -60,22 +60,6 @@ public class MainActivity extends AppCompatActivity {
         for(ApplicationModel applicationModel: applications){
             setApplicationAlarm(applicationModel);
         }
-    }
-
-    private void testAlarm() {
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.HOUR_OF_DAY, 16);
-        c.set(Calendar.MINUTE, 51);
-        c.set(Calendar.SECOND, 0);
-        c.set(Calendar.MILLISECOND, 0);
-
-        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(this, AlertReceiver.class);
-        intent.setAction("android.intent.action.NOTIFY");
-        MainActivity.this.registerReceiver(new AlertReceiver(), new IntentFilter());        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 2, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-
-        Toast.makeText(MainActivity.this, "Hello!", Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -119,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
     private void setRefreshAlarm() {
         AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
 
-        // Start refresh from the next Monday
         Calendar c = Calendar.getInstance();
         c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
         c.set(Calendar.HOUR_OF_DAY, 0);
@@ -130,6 +113,8 @@ public class MainActivity extends AppCompatActivity {
         // Use time as a unique ID for the pending intent
         int id = (int) c.getTimeInMillis();
         Intent intent = new Intent(MainActivity.this, RefreshReceiver.class);
+        intent.setAction("android.intent.action.NOTIFY");
+        MainActivity.this.registerReceiver(new RefreshReceiver(), new IntentFilter());
         PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, id, intent, PendingIntent.FLAG_UPDATE_CURRENT );
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
     }

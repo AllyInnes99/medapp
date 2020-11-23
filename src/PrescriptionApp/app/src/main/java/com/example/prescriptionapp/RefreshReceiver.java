@@ -10,7 +10,7 @@ public class RefreshReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         DatabaseHelper databaseHelper = new DatabaseHelper(context);
-        Toast.makeText(context, "Hello", Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, "Refresh!", Toast.LENGTH_SHORT).show();
         databaseHelper.refreshApplications();
     }
 }

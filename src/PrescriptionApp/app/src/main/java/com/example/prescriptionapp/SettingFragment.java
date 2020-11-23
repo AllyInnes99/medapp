@@ -99,6 +99,8 @@ public class SettingFragment extends Fragment {
                 .setSmallIcon(R.drawable.ic_healing)
                 .setContentTitle(title)
                 .setContentText(msg)
+                .setStyle(new NotificationCompat.BigTextStyle()
+                            .bigText(msg))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_REMINDER).build();
         notificationManager.notify(1, notification);
