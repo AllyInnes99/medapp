@@ -6,16 +6,15 @@ import android.content.Context;
 import android.content.Intent;
 
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 public class AlertReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        ApplicationModel applModel = (ApplicationModel)intent.getSerializableExtra("MyModel");
-        DatabaseHelper databaseHelper = new DatabaseHelper(context);
-        MedicationModel medModel = databaseHelper.selectMedicationFromApplication(applModel);
+        String title = "Medication refill";
+        String msg = "You need to restock medication!";
 
-        String title = "Medication Reminder";
-        String msg = "Take " + applModel.getAmount() + " of " + medModel.getName();
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
 
         Notification notification = new NotificationCompat.Builder(context, App.MED_TAKING_CHANNEL)
                 .setSmallIcon(R.drawable.ic_healing)
@@ -23,5 +22,6 @@ public class AlertReceiver extends BroadcastReceiver {
                 .setContentText(msg)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_REMINDER).build();
+        notificationManager.notify(2, notification);
     }
 }

@@ -114,7 +114,7 @@ public class SettingFragment extends Fragment {
                 .setContentText(msg)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_REMINDER).build();
-        notificationManager.notify(1, notification);
+        notificationManager.notify(2, notification);
     }
 
 }

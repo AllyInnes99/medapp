@@ -16,6 +16,7 @@ import android.app.NotificationChannel;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         navController = Navigation.findNavController(this, R.id.navFragment);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
+        testAlarm();
     }
 
     @Override
@@ -58,6 +60,22 @@ public class MainActivity extends AppCompatActivity {
         for(ApplicationModel applicationModel: applications){
             setApplicationAlarm(applicationModel);
         }
+    }
+
+    private void testAlarm() {
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR_OF_DAY, 16);
+        c.set(Calendar.MINUTE, 51);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+
+        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, AlertReceiver.class);
+        intent.setAction("android.intent.action.NOTIFY");
+        MainActivity.this.registerReceiver(new AlertReceiver(), new IntentFilter());        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 2, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+
+        Toast.makeText(MainActivity.this, "Hello!", Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -83,10 +101,14 @@ public class MainActivity extends AppCompatActivity {
 
         AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, AlertReceiver.class);
+        intent.setAction("android.intent.action.NOTIFY");
+
+        // Register receiver
+        MainActivity.this.registerReceiver(new AlertReceiver(), new IntentFilter());
+
         intent.putExtra("MyModel", model);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, model.getApplicationId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        long interval = 7 * 24 * 60 * 60 * 1000;
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), interval, pendingIntent);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
     }
 
     /**
@@ -105,19 +127,11 @@ public class MainActivity extends AppCompatActivity {
         c.set(Calendar.SECOND, 0);
         c.set(Calendar.MILLISECOND, 0);
 
-        Calendar now = Calendar.getInstance();
-        now.set(Calendar.SECOND, 0);
-        now.set(Calendar.MILLISECOND, 0);
-
-        if(c.before(now)) {
-            c.add(Calendar.DATE, 7);
-        }
-
+        // Use time as a unique ID for the pending intent
         int id = (int) c.getTimeInMillis();
-        long interval = 7 * 24 * 60 * 60 * 1000;
         Intent intent = new Intent(MainActivity.this, RefreshReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, id, intent, PendingIntent.FLAG_UPDATE_CURRENT );
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), interval, pendingIntent);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
     }
 
 }
