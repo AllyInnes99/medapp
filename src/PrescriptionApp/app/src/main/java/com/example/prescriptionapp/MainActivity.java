@@ -1,35 +1,23 @@
 package com.example.prescriptionapp;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+
 
 import android.app.AlarmManager;
-import android.app.Notification;
-import android.app.NotificationChannel;
+
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Build;
+
 import android.os.Bundle;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toast;
 
-import com.google.android.material.bottomnavigation.BottomNavigationMenu;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -77,11 +65,6 @@ public class MainActivity extends AppCompatActivity {
         c.set(Calendar.HOUR, hour);
         c.set(Calendar.MINUTE, mins);
 
-        // Ensure that reminder is setup for future if currently ahead of new reminder
-        Calendar now = Calendar.getInstance();
-        if(c.before(now)) {
-            c.add(Calendar.DATE, 7);
-        }
 
         AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, AlertReceiver.class);
@@ -103,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
     private void setRefreshAlarm() {
         AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
 
+        // Setup calendar obj so that it is set to the coming Monday at 00:00
         Calendar c = Calendar.getInstance();
         c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
         c.set(Calendar.HOUR_OF_DAY, 0);
@@ -111,11 +95,19 @@ public class MainActivity extends AppCompatActivity {
         c.set(Calendar.MILLISECOND, 0);
 
         // Use time as a unique ID for the pending intent
-        int id = (int) c.getTimeInMillis();
+        int id = (int) System.currentTimeMillis();
+
+        // Setup intent to pass to receiver
         Intent intent = new Intent(MainActivity.this, RefreshReceiver.class);
         intent.setAction("android.intent.action.NOTIFY");
+
+        // Register the custom broadcast receiver
         MainActivity.this.registerReceiver(new RefreshReceiver(), new IntentFilter());
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, id, intent, PendingIntent.FLAG_UPDATE_CURRENT );
+
+        // Set up pendingIntent for the broadcast to specify action in the future
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        // Set repeating alarm that calls onReceive() of RefreshReceiver at supplied time
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
     }
 

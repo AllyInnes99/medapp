@@ -320,6 +320,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.update(APPLICATION_TABLE, cv, null, null);
     }
+
+
     public void updateMedication(MedicationModel model) {
         ContentValues cv = new ContentValues();
 

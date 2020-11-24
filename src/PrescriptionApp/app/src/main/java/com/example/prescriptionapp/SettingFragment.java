@@ -110,7 +110,7 @@ public class SettingFragment extends Fragment {
         String title = "Medication refill";
         String msg = "You need to restock medication!";
 
-        Notification notification = new NotificationCompat.Builder(getActivity(), App.MED_TAKING_CHANNEL)
+        Notification notification = new NotificationCompat.Builder(getActivity(), App.REFILL_CHANNEL)
                 .setSmallIcon(R.drawable.ic_healing)
                 .setContentTitle(title)
                 .setContentText(msg)
