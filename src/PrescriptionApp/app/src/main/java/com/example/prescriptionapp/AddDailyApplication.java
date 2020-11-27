@@ -64,7 +64,6 @@ public class AddDailyApplication extends AppCompatActivity {
                 try {
                     int medID = medModel.getMedicationId();
                     String time = et_time.getText().toString();
-                    double dosage = Double.parseDouble(et_dosage.getText().toString());
                     int amount = Integer.parseInt(et_amount.getText().toString());
 
                     // add the medication model created previously

@@ -90,7 +90,6 @@ public class AddMedicationActivity extends AppCompatActivity {
                 MedicationModel model;
                 Intent intent;
                 try {
-                    DatabaseHelper databaseHelper = new DatabaseHelper(AddMedicationActivity.this);
                     String medicationName =  et_name.getText().toString();
                     if(!MedicationModel.validateMedicationName(medicationName)) {
                         throw new Exception("Invalid medication name");

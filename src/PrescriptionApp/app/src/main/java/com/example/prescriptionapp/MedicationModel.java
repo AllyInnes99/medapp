@@ -33,14 +33,15 @@ public class MedicationModel implements Serializable {
     }
 
     public MedicationModel(int medicationId, String name, int quantity,
-                           int refillAt, String type, String dayFrequency, String measurement,
-                           String profile) {
+                           int refillAt, String type, String dayFrequency,
+                           double dosage, String measurement, String profile) {
         this.medicationId = medicationId;
         this.name = name;
         this.quantity = quantity;
         this.refillAt = refillAt;
         this.type = type;
         this.dayFrequency = dayFrequency;
+        this.dosage = dosage;
         this.measurement = measurement;
         this.applications = new ArrayList<>();
         this.profile = profile;

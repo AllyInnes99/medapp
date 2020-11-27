@@ -98,6 +98,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COL_MEDICATION_NAME, medicationModel.getName());
         cv.put(COL_QUANTITY, medicationModel.getQuantity());
         cv.put(COL_FREQUENCY, medicationModel.getDayFrequency());
+        cv.put(COL_DOSAGE, medicationModel.getDosage());
         cv.put(COL_MEASUREMENT, medicationModel.getMeasurement());
         cv.put(COL_TYPE, medicationModel.getType());
         cv.put(COL_PROFILE, medicationModel.getProfile());
@@ -164,8 +165,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String type = cursor.getString(6);
                 String profile = cursor.getString(7);
                 int refill = cursor.getInt(8);
-                MedicationModel model = new MedicationModel(medicationID, medicationName, medicationQuantity, refill,
-                        type,  freq, measurement, profile);
+                MedicationModel model = new MedicationModel(medicationID, medicationName,
+                            medicationQuantity, refill, type,  freq, dosage, measurement, profile);
                 returnList.add(model);
 
             } while(cursor.moveToNext());
