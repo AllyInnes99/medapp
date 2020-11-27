@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,12 +14,12 @@ import java.util.List;
 public class AddApplicationAdapter extends RecyclerView.Adapter<AddApplicationAdapter.MyViewHolder> {
 
     private Context context;
-    private List<ApplicationModel> applicationModels;
+    private List<DoseModel> doseModels;
     DatabaseHelper databaseHelper;
 
-    AddApplicationAdapter(Context context, List<ApplicationModel> applicationModels) {
+    AddApplicationAdapter(Context context, List<DoseModel> doseModels) {
         this.context = context;
-        this.applicationModels = applicationModels;
+        this.doseModels = doseModels;
         this.databaseHelper = new DatabaseHelper(context);
     }
 
@@ -34,8 +33,8 @@ public class AddApplicationAdapter extends RecyclerView.Adapter<AddApplicationAd
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        ApplicationModel model = applicationModels.get(position);
-        final MedicationModel medModel = databaseHelper.selectMedicationFromApplication(model);
+        DoseModel model = doseModels.get(position);
+        final MedicationModel medModel = databaseHelper.selectMedicationFromDose(model);
         holder.appl_amount_txt.setText("Amount to take: " + model.getAmount());
         holder.appl_time_txt.setText("Time: " + model.getTime());
         holder.appl_med_txt.setText("Med name: " + medModel.getName());
@@ -43,7 +42,7 @@ public class AddApplicationAdapter extends RecyclerView.Adapter<AddApplicationAd
 
     @Override
     public int getItemCount() {
-        return applicationModels.size();
+        return doseModels.size();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {

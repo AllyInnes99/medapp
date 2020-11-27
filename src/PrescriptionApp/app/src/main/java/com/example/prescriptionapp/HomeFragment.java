@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -35,7 +34,7 @@ public class HomeFragment extends Fragment {
     RecyclerView recyclerView;
     ApplicationAdapter applicationAdapter;
     DatabaseHelper databaseHelper = new DatabaseHelper(getContext());
-    List<ApplicationModel> models;
+    List<DoseModel> models;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -99,7 +98,7 @@ public class HomeFragment extends Fragment {
      * Method that is used to display the rec
      */
     private void displayApplRecycler() {
-        models = databaseHelper.selectTodaysApplAndNotTaken();
+        models = databaseHelper.selectTodaysDoseAndNotTaken();
         Collections.sort(models);
         applicationAdapter = new ApplicationAdapter(getActivity(), models);
         recyclerView.setAdapter(applicationAdapter);

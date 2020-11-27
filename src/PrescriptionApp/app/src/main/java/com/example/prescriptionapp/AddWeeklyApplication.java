@@ -13,7 +13,6 @@ import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import java.lang.reflect.Array;
 import java.util.Calendar;
 
 public class AddWeeklyApplication extends AppCompatActivity {
@@ -80,15 +79,15 @@ public class AddWeeklyApplication extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                ApplicationModel applModel;
+                DoseModel applModel;
                 try {
                     int medID = medModel.getMedicationId();
                     String time = et_time.getText().toString();
                     double dosage = 0.1;
                     int amount = Integer.parseInt(et_amount.getText().toString());
 
-                    applModel = new ApplicationModel(0, medID, time, dosage, selectedDay, amount, false);
-                    boolean success = databaseHelper.addApplication(applModel);
+                    applModel = new DoseModel(0, medID, time, selectedDay, amount, false);
+                    boolean success = databaseHelper.addDose(applModel);
                     if(!success) throw new Exception("Failed to add new application");
 
                     finish();

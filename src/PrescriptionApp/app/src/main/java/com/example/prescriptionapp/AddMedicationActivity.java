@@ -17,7 +17,7 @@ import android.widget.Toast;
 public class AddMedicationActivity extends AppCompatActivity {
 
     Button btn_add, btn_cancel;
-    EditText et_name, et_quantity, et_refill;
+    EditText et_name, et_quantity, et_refill, et_dosage;
     Spinner medTypeDropdown, measurementDropdown, frequencyDropdown;
     String selectedType, selectedMeasurement, selectedFrequency;
     final String[] medTypes = new String[] {"tablet", "pill", "injection", "powder",
@@ -35,6 +35,7 @@ public class AddMedicationActivity extends AppCompatActivity {
         et_name = findViewById(R.id.edit_name);
         et_quantity = findViewById(R.id.edit_quantity);
         et_refill = findViewById(R.id.edit_refill);
+        et_dosage = findViewById(R.id.et_dosage);
         medTypeDropdown = findViewById(R.id.spinner1);
         measurementDropdown = findViewById(R.id.spinner2);
         frequencyDropdown = findViewById(R.id.spinner3);
@@ -96,9 +97,10 @@ public class AddMedicationActivity extends AppCompatActivity {
                     }
                     int quantity = Integer.parseInt(et_quantity.getText().toString());
                     int refill = Integer.parseInt(et_refill.getText().toString());
+                    double dosage = Double.parseDouble(et_dosage.getText().toString());
 
                     model = new MedicationModel(medicationName, quantity,refill, selectedType,
-                                                selectedFrequency, selectedMeasurement, "me");
+                                                selectedFrequency, dosage, selectedMeasurement, "me");
 
                     // Determine the next activity based off the frequency selected
                     switch(selectedFrequency){

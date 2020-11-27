@@ -1,16 +1,14 @@
 package com.example.prescriptionapp;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ApplicationModel implements Comparable<ApplicationModel>, Serializable {
+public class DoseModel implements Comparable<DoseModel>, Serializable {
 
-    private int applicationId;
+    private int doseId;
     private int medicationId;
     private String time;
-    private double dosage;
     private String day;
     private int amount;
     private boolean isTaken;
@@ -21,28 +19,26 @@ public class ApplicationModel implements Comparable<ApplicationModel>, Serializa
 
     /**
      * Initialise an ApplicationModel instance
-     * @param applicationId - unique identifier of instance
+     * @param doseId - unique identifier of instance
      * @param time - time for application to be taken
      * @param dosage - the dosage of the application to be taken
      * @param day - the day of when this application is to be taknen
      * @param amount - the amount of medicine to be taken in this applicaition
      * @param isTaken - if this application has been taken or not
      */
-    public ApplicationModel(int applicationId, int medicationId, String time, double dosage, String day, int amount, boolean isTaken) {
-        this.applicationId = applicationId;
+    public DoseModel(int doseId, int medicationId, String time, String day, int amount, boolean isTaken) {
+        this.doseId = doseId;
         this.medicationId = medicationId;
         this.time = time;
-        this.dosage = dosage;
         this.day = day;
         this.amount = amount;
         this.isTaken = isTaken;
     }
 
-    public ApplicationModel(int applicationId, int medicationId, int timeMinutes, int timeHour, double dosage, String day, int amount, boolean isTaken) {
-        this.applicationId = applicationId;
+    public DoseModel(int doseId, int medicationId, int timeMinutes, int timeHour, String day, int amount, boolean isTaken) {
+        this.doseId = doseId;
         this.medicationId = medicationId;
         this.time = intTimeToString(timeHour) +":"+ intTimeToString(timeMinutes);
-        this.dosage = dosage;
         this.day = day;
         this.amount = amount;
         this.isTaken = isTaken;
@@ -64,12 +60,12 @@ public class ApplicationModel implements Comparable<ApplicationModel>, Serializa
         return dayList.indexOf(this.day);
     }
 
-    public int getApplicationId() {
-        return applicationId;
+    public int getDoseId() {
+        return doseId;
     }
 
-    public void setApplicationId(int applicationId) {
-        this.applicationId = applicationId;
+    public void setDoseId(int doseId) {
+        this.doseId = doseId;
     }
 
     public String getTime() {
@@ -78,14 +74,6 @@ public class ApplicationModel implements Comparable<ApplicationModel>, Serializa
 
     public void setTime(String time) {
         this.time = time;
-    }
-
-    public double getDosage() {
-        return dosage;
-    }
-
-    public void setDosage(double dosage) {
-        this.dosage = dosage;
     }
 
     public String getDay() {
@@ -121,7 +109,7 @@ public class ApplicationModel implements Comparable<ApplicationModel>, Serializa
     }
 
     @Override
-    public int compareTo(ApplicationModel o) {
+    public int compareTo(DoseModel o) {
         String thisTime = this.getTime();
         String otherTime = o.getTime();
         if(thisTime.equals(null) || otherTime.equals(null)) return 0;

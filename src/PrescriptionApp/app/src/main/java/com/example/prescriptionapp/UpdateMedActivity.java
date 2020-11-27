@@ -3,7 +3,6 @@ package com.example.prescriptionapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -116,4 +115,13 @@ public class UpdateMedActivity extends AppCompatActivity {
         });
 
     }
+
+    private void cancelNotification(MedicationModel model){
+        List<DoseModel> doseModels = databaseHelper.selectDoseFromMedication(model);
+        for(DoseModel doseModel : doseModels){
+
+        }
+    }
+
+
 }
