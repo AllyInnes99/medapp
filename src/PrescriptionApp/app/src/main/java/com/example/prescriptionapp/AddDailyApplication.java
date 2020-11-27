@@ -3,7 +3,6 @@ package com.example.prescriptionapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.TimePickerDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -58,14 +57,13 @@ public class AddDailyApplication extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                ApplicationModel applModel;
+                DoseModel applModel;
                 String [] days = {"Monday", "Tuesday", "Wednesday", "Thursday",
                                     "Friday", "Saturday", "Sunday"};
 
                 try {
                     int medID = medModel.getMedicationId();
                     String time = et_time.getText().toString();
-                    double dosage = Double.parseDouble(et_dosage.getText().toString());
                     int amount = Integer.parseInt(et_amount.getText().toString());
 
                     // add the medication model created previously
@@ -73,8 +71,8 @@ public class AddDailyApplication extends AppCompatActivity {
 
                     // Add an application model for each day of the week
                     for(String day: days){
-                        applModel = new ApplicationModel(0, medID, time, dosage, day, amount, false);
-                        boolean success = databaseHelper.addApplication(applModel);
+                        applModel = new DoseModel(0, medID, time, day, amount, false);
+                        boolean success = databaseHelper.addDose(applModel);
                         if (!success) {
                             throw new Exception("Failed to add new application.");
                         }

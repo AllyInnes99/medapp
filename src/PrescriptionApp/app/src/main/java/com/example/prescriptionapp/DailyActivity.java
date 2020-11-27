@@ -31,9 +31,9 @@ public class DailyActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event){
         if(keyCode == KeyEvent.KEYCODE_BACK){
-            List<ApplicationModel> applModels = databaseHelper.selectApplFromMedication(medModel);
-            for(ApplicationModel m: applModels){
-                databaseHelper.deleteApplication(m);
+            List<DoseModel> applModels = databaseHelper.selectDoseFromMedication(medModel);
+            for(DoseModel m: applModels){
+                databaseHelper.deleteDose(m);
             }
             databaseHelper.deleteMedication(medModel);
         }
@@ -69,9 +69,9 @@ public class DailyActivity extends AppCompatActivity {
                 Intent i = new Intent(DailyActivity.this, MainActivity.class);
 
                 // For each application set-up, initialise a notification for taking the medication
-                List<ApplicationModel> applModels = databaseHelper.selectApplFromMedication(medModel);
+                List<DoseModel> applModels = databaseHelper.selectDoseFromMedication(medModel);
                 Toast.makeText(DailyActivity.this, medModel.getName(), Toast.LENGTH_SHORT).show();
-                for(ApplicationModel model: applModels){
+                for(DoseModel model: applModels){
                     intialiseNotification(model);
                 }
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -80,14 +80,14 @@ public class DailyActivity extends AppCompatActivity {
         });
     }
 
-    private void intialiseNotification(ApplicationModel applicationModel){
+    private void intialiseNotification(DoseModel doseModel){
         Calendar c = Calendar.getInstance();
-        String[] time = applicationModel.timeToHourAndMin();
+        String[] time = doseModel.timeToHourAndMin();
         int hour = Integer.parseInt(time[0]);
         int mins = Integer.parseInt(time[1]);
 
         // Set calendar to represent the day
-        c.set(Calendar.DAY_OF_WEEK, applicationModel.dayToInt());
+        c.set(Calendar.DAY_OF_WEEK, doseModel.dayToInt());
         c.set(Calendar.HOUR, hour);
         c.set(Calendar.MINUTE, mins);
         c.set(Calendar.SECOND, 0);
@@ -98,13 +98,13 @@ public class DailyActivity extends AppCompatActivity {
         Intent intent = new Intent(this, AlertReceiver.class);
         intent.setAction("android.intent.action.NOTIFY");
 
-        intent.putExtra("quantity", applicationModel.getAmount());
+        intent.putExtra("quantity", doseModel.getAmount());
         intent.putExtra("name", medModel.getName());
 
         // Register receiver
         DailyActivity.this.registerReceiver(new AlertReceiver(), new IntentFilter());
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(DailyActivity.this, applicationModel.getApplicationId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(DailyActivity.this, doseModel.getDoseId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
     }
 
@@ -116,7 +116,7 @@ public class DailyActivity extends AppCompatActivity {
     }
 
     private void displayRecycler() {
-        List<ApplicationModel> applModels = databaseHelper.selectApplFromMedicationAndDay(medModel);
+        List<DoseModel> applModels = databaseHelper.selectDoseFromMedicationAndDay(medModel);
         applicationAdapter = new AddApplicationAdapter(DailyActivity.this, applModels);
         recyclerView.setAdapter(applicationAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(DailyActivity.this));

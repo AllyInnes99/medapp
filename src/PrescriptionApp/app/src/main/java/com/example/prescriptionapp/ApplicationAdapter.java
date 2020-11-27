@@ -16,12 +16,12 @@ import java.util.List;
 public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.MyViewHolder> {
 
     private Context context;
-    private List<ApplicationModel> applicationModels;
+    private List<DoseModel> doseModels;
     DatabaseHelper databaseHelper;
 
-    ApplicationAdapter(Context context, List<ApplicationModel> applicationModels) {
+    ApplicationAdapter(Context context, List<DoseModel> doseModels) {
         this.context = context;
-        this.applicationModels = applicationModels;
+        this.doseModels = doseModels;
         this.databaseHelper = new DatabaseHelper(context);
     }
 
@@ -35,8 +35,8 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
-        final ApplicationModel model = applicationModels.get(position);
-        final MedicationModel medModel = databaseHelper.selectMedicationFromApplication(model);
+        final DoseModel model = doseModels.get(position);
+        final MedicationModel medModel = databaseHelper.selectMedicationFromDose(model);
         holder.appl_amount_txt.setText("Amount to take: " + model.getAmount());
         holder.appl_time_txt.setText("Time: " + model.getTime());
         holder.appl_med_txt.setText("Name: " + medModel.getName());
@@ -53,7 +53,7 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
 
     @Override
     public int getItemCount() {
-        return applicationModels.size();
+        return doseModels.size();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {

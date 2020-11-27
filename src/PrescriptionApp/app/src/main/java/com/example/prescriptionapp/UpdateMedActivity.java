@@ -3,7 +3,6 @@ package com.example.prescriptionapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -18,7 +17,7 @@ import java.util.List;
 public class UpdateMedActivity extends AppCompatActivity {
 
     Button btn_update, btn_delete;
-    EditText et_name, et_quantity, et_refill;
+    EditText et_name, et_quantity, et_refill, et_dosage;
     Spinner medTypeDropdown, measurementDropdown;
     String selectedType, selectedMeasurement;
     MedicationModel model;
@@ -38,6 +37,7 @@ public class UpdateMedActivity extends AppCompatActivity {
         et_name = findViewById(R.id.edit_name);
         et_quantity = findViewById(R.id.edit_quantity);
         et_refill = findViewById(R.id.edit_refill);
+        et_dosage = findViewById(R.id.et_dosage);
         medTypeDropdown = findViewById(R.id.spinner1);
         measurementDropdown = findViewById(R.id.spinner2);
 
@@ -46,6 +46,7 @@ public class UpdateMedActivity extends AppCompatActivity {
         et_name.setText(model.getName());
         et_quantity.setText(Integer.toString(model.getQuantity()));
         et_refill.setText(Integer.toString(model.getRefillAt()));
+        et_dosage.setText(Double.toString(model.getDosage()));
 
         ArrayAdapter<String> medTypeAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, medTypes);
         medTypeDropdown.setAdapter(medTypeAdapter);
@@ -116,4 +117,13 @@ public class UpdateMedActivity extends AppCompatActivity {
         });
 
     }
+
+    private void cancelNotification(MedicationModel model){
+        List<DoseModel> doseModels = databaseHelper.selectDoseFromMedication(model);
+        for(DoseModel doseModel : doseModels){
+
+        }
+    }
+
+
 }

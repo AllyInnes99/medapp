@@ -1,7 +1,6 @@
 package com.example.prescriptionapp;
 
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,33 +12,36 @@ public class MedicationModel implements Serializable {
     private int refillAt;
     private String type;
     private String dayFrequency;
+    private double dosage;
     private String measurement;
-    private List<ApplicationModel> applications;
+    private List<DoseModel> applications;
     private String profile;
     private static int id = 0;
 
     public MedicationModel(String name, int quantity, int refillAt, String type,
-                           String dayFrequency, String measurement, String profile) {
+                           String dayFrequency, double dosage, String measurement, String profile) {
         this.medicationId = ++id;
         this.name = name;
         this.quantity = quantity;
         this.refillAt = refillAt;
         this.type = type;
         this.dayFrequency = dayFrequency;
+        this.dosage = dosage;
         this.measurement = measurement;
         this.applications = new ArrayList<>();
         this.profile = profile;
     }
 
     public MedicationModel(int medicationId, String name, int quantity,
-                           int refillAt, String type, String dayFrequency, String measurement,
-                           String profile) {
+                           int refillAt, String type, String dayFrequency,
+                           double dosage, String measurement, String profile) {
         this.medicationId = medicationId;
         this.name = name;
         this.quantity = quantity;
         this.refillAt = refillAt;
         this.type = type;
         this.dayFrequency = dayFrequency;
+        this.dosage = dosage;
         this.measurement = measurement;
         this.applications = new ArrayList<>();
         this.profile = profile;
@@ -131,6 +133,14 @@ public class MedicationModel implements Serializable {
         this.dayFrequency = dayFrequency;
     }
 
+    public double getDosage() {
+        return dosage;
+    }
+
+    public void setDosage(double dosage) {
+        this.dosage = dosage;
+    }
+
     public String getMeasurement() {
         return measurement;
     }
@@ -139,11 +149,11 @@ public class MedicationModel implements Serializable {
         this.measurement = measurement;
     }
 
-    public List<ApplicationModel> getApplications() {
+    public List<DoseModel> getApplications() {
         return applications;
     }
 
-    public void setApplications(List<ApplicationModel> applications) {
+    public void setApplications(List<DoseModel> applications) {
         this.applications = applications;
     }
 

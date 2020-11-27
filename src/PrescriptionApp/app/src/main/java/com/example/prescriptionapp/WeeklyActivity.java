@@ -55,7 +55,7 @@ public class WeeklyActivity extends AppCompatActivity {
     }
 
     private void displayRecycler() {
-        List<ApplicationModel> applModels = databaseHelper.selectApplFromMedication(model);
+        List<DoseModel> applModels = databaseHelper.selectDoseFromMedication(model);
         applicationAdapter = new AddApplicationAdapter(WeeklyActivity.this, applModels);
         recyclerView.setAdapter(applicationAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(WeeklyActivity.this));

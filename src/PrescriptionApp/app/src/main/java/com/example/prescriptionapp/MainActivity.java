@@ -44,9 +44,9 @@ public class MainActivity extends AppCompatActivity {
     private void setMedicationAlarm(){
         // get every application in the db
         DatabaseHelper databaseHelper = new DatabaseHelper(MainActivity.this);
-        List<ApplicationModel> applications = databaseHelper.selectAllApplications();
-        for(ApplicationModel applicationModel: applications){
-            setApplicationAlarm(applicationModel);
+        List<DoseModel> applications = databaseHelper.selectAllDoses();
+        for(DoseModel doseModel : applications){
+            setApplicationAlarm(doseModel);
         }
     }
 
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
      * Method that creates a reminder notification for user to take certain medication
      * @param model - the application to be notified
      */
-    private void setApplicationAlarm(ApplicationModel model){
+    private void setApplicationAlarm(DoseModel model){
         Calendar c = Calendar.getInstance();
         String[] time = model.timeToHourAndMin();
         int hour = Integer.parseInt(time[0]);
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         MainActivity.this.registerReceiver(new AlertReceiver(), new IntentFilter());
 
         intent.putExtra("MyModel", model);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, model.getApplicationId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, model.getDoseId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
     }
 
