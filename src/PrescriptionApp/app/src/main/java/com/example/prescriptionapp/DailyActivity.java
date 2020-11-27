@@ -5,10 +5,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlarmManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -80,7 +83,26 @@ public class DailyActivity extends AppCompatActivity {
         });
     }
 
-    private void intialiseNotification(DoseModel doseModel){
+
+    /**
+     * Helper method that creates a new notification channel for a newly added medication
+     */
+    private void createNotificationChannel(){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+
+            String id = medModel.getName();
+            String label = medModel.getName() + " reminder";
+            NotificationChannel channel = new NotificationChannel(
+                    id, label, NotificationManager.IMPORTANCE_HIGH);
+            channel.setDescription("Notifications to remind user to take "+ medModel.getName() + " at appointed time");
+
+            NotificationManager notificationManager = (NotificationManager)getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+
+        }
+    }
+
+    private void initialiseNotification(DoseModel doseModel){
         Calendar c = Calendar.getInstance();
         String[] time = doseModel.timeToHourAndMin();
         int hour = Integer.parseInt(time[0]);
