@@ -1,4 +1,4 @@
-package com.example.prescriptionapp;
+package com.example.medapp;
 
 import android.app.Application;
 import android.app.NotificationChannel;
@@ -8,6 +8,7 @@ import android.os.Build;
 public class App extends Application {
     public static final String MED_TAKING_CHANNEL = "medChannel";
     public static final String REFILL_CHANNEL = "refillChannel";
+    public static final int CALLBACK_ID = 42;
 
     @Override
     public void onCreate(){

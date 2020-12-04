@@ -1,24 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.prescriptionapp">
+    package="com.example.medapp">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_CALENDAR" />
+    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
 
     <application
-        android:name=".App"
+        android:name="com.example.medapp.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="MedApp"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".UpdateMedActivity" />
-        <activity android:name=".AddWeeklyApplication" />
-        <activity android:name=".AddDailyApplication" />
-        <activity android:name=".WeeklyActivity" />
-        <activity android:name=".DailyActivity" />
-        <activity android:name=".AddMedicationActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name="com.example.medapp.UpdateMedActivity" />
+        <activity android:name="com.example.medapp.AddWeeklyApplication" />
+        <activity android:name="com.example.medapp.AddDailyApplication" />
+        <activity android:name="com.example.medapp.WeeklyActivity" />
+        <activity android:name="com.example.medapp.DailyActivity" />
+        <activity android:name="com.example.medapp.AddMedicationActivity" />
+        <activity android:name="com.example.medapp.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,7 +28,7 @@
             </intent-filter>
         </activity>
         <receiver
-            android:name=".AlertReceiver"
+            android:name="com.example.medapp.AlertReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
@@ -34,7 +36,7 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".RefreshReceiver"
+            android:name="com.example.medapp.RefreshReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
@@ -43,5 +45,6 @@
         </receiver>
 
     </application>
+
 
 </manifest>

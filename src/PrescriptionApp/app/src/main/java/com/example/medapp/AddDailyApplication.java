@@ -1,4 +1,4 @@
-package com.example.prescriptionapp;
+package com.example.medapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 

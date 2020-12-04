@@ -1,4 +1,4 @@
-package com.example.prescriptionapp;
+package com.example.medapp;
 
 import java.io.Serializable;
 import java.util.Arrays;

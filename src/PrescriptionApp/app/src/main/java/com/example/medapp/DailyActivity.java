@@ -1,4 +1,4 @@
-package com.example.prescriptionapp;
+package com.example.medapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -75,7 +75,7 @@ public class DailyActivity extends AppCompatActivity {
                 List<DoseModel> applModels = databaseHelper.selectDoseFromMedication(medModel);
                 Toast.makeText(DailyActivity.this, medModel.getName(), Toast.LENGTH_SHORT).show();
                 for(DoseModel model: applModels){
-                    intialiseNotification(model);
+                    initialiseNotification(model);
                 }
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);

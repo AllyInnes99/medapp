@@ -7,17 +7,17 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.prescriptionapp.HomeFragment"
+        android:name="com.example.medapp.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/medFragment"
-        android:name="com.example.prescriptionapp.MedFragment"
+        android:name="com.example.medapp.MedFragment"
         android:label="fragment_med"
         tools:layout="@layout/fragment_med" />
     <fragment
         android:id="@+id/settingFragment"
-        android:name="com.example.prescriptionapp.SettingFragment"
+        android:name="com.example.medapp.SettingFragment"
         android:label="fragment_setting"
         tools:layout="@layout/fragment_setting" />
 </navigation>
