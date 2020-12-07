@@ -11,7 +11,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Collections;
@@ -68,6 +71,7 @@ public class HomeFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         databaseHelper = new DatabaseHelper(getActivity());
         displayApplRecycler();
+        getProfile();
     }
 
     @Override
@@ -92,6 +96,7 @@ public class HomeFragment extends Fragment {
     public void onResume() {
         super.onResume();
         displayApplRecycler();
+        getProfile();
     }
 
     /**
@@ -104,6 +109,19 @@ public class HomeFragment extends Fragment {
         recyclerView.setAdapter(applicationAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
+
+    private void getProfile() {
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity());
+        if(acct != null) {
+            String acctEmail = acct.getEmail();
+            Toast.makeText(getActivity(), acctEmail, Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Toast.makeText(getActivity(), "no acct", Toast.LENGTH_SHORT).show();
+
+        }
+    }
+
 
     private void updateRecycler(int pos){
         models.remove(pos);

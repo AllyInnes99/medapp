@@ -7,44 +7,47 @@
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
 
     <application
-        android:name="com.example.medapp.App"
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="MedApp"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.example.medapp.UpdateMedActivity" />
-        <activity android:name="com.example.medapp.AddWeeklyApplication" />
-        <activity android:name="com.example.medapp.AddDailyApplication" />
-        <activity android:name="com.example.medapp.WeeklyActivity" />
-        <activity android:name="com.example.medapp.DailyActivity" />
-        <activity android:name="com.example.medapp.AddMedicationActivity" />
-        <activity android:name="com.example.medapp.MainActivity">
+        <activity
+            android:name=".SignInActivity"
+            android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver
-            android:name="com.example.medapp.AlertReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                <action android:name="android.intent.action.INPUT_METHOD_CHANGED" />
-            </intent-filter>
-        </receiver>
-        <receiver
-            android:name="com.example.medapp.RefreshReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                <action android:name="android.intent.action.INPUT_METHOD_CHANGED" />
-            </intent-filter>
-        </receiver>
+        <activity android:name=".UpdateMedActivity" />
+        <activity android:name=".AddWeeklyApplication" />
+        <activity android:name=".AddDailyApplication" />
+        <activity android:name=".WeeklyActivity" />
+        <activity android:name=".DailyActivity" />
+        <activity android:name=".AddMedicationActivity" />
+        <activity android:name=".MainActivity">
+        </activity>
 
+        <receiver
+            android:name=".AlertReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.INPUT_METHOD_CHANGED" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".RefreshReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.INPUT_METHOD_CHANGED" />
+            </intent-filter>
+        </receiver>
     </application>
-
 
 </manifest>
