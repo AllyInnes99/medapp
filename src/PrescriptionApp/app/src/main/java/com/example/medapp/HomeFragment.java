@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Collections;
 import java.util.List;
@@ -71,7 +72,6 @@ public class HomeFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         databaseHelper = new DatabaseHelper(getActivity());
         displayApplRecycler();
-        getProfile();
     }
 
     @Override
@@ -95,8 +95,14 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
         displayApplRecycler();
-        getProfile();
+        /*
+        if(FirebaseAuth.getInstance().getCurrentUser() != null){
+            Toast.makeText(getActivity(), FirebaseAuth.getInstance().getCurrentUser().getEmail(), Toast.LENGTH_SHORT).show();
+        }
+        */
+
     }
 
     /**
