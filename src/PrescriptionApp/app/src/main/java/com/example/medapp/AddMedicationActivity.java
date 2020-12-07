@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.Toast;
 
 public class AddMedicationActivity extends AppCompatActivity {
@@ -17,6 +18,7 @@ public class AddMedicationActivity extends AppCompatActivity {
     Button btn_add, btn_cancel;
     EditText et_name, et_quantity, et_refill, et_dosage;
     Spinner medTypeDropdown, measurementDropdown, frequencyDropdown;
+    Switch autoTake;
     String selectedType, selectedMeasurement, selectedFrequency;
     final String[] medTypes = new String[] {"tablet", "pill", "injection", "powder",
                                             "drops", "inhalers", "topical"};
@@ -37,6 +39,7 @@ public class AddMedicationActivity extends AppCompatActivity {
         medTypeDropdown = findViewById(R.id.spinner1);
         measurementDropdown = findViewById(R.id.spinner2);
         frequencyDropdown = findViewById(R.id.spinner3);
+        autoTake = findViewById(R.id.autotake);
 
         ArrayAdapter<String> medTypeAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, medTypes);
         medTypeDropdown.setAdapter(medTypeAdapter);
@@ -96,8 +99,12 @@ public class AddMedicationActivity extends AppCompatActivity {
                     int refill = Integer.parseInt(et_refill.getText().toString());
                     double dosage = Double.parseDouble(et_dosage.getText().toString());
 
+                    boolean take = autoTake.isChecked();
+
                     model = new MedicationModel(medicationName, quantity,refill, selectedType,
-                                                selectedFrequency, dosage, selectedMeasurement, "me");
+                    selectedFrequency, dosage, selectedMeasurement, "me", take );
+
+
 
                     // Determine the next activity based off the frequency selected
                     switch(selectedFrequency){
@@ -133,6 +140,4 @@ public class AddMedicationActivity extends AppCompatActivity {
 
     }
 
-
-    
 }

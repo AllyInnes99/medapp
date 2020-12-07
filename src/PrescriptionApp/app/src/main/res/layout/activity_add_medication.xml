@@ -41,7 +41,6 @@
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:layout_marginBottom="64dp"
         android:backgroundTint="#0000FF"
         android:text="@string/confirm"
@@ -49,33 +48,33 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.309"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinner3"
-        app:layout_constraintVertical_bias="0.502" />
+        app:layout_constraintTop_toBottomOf="@+id/autotake"
+        app:layout_constraintVertical_bias="0.477" />
 
     <Button
         android:id="@+id/button_cancel"
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginLeft="40dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
         android:layout_marginBottom="64dp"
         android:backgroundTint="#FF0000"
         android:text="@string/cancel"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/button_update"
-        app:layout_constraintTop_toBottomOf="@+id/spinner3"
-        app:layout_constraintVertical_bias="0.502" />
+        app:layout_constraintTop_toBottomOf="@+id/autotake"
+        app:layout_constraintVertical_bias="0.477" />
 
     <Spinner
         android:id="@+id/spinner1"
         android:layout_width="120dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="28dp"
         android:background="@android:drawable/btn_dropdown"
         android:spinnerMode="dropdown"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/spinner2" />
 
@@ -128,5 +127,15 @@
         android:inputType="numberDecimal"
         app:layout_constraintEnd_toStartOf="@+id/spinner2"
         app:layout_constraintTop_toBottomOf="@+id/edit_refill" />
+
+    <Switch
+        android:id="@+id/autotake"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/autotake"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinner3" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -28,6 +28,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_TYPE = "TYPE";
     public static final String COL_PROFILE = "PROFILE";
     public static final String COL_REFILL = "REFILL_AT";
+    public static final String COL_AUTO_TAKE = "AUTO_TAKE";
 
     // Const variables for the application table
     public static final String DOSE_TABLE = "DOSE_TABLE";
@@ -56,7 +57,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                         + COL_DOSAGE + " REAL, "
                                         + COL_MEASUREMENT + " TEXT, "
                                         + COL_TYPE + " TEXT, " + COL_PROFILE + " TEXT, "
-                                        + COL_REFILL + " INT)";
+                                        + COL_REFILL + " INT,"
+                                        + COL_AUTO_TAKE + " BOOL)";
 
         String createAppTableStatement = onCreateHelper(DOSE_TABLE) + " ("
                                         + COL_DOSE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -103,6 +105,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COL_TYPE, medicationModel.getType());
         cv.put(COL_PROFILE, medicationModel.getProfile());
         cv.put(COL_REFILL, medicationModel.getRefillAt());
+        cv.put(COL_AUTO_TAKE, medicationModel.isAutoTake());
         long insert = db.insert(MEDICATION_TABLE, null, cv);
         return isAdded(insert);
     }
@@ -156,17 +159,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()){
             do {
-                int medicationID = cursor.getInt(0);
-                String medicationName = cursor.getString(1);
-                int medicationQuantity = cursor.getInt(2);
+                int id = cursor.getInt(0);
+                String name = cursor.getString(1);
+                int qty = cursor.getInt(2);
                 String freq = cursor.getString(3);
                 double dosage = cursor.getDouble(4);
                 String measurement = cursor.getString(5);
                 String type = cursor.getString(6);
                 String profile = cursor.getString(7);
                 int refill = cursor.getInt(8);
-                MedicationModel model = new MedicationModel(medicationID, medicationName,
-                            medicationQuantity, refill, type,  freq, dosage, measurement, profile);
+                boolean autoTake = SQLiteIntToBool(cursor.getInt(9));
+                MedicationModel model = new MedicationModel(id, name, qty, refill, type, freq, dosage,
+                                                            measurement, profile, autoTake);
                 returnList.add(model);
 
             } while(cursor.moveToNext());
@@ -226,7 +230,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // In query, we check taken == 0 as this is how false is represented in SQLite
         String rawQuery = "SELECT * FROM " + DOSE_TABLE + " WHERE (" + COL_DAY + " = '" + day +
-                "' AND " + COL_TAKEN + " = 0 )";
+                "' AND " + COL_TAKEN + " = 0 ) AND (SELECT ";
         return selectDoseHelper(rawQuery);
     }
 

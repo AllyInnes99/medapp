@@ -97,11 +97,7 @@ public class HomeFragment extends Fragment {
         super.onResume();
 
         displayApplRecycler();
-        /*
-        if(FirebaseAuth.getInstance().getCurrentUser() != null){
-            Toast.makeText(getActivity(), FirebaseAuth.getInstance().getCurrentUser().getEmail(), Toast.LENGTH_SHORT).show();
-        }
-        */
+
 
     }
 
@@ -116,17 +112,6 @@ public class HomeFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 
-    private void getProfile() {
-        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity());
-        if(acct != null) {
-            String acctEmail = acct.getEmail();
-            Toast.makeText(getActivity(), acctEmail, Toast.LENGTH_SHORT).show();
-        }
-        else {
-            Toast.makeText(getActivity(), "no acct", Toast.LENGTH_SHORT).show();
-
-        }
-    }
 
 
     private void updateRecycler(int pos){
