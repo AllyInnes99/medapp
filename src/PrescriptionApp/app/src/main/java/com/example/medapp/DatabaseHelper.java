@@ -9,7 +9,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -41,7 +43,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     Calendar calendar = Calendar.getInstance();
     List<String> days = Arrays.asList(
-            new String[] {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"});
+            new String[] {"", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"});
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -380,6 +382,52 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return count;
     }
+
+    /**
+     * Function that calcs. the no. of days until a medication runs out of supply
+     * @param model - the med to find out
+     * @return
+     */
+    public int daysUntilRefill(MedicationModel model) {
+
+        Calendar c = Calendar.getInstance();
+        int day = c.get(Calendar.DAY_OF_WEEK);
+
+
+        List<DoseModel> doses = selectDoseFromMedication(model);
+        Map<String, Integer> takenPerDay = new HashMap<>();
+
+        for(DoseModel doseModel: doses) {
+            String d = doseModel.getDay();
+            int count = doseModel.getAmount();
+            if(takenPerDay.get(d) != null){
+                count += takenPerDay.get(d);
+            }
+            takenPerDay.put(d, count);
+        }
+
+        Map<Integer, Integer> m = new HashMap<>();
+        m.put(Calendar.SUNDAY, takenPerDay.get("Sunday"));
+        m.put(Calendar.MONDAY, takenPerDay.get("Monday"));
+        m.put(Calendar.TUESDAY, takenPerDay.get("Tuesday"));
+        m.put(Calendar.WEDNESDAY, takenPerDay.get("Wednesday"));
+        m.put(Calendar.THURSDAY, takenPerDay.get("Thursday"));
+        m.put(Calendar.FRIDAY, takenPerDay.get("Friday"));
+        m.put(Calendar.SATURDAY, takenPerDay.get("Saturday"));
+        takenPerDay.clear();
+
+        int current = model.getQuantity();
+        int dayCount = 0;
+
+        // from today's date, continuously subtract from the current qty for each day and then
+        while(current > 0) {
+            current -= m.get(c.get(Calendar.DAY_OF_WEEK));
+            c.add(Calendar.DATE, 1);
+            dayCount++;
+        }
+        return dayCount;
+    }
+
 
 
     /**
