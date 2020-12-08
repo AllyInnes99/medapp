@@ -82,24 +82,11 @@
         android:id="@+id/spinner2"
         android:layout_width="90dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         android:background="@android:drawable/btn_dropdown"
         android:spinnerMode="dropdown"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.672"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_refill" />
-
-    <EditText
-        android:id="@+id/edit_refill"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:ems="10"
-        android:hint="Refill"
-        android:inputType="number"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edit_quantity" />
 
@@ -119,14 +106,14 @@
         android:id="@+id/et_dosage"
         android:layout_width="90dp"
         android:layout_height="45dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="28dp"
         android:layout_marginRight="28dp"
         android:ems="10"
         android:hint="Dosage"
         android:inputType="numberDecimal"
         app:layout_constraintEnd_toStartOf="@+id/spinner2"
-        app:layout_constraintTop_toBottomOf="@+id/edit_refill" />
+        app:layout_constraintTop_toBottomOf="@+id/edit_quantity" />
 
     <Switch
         android:id="@+id/autotake"

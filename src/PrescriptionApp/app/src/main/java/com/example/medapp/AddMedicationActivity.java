@@ -16,7 +16,7 @@ import android.widget.Toast;
 public class AddMedicationActivity extends AppCompatActivity {
 
     Button btn_add, btn_cancel;
-    EditText et_name, et_quantity, et_refill, et_dosage;
+    EditText et_name, et_quantity, et_dosage;
     Spinner medTypeDropdown, measurementDropdown, frequencyDropdown;
     Switch autoTake;
     String selectedType, selectedMeasurement, selectedFrequency;
@@ -34,7 +34,6 @@ public class AddMedicationActivity extends AppCompatActivity {
         btn_cancel = findViewById(R.id.button_cancel);
         et_name = findViewById(R.id.edit_name);
         et_quantity = findViewById(R.id.edit_quantity);
-        et_refill = findViewById(R.id.edit_refill);
         et_dosage = findViewById(R.id.et_dosage);
         medTypeDropdown = findViewById(R.id.spinner1);
         measurementDropdown = findViewById(R.id.spinner2);
@@ -96,7 +95,7 @@ public class AddMedicationActivity extends AppCompatActivity {
                         throw new Exception("Invalid medication name");
                     }
                     int quantity = Integer.parseInt(et_quantity.getText().toString());
-                    int refill = Integer.parseInt(et_refill.getText().toString());
+                    int refill = 0;
                     double dosage = Double.parseDouble(et_dosage.getText().toString());
 
                     boolean take = autoTake.isChecked();

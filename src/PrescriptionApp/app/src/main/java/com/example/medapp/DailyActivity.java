@@ -8,6 +8,7 @@ import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -69,11 +70,14 @@ public class DailyActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
+
+                // update days until refill for med
+                databaseHelper.updateDaysUntilEmpty(medModel);
+
                 Intent i = new Intent(DailyActivity.this, MainActivity.class);
 
                 // For each application set-up, initialise a notification for taking the medication
                 List<DoseModel> applModels = databaseHelper.selectDoseFromMedication(medModel);
-                Toast.makeText(DailyActivity.this, medModel.getName(), Toast.LENGTH_SHORT).show();
                 for(DoseModel model: applModels){
                     initialiseNotification(model);
                 }

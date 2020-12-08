@@ -12,6 +12,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 public class UpdateMedActivity extends AppCompatActivity {
@@ -22,6 +23,7 @@ public class UpdateMedActivity extends AppCompatActivity {
     String selectedType, selectedMeasurement;
     MedicationModel model;
     DatabaseHelper databaseHelper = new DatabaseHelper(UpdateMedActivity.this);
+    int originalQuantity;
 
     final List<String> medTypes = Arrays.asList(new String[] {"tablet", "pill", "injection", "powder",
                                                                 "drops", "inhalers", "topical"});
@@ -42,10 +44,17 @@ public class UpdateMedActivity extends AppCompatActivity {
         measurementDropdown = findViewById(R.id.spinner2);
 
         model = (MedicationModel) getIntent().getSerializableExtra("MedModel");
+        originalQuantity = model.getQuantity();
 
         et_name.setText(model.getName());
         et_quantity.setText(Integer.toString(model.getQuantity()));
-        et_refill.setText(Integer.toString(model.getRefillAt()));
+
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DATE, model.getRefillAt());
+        String date = "" + c.get(Calendar.DAY_OF_MONTH) + "/" + (c.get(Calendar.MONTH) + 1) + "/" + c.get(Calendar.YEAR);
+
+
+        et_refill.setText(date);
         et_dosage.setText(Double.toString(model.getDosage()));
 
         ArrayAdapter<String> medTypeAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, medTypes);
@@ -87,15 +96,18 @@ public class UpdateMedActivity extends AppCompatActivity {
                         throw new Exception("Invalid medication name");
                     }
                     int quantity = Integer.parseInt(et_quantity.getText().toString());
-                    int refill = Integer.parseInt(et_refill.getText().toString());
+
 
                     model.setName(medicationName);
                     model.setQuantity(quantity);
-                    model.setRefillAt(refill);
                     model.setMeasurement(selectedMeasurement);
                     model.setType(selectedType);
 
                     databaseHelper.updateMedication(model);
+                    if(quantity != originalQuantity) {
+                        databaseHelper.updateDaysUntilEmpty(model);
+                    }
+
                     Toast.makeText(UpdateMedActivity.this, "Successfully updated medication", Toast.LENGTH_SHORT).show();
                     finish();
 

@@ -232,7 +232,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // In query, we check taken == 0 as this is how false is represented in SQLite
         String rawQuery = "SELECT * FROM " + DOSE_TABLE + " WHERE (" + COL_DAY + " = '" + day +
-                "' AND " + COL_TAKEN + " = 0 ) AND (SELECT ";
+                "' AND " + COL_TAKEN + " = 0 )";
         return selectDoseHelper(rawQuery);
     }
 
@@ -388,14 +388,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param model - the med to find out
      * @return
      */
-    public int daysUntilRefill(MedicationModel model) {
+    public int daysUntilEmpty(MedicationModel model) {
 
         Calendar c = Calendar.getInstance();
         int day = c.get(Calendar.DAY_OF_WEEK);
 
-
         List<DoseModel> doses = selectDoseFromMedication(model);
         Map<String, Integer> takenPerDay = new HashMap<>();
+
 
         for(DoseModel doseModel: doses) {
             String d = doseModel.getDay();
@@ -428,6 +428,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return dayCount;
     }
 
+    public void updateDaysUntilEmpty(MedicationModel medModel) {
+        int days = daysUntilEmpty(medModel);
+        ContentValues cv = new ContentValues();
+        cv.put(COL_REFILL, days);
+        updateMedicationRow(medModel, cv);
+
+    }
+
+    public boolean isRefillNeeded(MedicationModel m) {
+        int days = daysUntilEmpty(m);
+        return days < 14;
+    }
 
 
     /**
