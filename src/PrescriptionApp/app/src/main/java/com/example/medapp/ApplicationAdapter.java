@@ -44,8 +44,14 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
         holder.button.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                databaseHelper.takeMedication(model, medModel);
-                String msg = "You have taken " + model.getAmount() + " of " + medModel.getName();
+                String msg = "";
+                if(model.getAmount() > medModel.getQuantity()){
+                    msg = "You don't have enough stock to take this medication.";
+                }
+                else{
+                    databaseHelper.takeMedication(model, medModel);
+                    msg = "You have taken " + model.getAmount() + " of " + medModel.getName();
+                }
                 Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
             }
         });
