@@ -6,7 +6,9 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class App extends Application {
@@ -15,6 +17,10 @@ public class App extends Application {
     public static final int CALLBACK_ID = 42;
     public static Map<MedicationModel, NotificationChannel> channels = new HashMap<>();
     public static Map<MedicationModel, String> channelIDs = new HashMap<>();
+
+
+    public static List<String> days = Arrays.asList("", "Sunday", "Monday", "Tuesday", "Wednesday",
+                                                    "Thursday", "Friday", "Saturday");
 
     @Override
     public void onCreate(){

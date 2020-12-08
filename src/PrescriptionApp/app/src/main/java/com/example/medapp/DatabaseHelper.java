@@ -196,6 +196,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return selectDoseHelper(rawQuery);
     }
 
+    public List<MedicationModel> selectAutoTakenMeds() {
+        String rawQuery = "SELECT * FROM " + MEDICATION_TABLE
+                + " WHERE " + COL_AUTO_TAKE + " = 1";
+        return selectMedicationHelper(rawQuery);
+    }
+
+    // SELECT QUERIES FOR DOSE_TABLE
+
     /**
      * Method that gets all of the applications set up in the database
      * @return a list of application models
