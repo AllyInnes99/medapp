@@ -34,10 +34,10 @@ public class AddApplicationAdapter extends RecyclerView.Adapter<AddApplicationAd
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         DoseModel model = doseModels.get(position);
-        final MedicationModel medModel = databaseHelper.selectMedicationFromDose(model);
+        //final MedicationModel medModel = databaseHelper.selectMedicationFromDose(model);
         holder.appl_amount_txt.setText("Amount to take: " + model.getAmount());
         holder.appl_time_txt.setText("Time: " + model.getTime());
-        holder.appl_med_txt.setText("Med name: " + medModel.getName());
+        //holder.appl_med_txt.setText("Med name: " + medModel.getName());
     }
 
     @Override

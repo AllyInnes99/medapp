@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -31,18 +32,26 @@ public class DailyActivity extends AppCompatActivity {
     FloatingActionButton floatingActionButton, nextButton;
     AddApplicationAdapter applicationAdapter;
     DatabaseHelper databaseHelper = new DatabaseHelper(DailyActivity.this);
+    List<DoseModel> temp = new ArrayList<>();
+    private static final int SECOND_ACTIVITY_REQUEST_CODE = 42;
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event){
         if(keyCode == KeyEvent.KEYCODE_BACK){
-            List<DoseModel> applModels = databaseHelper.selectDoseFromMedication(medModel);
-            for(DoseModel m: applModels){
-                databaseHelper.deleteDose(m);
-            }
-            databaseHelper.deleteMedication(medModel);
+            temp.clear();
         }
 
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == SECOND_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+            DoseModel m = (DoseModel) data.getSerializableExtra("applModel");
+            temp.add(m);
+            displayRecycler();
+        }
     }
 
     @Override
@@ -62,7 +71,7 @@ public class DailyActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(DailyActivity.this, AddDailyApplication.class);
                 intent.putExtra("MedModel", medModel);
-                startActivity(intent);
+                startActivityForResult(intent, SECOND_ACTIVITY_REQUEST_CODE);
             }
         });
 
@@ -71,18 +80,32 @@ public class DailyActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+
+                databaseHelper.addMedication(medModel);
+
+                Intent intent = new Intent(DailyActivity.this, MainActivity.class);
+
+                // For each application set-up, initialise a notification for taking the medication
+                List<DoseModel> applModels = temp;
+
+                String [] days = {"Monday", "Tuesday", "Wednesday", "Thursday",
+                        "Friday", "Saturday", "Sunday"};
+
+                for(DoseModel m: temp){
+                    for(int i = 0; i < days.length; i++){
+                        m.setDay(days[i]);
+                        databaseHelper.addDose(m);
+                    }
+                    initialiseNotification(m);
+                }
+
+
                 // update days until refill for med
                 databaseHelper.updateDaysUntilEmpty(medModel);
 
-                Intent i = new Intent(DailyActivity.this, MainActivity.class);
 
-                // For each application set-up, initialise a notification for taking the medication
-                List<DoseModel> applModels = databaseHelper.selectDoseFromMedication(medModel);
-                for(DoseModel model: applModels){
-                    initialiseNotification(model);
-                }
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(i);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
             }
         });
     }
@@ -142,8 +165,8 @@ public class DailyActivity extends AppCompatActivity {
     }
 
     private void displayRecycler() {
-        List<DoseModel> applModels = databaseHelper.selectDoseFromMedicationAndDay(medModel);
-        applicationAdapter = new AddApplicationAdapter(DailyActivity.this, applModels);
+        //List<DoseModel> applModels = databaseHelper.selectDoseFromMedicationAndDay(medModel);
+        applicationAdapter = new AddApplicationAdapter(DailyActivity.this, temp);
         recyclerView.setAdapter(applicationAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(DailyActivity.this));
     }
