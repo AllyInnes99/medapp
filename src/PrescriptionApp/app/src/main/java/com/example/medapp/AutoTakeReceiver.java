@@ -3,6 +3,7 @@ package com.example.medapp;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.List;
@@ -15,6 +16,8 @@ public class AutoTakeReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         DatabaseHelper databaseHelper = new DatabaseHelper(context);
+
+        Toast.makeText(context, "AutoTake activated", Toast.LENGTH_SHORT).show();
 
         // Firstly get the day of prev. day
         Calendar c = Calendar.getInstance();

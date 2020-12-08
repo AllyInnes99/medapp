@@ -9,6 +9,7 @@ import androidx.navigation.ui.NavigationUI;
 import android.app.AlarmManager;
 
 import android.app.PendingIntent;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.nio.channels.AlreadyBoundException;
 import java.util.Calendar;
 import java.util.List;
 
@@ -35,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         navController = Navigation.findNavController(this, R.id.navFragment);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
+        setAutoTakeAlarm();
         setRefreshAlarm();
     }
 
@@ -82,8 +85,44 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * Helper function that is called on creation to start the daily cycle of "automatically" taking
+     * medication that the user wishes to do so.
+     */
+    private void setAutoTakeAlarm() {
+        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+
+        // set calendar to begin at midnight the next day
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DATE, 1);
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+
+        // Use time as a unique ID for the pending intent
+        int id = (int) System.currentTimeMillis();
+
+        // Setup intent to pass to receiver
+        Intent intent = new Intent(MainActivity.this, AutoTakeReceiver.class);
+        intent.setAction("android.intent.action.NOTIFY");
+
+        // Register the custom broadcast receiver
+        MainActivity.this.registerReceiver(new AutoTakeReceiver(), new IntentFilter());
+
+        // Set up pendingIntent for the broadcast to specify action in the future
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        // Set repeating alarm that calls onReceive() of RefreshReceiver at supplied time
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+
+        Toast.makeText(MainActivity.this, "Registered autotake!", Toast.LENGTH_SHORT).show();
+
+    }
+
+
+    /**
      * Helper function that is called on creation to start the refresh cycle for medication
-     * I.e., isTaken in each application will be set to false in every appl in db at the start of
+     * I.e., isTaken in each application will be set to false in every dose in db at the start of
      * a new week
      */
     private void setRefreshAlarm() {
