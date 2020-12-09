@@ -17,9 +17,9 @@ public class AutoTakeReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         DatabaseHelper databaseHelper = new DatabaseHelper(context);
 
-        Toast.makeText(context, "AutoTake activated", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context, "AutoTake activated", Toast.LENGTH_SHORT).show();
 
-        // Firstly get the day of prev. day
+        // Obtain what day it was yesterday
         Calendar c = Calendar.getInstance();
         c.add(Calendar.DATE, -1);
         int cDay = c.get(Calendar.DAY_OF_WEEK);
@@ -35,7 +35,7 @@ public class AutoTakeReceiver extends BroadcastReceiver {
 
                 // if the dose is to be taken on target day, take the med
                 String day = d.getDay();
-                if(App.days.indexOf(day) == cDay){
+                if(App.days.indexOf(day) == cDay && !d.isTaken()){
                     databaseHelper.takeMedication(d, m);
                 }
 

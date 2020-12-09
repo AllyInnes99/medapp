@@ -104,11 +104,11 @@ public class HomeFragment extends Fragment {
     /**
      * Method that is used to display the rec
      */
-    private void displayApplRecycler() {
+    public void displayApplRecycler() {
         models = databaseHelper.selectTodaysDoseAndNotTaken();
 
         if(!models.isEmpty()){
-            applicationAdapter = new ApplicationAdapter(getActivity(), models);
+            applicationAdapter = new ApplicationAdapter(getActivity(), models, this);
             recyclerView.setAdapter(applicationAdapter);
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         }

@@ -26,6 +26,7 @@ public class AlertReceiver extends BroadcastReceiver {
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
 
         int quantity = (int) intent.getSerializableExtra("quantity");
+        int id = (int) intent.getSerializableExtra("medID");
         String name = (String) intent.getSerializableExtra("name");
 
         String title = "MedApp: Take " + name;

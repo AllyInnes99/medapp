@@ -24,7 +24,7 @@ import java.nio.channels.AlreadyBoundException;
 import java.util.Calendar;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
 
     BottomNavigationView bottomNavigationView;
     NavController navController;

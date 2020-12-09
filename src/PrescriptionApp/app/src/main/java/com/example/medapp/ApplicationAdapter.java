@@ -9,6 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -18,11 +19,14 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
     private Context context;
     private List<DoseModel> doseModels;
     DatabaseHelper databaseHelper;
+    HomeFragment fragment;
 
-    ApplicationAdapter(Context context, List<DoseModel> doseModels) {
+    ApplicationAdapter(Context context, List<DoseModel> doseModels, HomeFragment fragment) {
         this.context = context;
         this.doseModels = doseModels;
+        this.fragment = fragment;
         this.databaseHelper = new DatabaseHelper(context);
+
     }
 
     @NonNull
@@ -44,7 +48,7 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
         holder.button.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                String msg = "";
+                String msg;
                 if(model.getAmount() > medModel.getQuantity()){
                     msg = "You don't have enough stock to take this medication.";
                 }
@@ -53,6 +57,7 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
                     msg = "You have taken " + model.getAmount() + " of " + medModel.getName();
                 }
                 Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+                fragment.displayApplRecycler();
             }
         });
 
