@@ -33,6 +33,7 @@
         </activity>
 
         <receiver
+            android:process=":remote"
             android:name=".AlertReceiver"
             android:exported="true">
             <intent-filter>
@@ -41,7 +42,17 @@
             </intent-filter>
         </receiver>
         <receiver
+            android:process=":remote"
             android:name=".RefreshReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.INPUT_METHOD_CHANGED" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:process=":remote"
+            android:name=".AutoTakeReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

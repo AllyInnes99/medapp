@@ -70,30 +70,11 @@ public class AddDailyApplication extends AppCompatActivity {
             public void onClick(View v) {
 
                 DoseModel applModel;
-                String [] days = {"Monday", "Tuesday", "Wednesday", "Thursday",
-                                    "Friday", "Saturday", "Sunday"};
-
                 try {
                     int medID = medModel.getMedicationId();
                     String time = et_time.getText().toString();
                     int amount = Integer.parseInt(et_amount.getText().toString());
-
-                    // add the medication model created previously
-                    //databaseHelper.addMedication(medModel);
-
-                    applModel = new DoseModel(0, medID, time, "Monday", amount, false);
-
-
-                    /*
-                    for(String day: days){
-                        applModel = new DoseModel(0, medID, time, day, amount, false);
-                        boolean success = databaseHelper.addDose(applModel);
-                        if (!success) {
-                            throw new Exception("Failed to add new application.");
-                        }
-                    }
-                    */
-                    // Once all applications added, return to the prev activity
+                    applModel = new DoseModel(medID, time, "Monday", amount, false);
                     Intent output = new Intent();
                     output.putExtra("applModel", applModel);
                     setResult(RESULT_OK, output);

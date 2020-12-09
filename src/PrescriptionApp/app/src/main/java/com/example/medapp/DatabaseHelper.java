@@ -53,7 +53,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
 
         String createMedTableStatement = onCreateHelper(MEDICATION_TABLE) + " ("
-                                        + COL_MEDICATION_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                                        + COL_MEDICATION_ID + " INTEGER PRIMARY KEY, "
                                         + COL_MEDICATION_NAME + " TEXT, " + COL_QUANTITY + " INT, "
                                         + COL_FREQUENCY + " TEXT,"
                                         + COL_DOSAGE + " REAL, "
@@ -141,6 +141,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public List<MedicationModel> selectAllMedication(){
         String rawQuery = "SELECT * FROM " + MEDICATION_TABLE;
         return selectMedicationHelper(rawQuery);
+    }
+
+    public MedicationModel selectMedicationFromID(int id) {
+        String rawQuery = "SELECT * FROM " + MEDICATION_TABLE
+                + " WHERE " + COL_MEDICATION_ID + " = " + id;
+        return selectMedicationHelper(rawQuery).get(0);
     }
 
     public MedicationModel selectMedicationFromDose(DoseModel model) {

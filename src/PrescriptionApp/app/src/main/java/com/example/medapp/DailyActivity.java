@@ -92,6 +92,7 @@ public class DailyActivity extends AppCompatActivity {
                         "Friday", "Saturday", "Sunday"};
 
                 for(DoseModel m: temp){
+                    m.setMedicationId(medModel.getMedicationId());
                     for(int i = 0; i < days.length; i++){
                         m.setDay(days[i]);
                         databaseHelper.addDose(m);
@@ -136,17 +137,19 @@ public class DailyActivity extends AppCompatActivity {
         int mins = Integer.parseInt(time[1]);
 
         // Set calendar to represent the day
-        c.set(Calendar.DAY_OF_WEEK, doseModel.dayToInt());
         c.set(Calendar.HOUR, hour);
         c.set(Calendar.MINUTE, mins);
         c.set(Calendar.SECOND, 0);
         c.set(Calendar.MILLISECOND, 0);
 
 
+
         AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, AlertReceiver.class);
         intent.setAction("android.intent.action.NOTIFY");
 
+
+        intent.putExtra("", "");
         intent.putExtra("quantity", doseModel.getAmount());
         intent.putExtra("name", medModel.getName());
 
@@ -154,7 +157,7 @@ public class DailyActivity extends AppCompatActivity {
         DailyActivity.this.registerReceiver(new AlertReceiver(), new IntentFilter());
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(DailyActivity.this, doseModel.getDoseId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
     }
 
 

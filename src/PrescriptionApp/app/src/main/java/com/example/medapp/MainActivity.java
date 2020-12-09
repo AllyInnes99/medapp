@@ -112,11 +112,8 @@ public class MainActivity extends AppCompatActivity {
         // Set up pendingIntent for the broadcast to specify action in the future
         PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        // Set repeating alarm that calls onReceive() of RefreshReceiver at supplied time
+        // Set repeating alarm that calls onReceive() of AutoTakeReceiver at supplied time
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
-
-        Toast.makeText(MainActivity.this, "Registered autotake!", Toast.LENGTH_SHORT).show();
-
     }
 
 

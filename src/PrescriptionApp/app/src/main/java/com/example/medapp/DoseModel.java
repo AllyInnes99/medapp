@@ -15,25 +15,26 @@ public class DoseModel implements Comparable<DoseModel>, Serializable {
     private static String[] days = {"Sunday", "Monday", "Tuesday", "Wednesday",
                                     "Thursday", "Friday", "Saturday"};
     private static List<String> dayList = Arrays.asList(days);
+    private static int id = 0;
 
 
     /**
      * Initialise an ApplicationModel instance
      * @param doseId - unique identifier of instance
      * @param time - time for application to be taken
-     * @param dosage - the dosage of the application to be taken
      * @param day - the day of when this application is to be taknen
      * @param amount - the amount of medicine to be taken in this applicaition
      * @param isTaken - if this application has been taken or not
      */
-    public DoseModel(int doseId, int medicationId, String time, String day, int amount, boolean isTaken) {
-        this.doseId = doseId;
+    public DoseModel(int medicationId, String time, String day, int amount, boolean isTaken) {
+        this.doseId = id++;
         this.medicationId = medicationId;
         this.time = time;
         this.day = day;
         this.amount = amount;
         this.isTaken = isTaken;
     }
+
 
     public DoseModel(int doseId, int medicationId, int timeMinutes, int timeHour, String day, int amount, boolean isTaken) {
         this.doseId = doseId;

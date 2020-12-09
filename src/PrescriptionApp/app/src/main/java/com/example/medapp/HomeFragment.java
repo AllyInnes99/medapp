@@ -106,10 +106,12 @@ public class HomeFragment extends Fragment {
      */
     private void displayApplRecycler() {
         models = databaseHelper.selectTodaysDoseAndNotTaken();
-        Collections.sort(models);
-        applicationAdapter = new ApplicationAdapter(getActivity(), models);
-        recyclerView.setAdapter(applicationAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        if(!models.isEmpty()){
+            applicationAdapter = new ApplicationAdapter(getActivity(), models);
+            recyclerView.setAdapter(applicationAdapter);
+            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        }
     }
 
 

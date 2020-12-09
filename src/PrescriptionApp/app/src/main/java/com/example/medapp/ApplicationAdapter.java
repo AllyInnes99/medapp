@@ -55,6 +55,8 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
                 Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
             }
         });
+
+
     }
 
     @Override

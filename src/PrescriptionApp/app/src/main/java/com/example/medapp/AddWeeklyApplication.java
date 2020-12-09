@@ -86,7 +86,7 @@ public class AddWeeklyApplication extends AppCompatActivity {
                     double dosage = 0.1;
                     int amount = Integer.parseInt(et_amount.getText().toString());
 
-                    applModel = new DoseModel(0, medID, time, selectedDay, amount, false);
+                    applModel = new DoseModel(medID, time, selectedDay, amount, false);
                     boolean success = databaseHelper.addDose(applModel);
                     if(!success) throw new Exception("Failed to add new application");
 

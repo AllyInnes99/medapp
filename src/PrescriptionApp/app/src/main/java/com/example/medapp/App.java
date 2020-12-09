@@ -89,9 +89,7 @@ public class App extends Application {
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(medChannel);
             notificationManager.createNotificationChannel(refillChannel);
-
         }
-
     }
 
 }

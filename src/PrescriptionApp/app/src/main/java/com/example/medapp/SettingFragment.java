@@ -1,10 +1,14 @@
 package com.example.medapp;
 
 import android.Manifest;
+import android.app.AlarmManager;
 import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -82,7 +86,7 @@ public class SettingFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_setting, container, false);
+        final View view = inflater.inflate(R.layout.fragment_setting, container, false);
         btnMed = view.findViewById(R.id.btnMed);
         btnRefill = view.findViewById(R.id.btnRefill);
         notificationManager = NotificationManagerCompat.from(getActivity());
@@ -91,48 +95,29 @@ public class SettingFragment extends Fragment {
         btnMed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Calendar c = Calendar.getInstance();
-
-                Intent intent = new Intent(Intent.ACTION_INSERT)
-                        .setType("vnd.android.cursor.item/event")
-                        .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, c.getTimeInMillis())
-                        .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, c.getTimeInMillis())
-                        .putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY , false)
-                        .putExtra(CalendarContract.Events.TITLE, "Take medication")
-                        .putExtra(CalendarContract.Events.DESCRIPTION, "Take 1 of med")
-                        .putExtra(CalendarContract.Events.EVENT_LOCATION, "Earth")
-                        .putExtra(CalendarContract.Events.RRULE, "FREQ=DAILY");
-                startActivity(intent);
+            sendOnChannel1(v);
             }
         });
 
         btnRefill.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                AlarmManager alarmManager = (AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
 
-                // req permissions
-                checkCalendarPermission(Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR);
+                Calendar c = Calendar.getInstance();
+                c.add(Calendar.SECOND, 10);
 
+                Intent intent = new Intent(getActivity(), AlertReceiver.class);
+                intent.setAction("android.intent.action.NOTIFY");
 
-                Calendar c1 = Calendar.getInstance();
-                c1.set(2020, 12, 2, 9, 0);
+                intent.putExtra("quantity", 1);
+                intent.putExtra("name", "test");
 
-                Calendar c2 = Calendar.getInstance();
-                c2.set(2020, 12, 2, 10, 0);
+                // Register receiver
+                getActivity().registerReceiver(new AlertReceiver(), new IntentFilter());
 
-                ContentResolver cr = getActivity().getContentResolver();
-                ContentValues cv = new ContentValues();
-                cv.put(CalendarContract.Events.DTSTART, c1.getTimeInMillis());
-                cv.put(CalendarContract.Events.DTEND, c2.getTimeInMillis());
-                cv.put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().getID());
-                cv.put(CalendarContract.Events.TITLE, "Test Title");
-                cv.put(CalendarContract.Events.DESCRIPTION, "Test description");
-                cv.put(CalendarContract.Events.CALENDAR_ID, getCalendarID());
-                Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, cv);
-
-                String eventId = uri.getLastPathSegment();
-
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), (int)System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_FIFTEEN_MINUTES / 15, pendingIntent);
             }
         });
 
@@ -164,6 +149,31 @@ public class SettingFragment extends Fragment {
 
 
     }
+
+    private void addToCalendar(){
+        // req permissions
+        checkCalendarPermission(Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR);
+
+
+        Calendar c1 = Calendar.getInstance();
+        c1.set(2020, 12, 2, 9, 0);
+
+        Calendar c2 = Calendar.getInstance();
+        c2.set(2020, 12, 2, 10, 0);
+
+        ContentResolver cr = getActivity().getContentResolver();
+        ContentValues cv = new ContentValues();
+        cv.put(CalendarContract.Events.DTSTART, c1.getTimeInMillis());
+        cv.put(CalendarContract.Events.DTEND, c2.getTimeInMillis());
+        cv.put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().getID());
+        cv.put(CalendarContract.Events.TITLE, "Test Title");
+        cv.put(CalendarContract.Events.DESCRIPTION, "Test description");
+        cv.put(CalendarContract.Events.CALENDAR_ID, getCalendarID());
+        Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, cv);
+
+        String eventId = uri.getLastPathSegment();
+    }
+
 
 
     private void checkCalendarPermission(String... permissionsId){
