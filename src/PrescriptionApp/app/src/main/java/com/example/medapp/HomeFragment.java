@@ -95,10 +95,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
         displayApplRecycler();
-
-
     }
 
     /**
@@ -106,18 +103,8 @@ public class HomeFragment extends Fragment {
      */
     public void displayApplRecycler() {
         models = databaseHelper.selectTodaysDoseAndNotTaken();
-
-        if(!models.isEmpty()){
-            applicationAdapter = new ApplicationAdapter(getActivity(), models, this);
-            recyclerView.setAdapter(applicationAdapter);
-            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        }
-    }
-
-
-
-    private void updateRecycler(int pos){
-        models.remove(pos);
-        applicationAdapter.notifyDataSetChanged();
+        applicationAdapter = new ApplicationAdapter(getActivity(), models, this);
+        recyclerView.setAdapter(applicationAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 }
