@@ -95,7 +95,7 @@ public class SettingFragment extends Fragment {
         btnMed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            sendOnChannel1(v);
+                addToCalendar();
             }
         });
 
@@ -168,7 +168,7 @@ public class SettingFragment extends Fragment {
         cv.put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().getID());
         cv.put(CalendarContract.Events.TITLE, "Test Title");
         cv.put(CalendarContract.Events.DESCRIPTION, "Test description");
-        cv.put(CalendarContract.Events.CALENDAR_ID, getCalendarID());
+        cv.put(CalendarContract.Events.CALENDAR_ID, 2);
         Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, cv);
 
         String eventId = uri.getLastPathSegment();
