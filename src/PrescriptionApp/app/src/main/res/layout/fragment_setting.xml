@@ -23,13 +23,12 @@
             android:layout_height="wrap_content"
             android:hint="Message">:
         </EditText>
-        
+
         <Button
             android:id="@+id/btnMed"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Channel 1">
-        </Button>
+            android:text="Channel 1"></Button>
 
         <Button
             android:id="@+id/btnRefill"
@@ -37,8 +36,14 @@
             android:layout_height="wrap_content"
             android:text="Channel 2">
         </Button>
-        
-        
+
+        <Button
+            android:id="@+id/sign_out_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="sign out" />
+
+
     </LinearLayout>
 
 

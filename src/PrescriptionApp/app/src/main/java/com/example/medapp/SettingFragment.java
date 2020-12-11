@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.net.Credentials;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -26,7 +27,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.credentials.CredentialsClient;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.Calendar;
+import java.util.Set;
 import java.util.TimeZone;
 
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
@@ -43,7 +49,7 @@ public class SettingFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    Button btnMed, btnRefill;
+    Button btnMed, btnRefill, btnSignOut;
     NotificationManagerCompat notificationManager;
 
 
@@ -89,35 +95,32 @@ public class SettingFragment extends Fragment {
         final View view = inflater.inflate(R.layout.fragment_setting, container, false);
         btnMed = view.findViewById(R.id.btnMed);
         btnRefill = view.findViewById(R.id.btnRefill);
+        btnSignOut = view.findViewById(R.id.sign_out_btn);
         notificationManager = NotificationManagerCompat.from(getActivity());
 
 
         btnMed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addToCalendar();
+                credentialTest();
             }
         });
 
         btnRefill.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlarmManager alarmManager = (AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
+                addToCalendar();
+            }
+        });
 
-                Calendar c = Calendar.getInstance();
-                c.add(Calendar.SECOND, 10);
-
-                Intent intent = new Intent(getActivity(), AlertReceiver.class);
-                intent.setAction("android.intent.action.NOTIFY");
-
-                intent.putExtra("quantity", 1);
-                intent.putExtra("name", "test");
-
-                // Register receiver
-                getActivity().registerReceiver(new AlertReceiver(), new IntentFilter());
-
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), (int)System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_FIFTEEN_MINUTES / 15, pendingIntent);
+        btnSignOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                Toast.makeText(getActivity(), "Signed out.", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity(), SignInActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
             }
         });
 
@@ -156,10 +159,10 @@ public class SettingFragment extends Fragment {
 
 
         Calendar c1 = Calendar.getInstance();
-        c1.set(2020, 12, 2, 9, 0);
+        c1.set(2020, 12, 25, 9, 0);
 
         Calendar c2 = Calendar.getInstance();
-        c2.set(2020, 12, 2, 10, 0);
+        c2.set(2020, 12, 25, 10, 0);
 
         ContentResolver cr = getActivity().getContentResolver();
         ContentValues cv = new ContentValues();
@@ -168,7 +171,7 @@ public class SettingFragment extends Fragment {
         cv.put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().getID());
         cv.put(CalendarContract.Events.TITLE, "Test Title");
         cv.put(CalendarContract.Events.DESCRIPTION, "Test description");
-        cv.put(CalendarContract.Events.CALENDAR_ID, 2);
+        cv.put(CalendarContract.Events.CALENDAR_ID, 3);
         Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, cv);
 
         String eventId = uri.getLastPathSegment();
@@ -214,5 +217,38 @@ public class SettingFragment extends Fragment {
                 .setCategory(NotificationCompat.CATEGORY_REMINDER).build();
         notificationManager.notify(2, notification);
     }
+
+    public void credentialTest() {
+        FirebaseUser usr = FirebaseAuth.getInstance().getCurrentUser();
+        String msg;
+        if(usr.isAnonymous()){
+            msg = "User is anonymous!";
+        }
+        else{
+            msg = usr.getDisplayName();
+        }
+        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+    }
+
+    private void notifTest() {
+        AlarmManager alarmManager = (AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
+
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.SECOND, 10);
+
+        Intent intent = new Intent(getActivity(), AlertReceiver.class);
+        intent.setAction("android.intent.action.NOTIFY");
+
+        intent.putExtra("quantity", 1);
+        intent.putExtra("name", "test");
+
+        // Register receiver
+        getActivity().registerReceiver(new AlertReceiver(), new IntentFilter());
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), (int)System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_FIFTEEN_MINUTES / 15, pendingIntent);
+    }
+
+
 
 }

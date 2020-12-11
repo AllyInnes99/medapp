@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -17,7 +18,6 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -27,7 +27,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 public class SignInActivity extends AppCompatActivity {
 
     private static final String TAG = "Google Activity";
-    private static int RC_SIGN_IN = 100;
+    private static int GOOGLE_SIGN_IN = 100;
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
 
@@ -48,16 +48,26 @@ public class SignInActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        SignInButton signInButton = findViewById(R.id.sign_in_button);
-        signInButton.setSize(SignInButton.SIZE_STANDARD);
+        SignInButton googleSignInButton = findViewById(R.id.sign_in_button);
+        googleSignInButton.setSize(SignInButton.SIZE_STANDARD);
 
-        signInButton.setOnClickListener(new View.OnClickListener(){
+        googleSignInButton.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View v) {
-                signIn();
+                signInWithGoogle();
             }
         });
+
+        final Button anonSignInButton = findViewById(R.id.anon_sign_in);
+        anonSignInButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                signInAnonymously();
+            }
+        });
+
+
 
     }
 
@@ -75,7 +85,7 @@ public class SignInActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
+        if (requestCode == GOOGLE_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 // Google Sign In was successful, authenticate with Firebase
@@ -113,13 +123,28 @@ public class SignInActivity extends AppCompatActivity {
     }
 
 
-    private void signIn() {
+    private void signInWithGoogle() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, RC_SIGN_IN);
+        startActivityForResult(signInIntent, GOOGLE_SIGN_IN);
     }
 
+    private void signInAnonymously() {
+        mAuth.signInAnonymously()
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful()) {
+                            Log.d(TAG, "signInAnonymously:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            startActivity(new Intent(SignInActivity.this, MainActivity.class));
+                        }
+                        else {
+                            Log.w(TAG, "signInAnonymously:failure", task.getException());
+                            Toast.makeText(SignInActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
 
-
-
-
+    }
 }
