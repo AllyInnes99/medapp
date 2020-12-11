@@ -32,6 +32,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Calendar;
+import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
 
@@ -109,7 +110,7 @@ public class SettingFragment extends Fragment {
         btnRefill.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addToCalendar();
+                delDatabase();
             }
         });
 
@@ -189,6 +190,19 @@ public class SettingFragment extends Fragment {
         }
     }
 
+    private void delDatabase(){
+        DatabaseHelper databaseHelper = new DatabaseHelper(getActivity());
+        List<DoseModel> ds = databaseHelper.selectAllDoses();
+        List<MedicationModel> ms = databaseHelper.selectAllMedication();
+        for(DoseModel d: ds){
+            databaseHelper.deleteDose(d);
+        }
+        for(MedicationModel m: ms){
+            databaseHelper.deleteMedication(m);
+        }
+        Toast.makeText(getActivity(), "Deleted all med records.", Toast.LENGTH_SHORT).show();
+    }
+
 
     public void sendOnChannel1(View v){
         String title = "Take medication!";
@@ -248,7 +262,5 @@ public class SettingFragment extends Fragment {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), (int)System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_FIFTEEN_MINUTES / 15, pendingIntent);
     }
-
-
 
 }

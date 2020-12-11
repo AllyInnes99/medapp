@@ -8,7 +8,6 @@ import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -80,13 +79,15 @@ public class DailyActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-
                 databaseHelper.addMedication(medModel);
+                Toast.makeText(DailyActivity.this, medModel.getName(), Toast.LENGTH_SHORT).show();
+
+                List<MedicationModel> mModels = databaseHelper.selectAllMedication();
+                medModel = mModels.get(0);
+
+                Toast.makeText(DailyActivity.this, Integer.toString(medModel.getMedicationId()), Toast.LENGTH_SHORT).show();
 
                 Intent intent = new Intent(DailyActivity.this, MainActivity.class);
-
-                // For each application set-up, initialise a notification for taking the medication
-                List<DoseModel> applModels = temp;
 
                 String [] days = {"Monday", "Tuesday", "Wednesday", "Thursday",
                         "Friday", "Saturday", "Sunday"};
@@ -94,23 +95,21 @@ public class DailyActivity extends AppCompatActivity {
                 for(DoseModel m: temp){
                     m.setMedicationId(medModel.getMedicationId());
                     for(int i = 0; i < days.length; i++){
+                        m.setDoseId((int) Calendar.getInstance().getTimeInMillis());
                         m.setDay(days[i]);
                         databaseHelper.addDose(m);
                     }
                     initialiseNotification(m);
                 }
 
-
                 // update days until refill for med
                 databaseHelper.updateDaysUntilEmpty(medModel);
-
 
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }
         });
     }
-
 
     /**
      * Helper method that creates a new notification channel for a newly added medication
@@ -148,8 +147,6 @@ public class DailyActivity extends AppCompatActivity {
         Intent intent = new Intent(this, AlertReceiver.class);
         intent.setAction("android.intent.action.NOTIFY");
 
-
-        intent.putExtra("", "");
         intent.putExtra("quantity", doseModel.getAmount());
         intent.putExtra("name", medModel.getName());
 

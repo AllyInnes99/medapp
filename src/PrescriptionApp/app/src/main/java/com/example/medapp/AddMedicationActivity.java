@@ -100,8 +100,8 @@ public class AddMedicationActivity extends AppCompatActivity {
 
                     boolean take = autoTake.isChecked();
 
-                    model = new MedicationModel(medicationName, quantity,refill, selectedType,
-                    selectedFrequency, dosage, selectedMeasurement, "me", take );
+                    model = new MedicationModel(medicationName, quantity, refill, selectedType,
+                                selectedFrequency, dosage, selectedMeasurement, "me", take );
 
 
 

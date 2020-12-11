@@ -20,14 +20,13 @@ public class DoseModel implements Comparable<DoseModel>, Serializable {
 
     /**
      * Initialise an ApplicationModel instance
-     * @param doseId - unique identifier of instance
      * @param time - time for application to be taken
      * @param day - the day of when this application is to be taknen
      * @param amount - the amount of medicine to be taken in this applicaition
      * @param isTaken - if this application has been taken or not
      */
     public DoseModel(int medicationId, String time, String day, int amount, boolean isTaken) {
-        this.doseId = id++;
+        this.doseId = (int)System.currentTimeMillis();
         this.medicationId = medicationId;
         this.time = time;
         this.day = day;

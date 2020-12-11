@@ -16,11 +16,11 @@ public class MedicationModel implements Serializable {
     private String measurement;
     private String profile;
     private boolean autoTake;
-    private static int id = 0;
+
 
     public MedicationModel(String name, int quantity, int refillAt, String type, String dayFrequency,
                            double dosage, String measurement, String profile, boolean autoTake) {
-        this.medicationId = ++id;
+        this.medicationId = (int) System.currentTimeMillis();
         this.name = name;
         this.quantity = quantity;
         this.refillAt = refillAt;
@@ -34,7 +34,7 @@ public class MedicationModel implements Serializable {
 
     public MedicationModel(String name, int quantity, int refillAt, String type, String dayFrequency,
                            double dosage, String measurement, String profile) {
-        this.medicationId = ++id;
+        this.medicationId = ++App.medId;
         this.name = name;
         this.quantity = quantity;
         this.refillAt = refillAt;
