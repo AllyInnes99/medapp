@@ -103,7 +103,7 @@ public class SettingFragment extends Fragment {
         btnMed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                credentialTest();
+                notifTest();
             }
         });
 
@@ -247,6 +247,7 @@ public class SettingFragment extends Fragment {
     private void notifTest() {
         AlarmManager alarmManager = (AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
 
+
         Calendar c = Calendar.getInstance();
         c.add(Calendar.SECOND, 10);
 
@@ -260,7 +261,7 @@ public class SettingFragment extends Fragment {
         getActivity().registerReceiver(new AlertReceiver(), new IntentFilter());
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), (int)System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_FIFTEEN_MINUTES / 15, pendingIntent);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
     }
 
 }

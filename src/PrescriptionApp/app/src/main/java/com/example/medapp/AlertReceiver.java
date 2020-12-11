@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -18,15 +19,18 @@ public class AlertReceiver extends BroadcastReceiver {
         tapIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, tapIntent, 0);
 
+        /*
         Intent takeIntent = new Intent(context, TakeReceiver.class);
         takeIntent.setAction(Intent.ACTION_EDIT);
         takeIntent.putExtra("take", 0);
+        */
 
+        Toast.makeText(context, "notif received", Toast.LENGTH_SHORT).show();
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
 
         int quantity = (int) intent.getSerializableExtra("quantity");
-        int id = (int) intent.getSerializableExtra("medID");
+        //int id = (int) intent.getSerializableExtra("medID");
         String name = (String) intent.getSerializableExtra("name");
 
         String title = "MedApp: Take " + name;

@@ -80,12 +80,10 @@ public class DailyActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 databaseHelper.addMedication(medModel);
-                Toast.makeText(DailyActivity.this, medModel.getName(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(DailyActivity.this, medModel.getName(), Toast.LENGTH_SHORT).show();
 
                 List<MedicationModel> mModels = databaseHelper.selectAllMedication();
                 medModel = mModels.get(0);
-
-                Toast.makeText(DailyActivity.this, Integer.toString(medModel.getMedicationId()), Toast.LENGTH_SHORT).show();
 
                 Intent intent = new Intent(DailyActivity.this, MainActivity.class);
 
@@ -123,7 +121,7 @@ public class DailyActivity extends AppCompatActivity {
                     id, label, NotificationManager.IMPORTANCE_HIGH);
             channel.setDescription("Notifications to remind user to take "+ medModel.getName() + " at appointed time");
 
-            NotificationManager notificationManager = (NotificationManager)getSystemService(NotificationManager.class);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
 
         }
@@ -131,17 +129,17 @@ public class DailyActivity extends AppCompatActivity {
 
     private void initialiseNotification(DoseModel doseModel){
         Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(System.currentTimeMillis());
+
         String[] time = doseModel.timeToHourAndMin();
         int hour = Integer.parseInt(time[0]);
         int mins = Integer.parseInt(time[1]);
 
         // Set calendar to represent the day
-        c.set(Calendar.HOUR, hour);
+        c.set(Calendar.HOUR_OF_DAY, hour);
         c.set(Calendar.MINUTE, mins);
         c.set(Calendar.SECOND, 0);
         c.set(Calendar.MILLISECOND, 0);
-
-
 
         AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, AlertReceiver.class);
@@ -154,7 +152,8 @@ public class DailyActivity extends AppCompatActivity {
         DailyActivity.this.registerReceiver(new AlertReceiver(), new IntentFilter());
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(DailyActivity.this, doseModel.getDoseId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+        Toast.makeText(DailyActivity.this, "Registered alarm.", Toast.LENGTH_SHORT).show();
     }
 
 
