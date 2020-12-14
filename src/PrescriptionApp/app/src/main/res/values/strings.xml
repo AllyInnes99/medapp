@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Prescription App</string>
+    <string name="app_name">MedApp</string>
     <string name="MedicationQuantity">Quantity</string>
     <string name="MedicationTaken">Taken</string>
     <string name="MedicationName">"Medication Name "</string>
@@ -9,8 +9,6 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="update">update</string>
     <string name="delete">delete</string>
     <string name="title_activity_settings">SettingsActivity</string>

@@ -1,6 +1,7 @@
 package com.example.medapp;
 
 import android.Manifest;
+import android.accounts.Account;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -21,6 +22,8 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.provider.CalendarContract;
+import android.provider.CalendarContract.Calendars;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,10 +31,29 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.credentials.CredentialsClient;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.util.DateTime;
+import com.google.api.services.calendar.CalendarScopes;
+import com.google.api.services.calendar.model.Event;
+import com.google.api.services.calendar.model.EventDateTime;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.OAuthCredential;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 
+
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
@@ -103,14 +125,20 @@ public class SettingFragment extends Fragment {
         btnMed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                notifTest();
+                calTest();
             }
         });
 
         btnRefill.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                delDatabase();
+                try {
+                    addToCalendar();
+                } catch (GeneralSecurityException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -128,10 +156,70 @@ public class SettingFragment extends Fragment {
         return view;
     }
 
-    private int getCalendarID(){
+    private void addEvent(NetHttpTransport httpTransport) {
+
+        final String scope = "audience:server:client_id:" + "760826647786-auv3uj2k1je1dmjiohges1d846evjqm7.apps.googleusercontent.com";
+        GoogleAccountCredential gac =
+                GoogleAccountCredential.usingOAuth2(getActivity(), Collections.singleton(CalendarScopes.CALENDAR_EVENTS));
+        gac.setSelectedAccount(GoogleSignIn.getLastSignedInAccount(getActivity()).getAccount());
+
+        // Java has no aliasing of import names, need to use full path
+        final com.google.api.services.calendar.Calendar service =
+                new com.google.api.services.calendar.Calendar.Builder(
+                        httpTransport, JacksonFactory.getDefaultInstance(), gac)
+                        .setApplicationName(getString(R.string.app_name))
+                        .build();
+
+        final Event[] event = {new Event()
+                .setSummary("THis is a test summary")
+                .setLocation("Test location")
+                .setDescription("Test description for this test event!")};
+
+        DateTime startDateTime = new DateTime("2020-12-28T09:00:00-07:00");
+        EventDateTime start = new EventDateTime()
+                .setDateTime(startDateTime)
+                .setTimeZone("Europe/London");
+        event[0].setStart(start);
+
+        DateTime endDateTime = new DateTime("2020-12-28T17:00:00-07:00");
+        EventDateTime end = new EventDateTime()
+                .setDateTime(endDateTime)
+                .setTimeZone("Europe/London");
+        event[0].setEnd(end);
+
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    event[0] = service.events().insert("primary", event[0]).execute();
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getActivity(), "Pass", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    //Toast.makeText(getActivity(), "Success", Toast.LENGTH_SHORT).show();
+                } catch (final Exception e) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
+                            Log.e("MedApp", "exception", e);
+                        }
+                    });
+                }
+            }
+        });
+        t.start();
+
+
+    }
+
+    private void getCalendarID(){
         Uri uri = CalendarContract.Calendars.CONTENT_URI;
         String[] projection = new String[] {
                 CalendarContract.Calendars._ID,
+                CalendarContract.Calendars.ACCOUNT_TYPE,
                 CalendarContract.Calendars.ACCOUNT_NAME,
                 CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,
                 CalendarContract.Calendars.NAME,
@@ -139,43 +227,61 @@ public class SettingFragment extends Fragment {
         };
 
         Cursor cursor = getActivity().getContentResolver().query(uri, projection,
-                                                        null, null, null);
+                null, null, null);
 
         if(cursor.moveToFirst()){
 
+            do {
+                Log.d("MedApp", Integer.toString(cursor.getInt(0)));
+                Log.d("MedApp", cursor.getString(1));
+
+            } while(cursor.moveToNext());
+
             int a  = Integer.parseInt(cursor.getString(cursor.getColumnIndex(CalendarContract.Calendars._ID)));
             Toast.makeText(getActivity(), Integer.toString(a), Toast.LENGTH_SHORT).show();
-            return a;
-        }
-        else{
-            return -1;
-        }
 
+        }
+        cursor.close();
 
     }
 
-    private void addToCalendar(){
-        // req permissions
-        checkCalendarPermission(Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR);
+    private void calTest() {
+        // Construct event details
+        long startMillis = 0;
+        long endMillis = 0;
+        Calendar beginTime = Calendar.getInstance();
+        beginTime.set(2020, 12, 20, 7, 30);
+        startMillis = beginTime.getTimeInMillis();
+        Calendar endTime = Calendar.getInstance();
+        endTime.set(2020, 12, 20, 8, 45);
+        endMillis = endTime.getTimeInMillis();
+
+        // Insert Event
+        ContentResolver cr = getActivity().getApplicationContext().getContentResolver();
+        ContentValues values = new ContentValues();
+        TimeZone timeZone = TimeZone.getDefault();
+        values.put(CalendarContract.Events.DTSTART, startMillis);
+        values.put(CalendarContract.Events.DTEND, endMillis);
+        values.put(CalendarContract.Events.EVENT_TIMEZONE, timeZone.getID());
+        values.put(CalendarContract.Events.TITLE, "Walk The Dog");
+        values.put(CalendarContract.Events.DESCRIPTION, "My dog is bored, so we're going on a really long walk!");
+        values.put(CalendarContract.Events.CALENDAR_ID, 3);
+        Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
+
+        // Retrieve ID for new event
+        String eventID = uri.getLastPathSegment();
+        Toast.makeText(getActivity(), "Added to cal", Toast.LENGTH_SHORT).show();
+    }
 
 
-        Calendar c1 = Calendar.getInstance();
-        c1.set(2020, 12, 25, 9, 0);
 
-        Calendar c2 = Calendar.getInstance();
-        c2.set(2020, 12, 25, 10, 0);
 
-        ContentResolver cr = getActivity().getContentResolver();
-        ContentValues cv = new ContentValues();
-        cv.put(CalendarContract.Events.DTSTART, c1.getTimeInMillis());
-        cv.put(CalendarContract.Events.DTEND, c2.getTimeInMillis());
-        cv.put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().getID());
-        cv.put(CalendarContract.Events.TITLE, "Test Title");
-        cv.put(CalendarContract.Events.DESCRIPTION, "Test description");
-        cv.put(CalendarContract.Events.CALENDAR_ID, 3);
-        Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, cv);
+    private void addToCalendar() throws GeneralSecurityException, IOException {
 
-        String eventId = uri.getLastPathSegment();
+        NetHttpTransport HTTP_TRANSPORT;
+        HTTP_TRANSPORT = new com.google.api.client.http.javanet.NetHttpTransport();
+        addEvent(HTTP_TRANSPORT);
+
     }
 
 
@@ -232,7 +338,15 @@ public class SettingFragment extends Fragment {
         notificationManager.notify(2, notification);
     }
 
+    private void getCredentials() {
+
+    }
+
+
+
     public void credentialTest() {
+
+        /**
         FirebaseUser usr = FirebaseAuth.getInstance().getCurrentUser();
         String msg;
         if(usr.isAnonymous()){
@@ -242,6 +356,20 @@ public class SettingFragment extends Fragment {
             msg = usr.getDisplayName();
         }
         Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+         **/
+
+        GoogleSignInAccount usr = GoogleSignIn.getLastSignedInAccount(getActivity());
+        
+        String msg;
+        if(usr == null){
+            msg = "User is anonymous!";
+        }
+        else{
+            msg = usr.getDisplayName();
+        }
+
+        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+
     }
 
     private void notifTest() {

@@ -53,7 +53,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
 
         String createMedTableStatement = onCreateHelper(MEDICATION_TABLE) + " ("
-                                        + COL_MEDICATION_ID + " INTEGER PRIMARY KEY UNIQUE DESC AUTOINCREMENT, "
+                                        + COL_MEDICATION_ID + " INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT, "
                                         + COL_MEDICATION_NAME + " TEXT, " + COL_QUANTITY + " INT, "
                                         + COL_FREQUENCY + " TEXT,"
                                         + COL_DOSAGE + " REAL, "
