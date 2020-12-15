@@ -44,19 +44,11 @@ import java.util.List;
  */
 public class SettingFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
     Button btnMed, btnRefill, btnSignOut;
     NotificationManagerCompat notificationManager;
 
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-    
     public SettingFragment() {
         // Required empty public constructor
     }
@@ -73,8 +65,6 @@ public class SettingFragment extends Fragment {
     public static SettingFragment newInstance(String param1, String param2) {
         SettingFragment fragment = new SettingFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -82,10 +72,6 @@ public class SettingFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -109,8 +95,33 @@ public class SettingFragment extends Fragment {
         btnRefill.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast.makeText(getActivity(), "Adding to Google Calendar", Toast.LENGTH_SHORT).show();
+                DatabaseHelper databaseHelper = new DatabaseHelper(getActivity());
                 GoogleCalendarHelper gch = new GoogleCalendarHelper(getActivity());
-                gch.addEvent();
+                List<MedicationModel> models = databaseHelper.selectAllMedication();
+
+                for(MedicationModel model: models){
+                    gch.addEventForMedication(model);
+                }
+
+                /*
+                String date = String.format("%s-%s-%s", "2021", "03", "25");
+
+
+                Event event  = new Event()
+                        .setDescription("Test")
+                        .setSummary("Test");
+                DateTime startDateTime = new DateTime(date);
+                EventDateTime start = new EventDateTime()
+                        .setDate(startDateTime)
+                        .setTimeZone("Europe/London");
+                event.setStart(start);
+                event.setEnd(start);
+
+                gch.addEventToCalendar(event);
+                */
+
+
             }
         });
 
