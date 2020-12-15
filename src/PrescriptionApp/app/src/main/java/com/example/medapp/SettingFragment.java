@@ -88,7 +88,12 @@ public class SettingFragment extends Fragment {
         btnMed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                delDatabase();
+                GoogleCalendarHelper gch = new GoogleCalendarHelper(getActivity());
+                try {
+                    gch.getEvents();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -103,25 +108,6 @@ public class SettingFragment extends Fragment {
                 for(MedicationModel model: models){
                     gch.addEventForMedication(model);
                 }
-
-                /*
-                String date = String.format("%s-%s-%s", "2021", "03", "25");
-
-
-                Event event  = new Event()
-                        .setDescription("Test")
-                        .setSummary("Test");
-                DateTime startDateTime = new DateTime(date);
-                EventDateTime start = new EventDateTime()
-                        .setDate(startDateTime)
-                        .setTimeZone("Europe/London");
-                event.setStart(start);
-                event.setEnd(start);
-
-                gch.addEventToCalendar(event);
-                */
-
-
             }
         });
 
