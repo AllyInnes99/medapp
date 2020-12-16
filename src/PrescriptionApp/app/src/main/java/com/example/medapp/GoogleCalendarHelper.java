@@ -72,6 +72,7 @@ public class GoogleCalendarHelper {
         t.start();
     }
 
+
     public void addMedReminder(MedicationModel medicationModel) {
         DatabaseHelper databaseHelper = new DatabaseHelper(context);
         List<DoseModel> doseModels = databaseHelper.selectDoseFromMedication(medicationModel);
@@ -102,8 +103,6 @@ public class GoogleCalendarHelper {
                     e.setRecurrence(Arrays.asList("RRULE:FREQ=DAILY;UNTIL=" + recurrenceEndDate));
                     addEventToCalendar(e);
                 }
-
-
             }
         }
     }
