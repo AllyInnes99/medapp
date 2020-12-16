@@ -91,7 +91,7 @@ public class SettingFragment extends Fragment {
             public void onClick(View v) {
                 GoogleCalendarHelper gch = new GoogleCalendarHelper(getActivity());
                 try {
-                    gch.deleteEvents();
+                    gch.deleteAllEvents();
                 } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }

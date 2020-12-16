@@ -123,6 +123,8 @@ public class UpdateMedActivity extends AppCompatActivity {
         btn_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
+                GoogleCalendarHelper gac = new GoogleCalendarHelper(UpdateMedActivity.this);
+                gac.deleteMedEvents(model);
                 databaseHelper.deleteMedication(model);
                 Toast.makeText(UpdateMedActivity.this, "Successfully deleted medication", Toast.LENGTH_SHORT).show();
                 finish();
@@ -136,8 +138,6 @@ public class UpdateMedActivity extends AppCompatActivity {
                 gac.addMedReminder(model);
             }
         });
-
-
 
     }
 

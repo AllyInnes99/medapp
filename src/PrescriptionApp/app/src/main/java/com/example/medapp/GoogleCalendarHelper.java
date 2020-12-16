@@ -51,7 +51,31 @@ public class GoogleCalendarHelper {
                         .build();
     }
 
-    public void deleteEvents() throws InterruptedException, ExecutionException {
+    /**
+     * Method that deletes all events in a user's Google Calendar that are related to a given med
+     * @param medicationModel the med to remove all events from
+     */
+    public void deleteMedEvents(final MedicationModel medicationModel){
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Events events = service.events().list("primary").execute();
+                    for(Event event: events.getItems()){
+                        if(event.getSummary().contains("MedApp: " + medicationModel.getName() + " Reminder")){
+                            Log.d("MedApp", event.getSummary());
+                            service.events().delete("primary", event.getId()).execute();
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        t.start();
+    }
+
+    public void deleteAllEvents() throws InterruptedException, ExecutionException {
 
         Thread t = new Thread(new Runnable() {
             @Override
@@ -203,7 +227,7 @@ public class GoogleCalendarHelper {
         event.setEnd(eventDateTime);
     }
 
-    public void deleteEvents(final MedicationModel model) {
+    public void deleteAllEvents(final MedicationModel model) {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
