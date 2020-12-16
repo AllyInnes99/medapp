@@ -18,9 +18,12 @@ import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.Events;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -48,25 +51,25 @@ public class GoogleCalendarHelper {
                         .build();
     }
 
-    public void getEvents() throws IOException {
+    public void deleteEvents() throws InterruptedException, ExecutionException {
 
-        new Thread(new Runnable() {
+        Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                Events events = null;
                 try {
-                    events = service.events().list("primary").execute();
-                    List<Event> items = events.getItems();
-                    for(final Event event: items) {
-                        Log.d("MedApp", event.getSummary());
+                    Events events = service.events().list("primary").execute();
+                    for(Event event: events.getItems()){
+                        if(event.getSummary().contains("MedApp:")){
+                            Log.d("MedApp", event.getSummary());
+                            service.events().delete("primary", event.getId()).execute();
+                        }
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
             }
-        }).start();
-
+        });
+        t.start();
     }
 
     public void addMedReminder(MedicationModel medicationModel) {
@@ -76,32 +79,53 @@ public class GoogleCalendarHelper {
         if(medicationModel.getDayFrequency().equals("Daily")){
 
             Calendar c = Calendar.getInstance();
+            String prevTime = "";
             for(DoseModel dose: doseModels){
-                Event e = new Event()
-                        .setSummary(medicationModel.getName() + " Reminder")
-                        .setDescription("Reminder to take " + dose.getAmount()
-                                + " of " + medicationModel.getName());
+                if(!dose.getTime().equals(prevTime)){
+                    prevTime = dose.getTime();
+                    Event e = new Event()
+                            .setSummary("MedApp: " + medicationModel.getName() + " Reminder")
+                            .setDescription("Reminder to take " + dose.getAmount()
+                                    + " of " + medicationModel.getName());
+
+                    setMedReminderStart(c, e, dose);
+                    setMedReminderEnd(c, e, dose);
+
+                    int daysUntilEmpty = medicationModel.getRefillAt();
+                    c.add(Calendar.DATE, daysUntilEmpty);
+                    String year = Integer.toString(c.get(Calendar.YEAR));
+                    String day = padDate(c.get(Calendar.DATE));
+                    String month = padDate(c.get(Calendar.MONTH) + 1);
+                    String recurrenceEndDate = year + month + day;
+                    Toast.makeText(context, recurrenceEndDate, Toast.LENGTH_SHORT).show();
+
+                    e.setRecurrence(Arrays.asList("RRULE:FREQ=DAILY;UNTIL=" + recurrenceEndDate));
+                    addEventToCalendar(e);
+                }
+
+
             }
         }
     }
 
-    private void setDateTime(Calendar c, Event event, DoseModel doseModel){
-        String year = Integer.toString(c.get(Calendar.YEAR));
-        String day = padDate(c.get(Calendar.DATE));
-        String month = padDate(c.get(Calendar.MONTH) + 1);
-        String[] time = doseModel.getTime().split(":");
-        c.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time[0]));
-        c.set(Calendar.MINUTE, Integer.parseInt(time[1]));
-
-    }
-
     private void setMedReminderStart(Calendar c, Event e, DoseModel doseModel) {
-
-
+        String date = createDateString(c);
+        String time = doseModel.getTime();
+        String dateTime = date + "T" + time + ":00-00:00";
+        EventDateTime eventDateTime = new EventDateTime()
+                .setDateTime(new DateTime(dateTime))
+                .setTimeZone("Europe/London");
+        e.setStart(eventDateTime);
     }
 
     private void setMedReminderEnd(Calendar c, Event e, DoseModel doseModel) {
-
+        String date = createDateString(c);
+        String time = doseModel.getTime();
+        String dateTime = date + "T" + time + ":00-00:00";
+        EventDateTime eventDateTime = new EventDateTime()
+                .setDateTime(new DateTime(dateTime))
+                .setTimeZone("Europe/London");
+        e.setEnd(eventDateTime);
     }
 
 
@@ -128,11 +152,10 @@ public class GoogleCalendarHelper {
             }
         });
         t.start();
-        //Toast.makeText(context, events[0].getId(), Toast.LENGTH_SHORT).show();
     }
 
     /**
-     * Creates a Google Calendar Event for when the mediication will run out
+     * Creates a Google Calendar Event for when the medication will run out
      * @param medModel the medication to create an event for
      */
     public void addEventForMedication(MedicationModel medModel) {
@@ -143,7 +166,7 @@ public class GoogleCalendarHelper {
 
         Event emptyEvent = new Event()
                 .setDescription(medModel.getName() + " will run out of supply today.")
-                .setSummary(medModel.getName() + " Empty");
+                .setSummary("MedApp: " + medModel.getName() + " Empty");
 
 
         setTime(c, emptyEvent);
@@ -162,12 +185,17 @@ public class GoogleCalendarHelper {
 
     }
 
-    private void setTime(Calendar c, Event event){
+    private String createDateString(Calendar c){
         String year = Integer.toString(c.get(Calendar.YEAR));
         String day = padDate(c.get(Calendar.DATE));
         String month = padDate(c.get(Calendar.MONTH) + 1);
         String date = String.format("%s-%s-%s", year, month, day);
+        return date;
+    }
 
+
+    private void setTime(Calendar c, Event event){
+        String date = createDateString(c);
         DateTime dateTime = new DateTime(date);
         EventDateTime eventDateTime = new EventDateTime()
                 .setDate(dateTime)

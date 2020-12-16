@@ -35,6 +35,7 @@ import java.security.GeneralSecurityException;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -90,8 +91,8 @@ public class SettingFragment extends Fragment {
             public void onClick(View v) {
                 GoogleCalendarHelper gch = new GoogleCalendarHelper(getActivity());
                 try {
-                    gch.getEvents();
-                } catch (IOException e) {
+                    gch.deleteEvents();
+                } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
             }

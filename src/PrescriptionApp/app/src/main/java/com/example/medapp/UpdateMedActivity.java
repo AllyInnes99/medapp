@@ -17,7 +17,7 @@ import java.util.List;
 
 public class UpdateMedActivity extends AppCompatActivity {
 
-    Button btn_update, btn_delete;
+    Button btn_update, btn_delete, btn_cal;
     EditText et_name, et_quantity, et_refill, et_dosage;
     Spinner medTypeDropdown, measurementDropdown;
     String selectedType, selectedMeasurement;
@@ -36,6 +36,7 @@ public class UpdateMedActivity extends AppCompatActivity {
 
         btn_update = findViewById(R.id.button_update);
         btn_delete = findViewById(R.id.button_cancel);
+        btn_cal = findViewById(R.id.btn_cal);
         et_name = findViewById(R.id.edit_name);
         et_quantity = findViewById(R.id.edit_quantity);
         et_refill = findViewById(R.id.edit_refill);
@@ -127,6 +128,16 @@ public class UpdateMedActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        btn_cal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GoogleCalendarHelper gac = new GoogleCalendarHelper(UpdateMedActivity.this);
+                gac.addMedReminder(model);
+            }
+        });
+
+
 
     }
 
