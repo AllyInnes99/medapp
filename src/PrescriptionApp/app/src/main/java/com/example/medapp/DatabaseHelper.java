@@ -425,13 +425,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         Map<Integer, Integer> m = new HashMap<>();
-        m.put(Calendar.SUNDAY, takenPerDay.get("Sunday"));
-        m.put(Calendar.MONDAY, takenPerDay.get("Monday"));
-        m.put(Calendar.TUESDAY, takenPerDay.get("Tuesday"));
-        m.put(Calendar.WEDNESDAY, takenPerDay.get("Wednesday"));
-        m.put(Calendar.THURSDAY, takenPerDay.get("Thursday"));
-        m.put(Calendar.FRIDAY, takenPerDay.get("Friday"));
-        m.put(Calendar.SATURDAY, takenPerDay.get("Saturday"));
+        m.put(Calendar.SUNDAY, mapFiller(takenPerDay, "Sunday"));
+        m.put(Calendar.MONDAY, mapFiller(takenPerDay, "Monday"));
+        m.put(Calendar.TUESDAY, mapFiller(takenPerDay, "Tuesday"));
+        m.put(Calendar.WEDNESDAY, mapFiller(takenPerDay, "Wednesday"));
+        m.put(Calendar.THURSDAY, mapFiller(takenPerDay, "Thursday"));
+        m.put(Calendar.FRIDAY, mapFiller(takenPerDay, "Friday"));
+        m.put(Calendar.SATURDAY, mapFiller(takenPerDay, "Saturday"));
         takenPerDay.clear();
 
         int current = model.getQuantity();
@@ -457,6 +457,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public boolean isRefillNeeded(MedicationModel m) {
         int days = daysUntilEmpty(m);
         return days < 14;
+    }
+
+    private int mapFiller(Map<String, Integer> takenMap, String target){
+        if(takenMap.get(target) == null){
+            return 0;
+        }
+        return takenMap.get(target);
     }
 
 

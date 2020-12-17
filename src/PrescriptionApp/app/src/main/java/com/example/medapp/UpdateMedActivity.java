@@ -142,7 +142,11 @@ public class UpdateMedActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 GoogleCalendarHelper gac = new GoogleCalendarHelper(UpdateMedActivity.this);
-                gac.addMedReminder(model);
+                try {
+                    gac.addMedReminder(model);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 

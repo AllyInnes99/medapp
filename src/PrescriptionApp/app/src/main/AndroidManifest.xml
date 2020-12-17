@@ -50,7 +50,7 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".AutoTakeReceiver"
+            android:name=".DailyEventReceiver"
             android:exported="true"
             android:process=":remote">
             <intent-filter>

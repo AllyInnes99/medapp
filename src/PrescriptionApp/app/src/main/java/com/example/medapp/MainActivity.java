@@ -13,10 +13,8 @@ import android.content.IntentFilter;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.snackbar.Snackbar;
 
 
 import java.util.Calendar;
@@ -39,9 +37,6 @@ public class MainActivity extends AppCompatActivity{
         setAutoTakeAlarm();
         setRefreshAlarm();
 
-        /*Snackbar.make(parentLayout, "test", Snackbar.LENGTH_LONG)
-                .show();
-         */
     }
 
     @Override
@@ -95,7 +90,6 @@ public class MainActivity extends AppCompatActivity{
 
         // set calendar to begin at midnight the next day
         Calendar c = Calendar.getInstance();
-        c.add(Calendar.DATE, 1);
         c.set(Calendar.HOUR_OF_DAY, 0);
         c.set(Calendar.MINUTE, 0);
         c.set(Calendar.SECOND, 0);
@@ -105,11 +99,11 @@ public class MainActivity extends AppCompatActivity{
         int id = (int) System.currentTimeMillis();
 
         // Setup intent to pass to receiver
-        Intent intent = new Intent(MainActivity.this, AutoTakeReceiver.class);
+        Intent intent = new Intent(MainActivity.this, DailyEventReceiver.class);
         intent.setAction("android.intent.action.NOTIFY");
 
         // Register the custom broadcast receiver
-        MainActivity.this.registerReceiver(new AutoTakeReceiver(), new IntentFilter());
+        MainActivity.this.registerReceiver(new DailyEventReceiver(), new IntentFilter());
 
         // Set up pendingIntent for the broadcast to specify action in the future
         PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);

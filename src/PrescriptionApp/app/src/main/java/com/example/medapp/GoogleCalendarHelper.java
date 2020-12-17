@@ -136,38 +136,66 @@ public class GoogleCalendarHelper {
      * Adds a reminder to take medication to Google Calendar
      * @param medicationModel
      */
-    public void addMedReminder(MedicationModel medicationModel) {
+    public void addMedReminder(MedicationModel medicationModel) throws Exception {
         DatabaseHelper databaseHelper = new DatabaseHelper(context);
+        Calendar c = Calendar.getInstance();
         List<DoseModel> doseModels = databaseHelper.selectDoseFromMedication(medicationModel);
+        String recurrenceEndDate = createRecurrenceEndDate(medicationModel, c);
 
-        if(medicationModel.getDayFrequency().equals("Daily")){
-
-            Calendar c = Calendar.getInstance();
-            String prevTime = "";
-            for(DoseModel dose: doseModels){
-                if(!dose.getTime().equals(prevTime)){
-                    prevTime = dose.getTime();
-                    Event e = new Event()
-                            .setSummary("MedApp: " + medicationModel.getName() + " Reminder")
-                            .setDescription("Reminder to take " + dose.getAmount()
-                                    + " of " + medicationModel.getName());
-
-                    setMedReminderTime(c, e, dose);
-
-                    int daysUntilEmpty = medicationModel.getRefillAt();
-                    c.add(Calendar.DATE, daysUntilEmpty);
-                    String year = Integer.toString(c.get(Calendar.YEAR));
-                    String day = padDate(c.get(Calendar.DATE));
-                    String month = padDate(c.get(Calendar.MONTH) + 1);
-                    String recurrenceEndDate = year + month + day;
-                    Toast.makeText(context, recurrenceEndDate, Toast.LENGTH_SHORT).show();
-
-                    e.setRecurrence(Arrays.asList("RRULE:FREQ=DAILY;UNTIL=" + recurrenceEndDate));
-                    addEventToCalendar(e);
+        switch (medicationModel.getDayFrequency()) {
+            case "Daily":
+                String prevTime = "";
+                for (DoseModel dose : doseModels) {
+                    if (!dose.getTime().equals(prevTime)) {
+                        prevTime = dose.getTime();
+                        Event event = createMedReminderEvent(medicationModel, dose);
+                        setMedReminderTime(c, event, dose);
+                        event.setRecurrence(Arrays.asList("RRULE:FREQ=DAILY;UNTIL=" + recurrenceEndDate));
+                        addEventToCalendar(event);
+                    }
                 }
-            }
+                break;
+            case "Weekly":
+                for (DoseModel dose : doseModels) {
+                    Event event = createMedReminderEvent(medicationModel, dose);
+
+                    int day = App.days.indexOf(dose.getDay());
+                    Calendar startDay = nextDayOfWeek(day);
+                    setMedReminderTime(startDay, event, dose);
+                    event.setRecurrence(Arrays.asList("RRULE:FREQ=WEEKLY;UNTIL=" + recurrenceEndDate));
+                    addEventToCalendar(event);
+                }
+                break;
         }
     }
+
+    public Calendar nextDayOfWeek(int dow) {
+        Calendar date = Calendar.getInstance();
+        int diff = dow - date.get(Calendar.DAY_OF_WEEK);
+        if (diff < 0) {
+            diff += 7;
+        }
+        date.add(Calendar.DAY_OF_MONTH, diff);
+        return date;
+    }
+
+    private String createRecurrenceEndDate(MedicationModel medicationModel, Calendar c) {
+        int daysUntilEmpty = medicationModel.getRefillAt();
+        c.add(Calendar.DATE, daysUntilEmpty);
+        String year = Integer.toString(c.get(Calendar.YEAR));
+        String day = padDate(c.get(Calendar.DATE));
+        String month = padDate(c.get(Calendar.MONTH) + 1);
+        return year + month + day;
+    }
+
+    private Event createMedReminderEvent(MedicationModel medModel, DoseModel doseModel) {
+        Event e = new Event()
+                .setSummary("MedApp: " + medModel.getName() + " Reminder")
+                .setDescription("Reminder to take " + doseModel.getAmount() + " of " + medModel.getName());
+        return e;
+    }
+
+
 
     private void setMedReminderTime(Calendar c, Event e, DoseModel doseModel) {
         String date = createDateString(c);
