@@ -29,7 +29,7 @@ public class DailyActivity extends AppCompatActivity {
     MedicationModel medModel;
     RecyclerView recyclerView;
     FloatingActionButton floatingActionButton, nextButton;
-    AddApplicationAdapter applicationAdapter;
+    AddDailyAdapter applicationAdapter;
     DatabaseHelper databaseHelper = new DatabaseHelper(DailyActivity.this);
     List<DoseModel> temp = new ArrayList<>();
     private static final int SECOND_ACTIVITY_REQUEST_CODE = 42;
@@ -39,7 +39,6 @@ public class DailyActivity extends AppCompatActivity {
         if(keyCode == KeyEvent.KEYCODE_BACK){
             temp.clear();
         }
-
         return super.onKeyDown(keyCode, event);
     }
 
@@ -80,12 +79,9 @@ public class DailyActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 databaseHelper.addMedication(medModel);
-                //Toast.makeText(DailyActivity.this, medModel.getName(), Toast.LENGTH_SHORT).show();
 
                 List<MedicationModel> mModels = databaseHelper.selectAllMedication();
                 medModel = mModels.get(0);
-
-                Intent intent = new Intent(DailyActivity.this, MainActivity.class);
 
                 String [] days = {"Monday", "Tuesday", "Wednesday", "Thursday",
                         "Friday", "Saturday", "Sunday"};
@@ -103,6 +99,7 @@ public class DailyActivity extends AppCompatActivity {
                 // update days until refill for med
                 databaseHelper.updateDaysUntilEmpty(medModel);
 
+                Intent intent = new Intent(DailyActivity.this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }
@@ -165,7 +162,7 @@ public class DailyActivity extends AppCompatActivity {
 
     private void displayRecycler() {
         //List<DoseModel> applModels = databaseHelper.selectDoseFromMedicationAndDay(medModel);
-        applicationAdapter = new AddApplicationAdapter(DailyActivity.this, temp);
+        applicationAdapter = new AddDailyAdapter(DailyActivity.this, temp);
         recyclerView.setAdapter(applicationAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(DailyActivity.this));
     }

@@ -11,13 +11,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class AddApplicationAdapter extends RecyclerView.Adapter<AddApplicationAdapter.MyViewHolder> {
+public class AddWeeklyAdapter extends RecyclerView.Adapter<AddWeeklyAdapter.MyViewHolder> {
 
     private Context context;
     private List<DoseModel> doseModels;
     DatabaseHelper databaseHelper;
 
-    AddApplicationAdapter(Context context, List<DoseModel> doseModels) {
+    AddWeeklyAdapter(Context context, List<DoseModel> doseModels) {
         this.context = context;
         this.doseModels = doseModels;
         this.databaseHelper = new DatabaseHelper(context);
@@ -27,17 +27,16 @@ public class AddApplicationAdapter extends RecyclerView.Adapter<AddApplicationAd
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.add_application_row, parent, false);
-        return new AddApplicationAdapter.MyViewHolder(view);
+        View view = inflater.inflate(R.layout.weekly_application_row, parent, false);
+        return new AddWeeklyAdapter.MyViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         DoseModel model = doseModels.get(position);
-        //final MedicationModel medModel = databaseHelper.selectMedicationFromDose(model);
         holder.appl_amount_txt.setText("Amount to take: " + model.getAmount());
         holder.appl_time_txt.setText("Time: " + model.getTime());
-        //holder.appl_med_txt.setText("Med name: " + medModel.getName());
+        holder.appl_day_txt.setText(model.getDay());
     }
 
     @Override
@@ -47,12 +46,12 @@ public class AddApplicationAdapter extends RecyclerView.Adapter<AddApplicationAd
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView appl_med_txt, appl_amount_txt, appl_time_txt;
+        TextView appl_amount_txt, appl_time_txt, appl_day_txt;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            appl_med_txt = itemView.findViewById(R.id.appl_med_txt);
             appl_amount_txt = itemView.findViewById(R.id.appl_amount_txt);
             appl_time_txt = itemView.findViewById(R.id.appl_time_txt);
+            appl_day_txt = itemView.findViewById(R.id.appl_day_txt);
         }
     }
 

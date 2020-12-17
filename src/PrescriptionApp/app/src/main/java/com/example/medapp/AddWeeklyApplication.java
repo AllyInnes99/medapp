@@ -3,6 +3,7 @@ package com.example.medapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -25,7 +26,7 @@ public class AddWeeklyApplication extends AppCompatActivity {
     DatabaseHelper databaseHelper;
 
 
-    final String[] days = new String[] {"Monday", "Tuesday", "Wednesday",
+    final String[] days = new String[] {"Daily", "Monday", "Tuesday", "Wednesday",
                                         "Thursday", "Friday", "Saturday", "Sunday"};
     String selectedDay;
 
@@ -79,17 +80,16 @@ public class AddWeeklyApplication extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                DoseModel applModel;
+                DoseModel doseModel;
                 try {
                     int medID = medModel.getMedicationId();
                     String time = et_time.getText().toString();
-                    double dosage = 0.1;
                     int amount = Integer.parseInt(et_amount.getText().toString());
 
-                    applModel = new DoseModel(medID, time, selectedDay, amount, false);
-                    boolean success = databaseHelper.addDose(applModel);
-                    if(!success) throw new Exception("Failed to add new application");
-
+                    doseModel = new DoseModel(medID, time, selectedDay, amount, false);
+                    Intent output = new Intent();
+                    output.putExtra("applModel", doseModel);
+                    setResult(RESULT_OK, output);
                     finish();
 
                 } catch (Exception e) {

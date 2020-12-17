@@ -69,14 +69,14 @@ public class AddDailyApplication extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                DoseModel applModel;
+                DoseModel doseModel;
                 try {
                     int medID = medModel.getMedicationId();
                     String time = et_time.getText().toString();
                     int amount = Integer.parseInt(et_amount.getText().toString());
-                    applModel = new DoseModel(medID, time, "Monday", amount, false);
+                    doseModel = new DoseModel(medID, time, "Monday", amount, false);
                     Intent output = new Intent();
-                    output.putExtra("applModel", applModel);
+                    output.putExtra("applModel", doseModel);
                     setResult(RESULT_OK, output);
                     finish();
 
