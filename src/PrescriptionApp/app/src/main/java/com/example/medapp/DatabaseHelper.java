@@ -334,6 +334,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COL_TAKEN, false);
         SQLiteDatabase db = this.getWritableDatabase();
         db.update(DOSE_TABLE, cv, null, null);
+        db.close();
     }
 
 
@@ -360,6 +361,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.update(MEDICATION_TABLE, cv, COL_MEDICATION_ID + "= "
                 + medModel.getMedicationId(), null);
+        db.close();
     }
 
     /**
@@ -371,6 +373,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.update(DOSE_TABLE, cv, COL_DOSE_ID + "= "
                                         + applModel.getDoseId(), null);
+        db.close();
     }
 
     /**
@@ -394,6 +397,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.moveToFirst();
         int count = cursor.getInt(0);
         cursor.close();
+        db.close();
         return count;
     }
 

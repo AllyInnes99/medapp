@@ -12,9 +12,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.snackbar.Snackbar;
 
 
 import java.util.Calendar;
@@ -24,23 +26,27 @@ public class MainActivity extends AppCompatActivity{
 
     BottomNavigationView bottomNavigationView;
     NavController navController;
+    View parentLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        parentLayout = findViewById(android.R.id.content);
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         navController = Navigation.findNavController(this, R.id.navFragment);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
         setAutoTakeAlarm();
         setRefreshAlarm();
+
+        /*Snackbar.make(parentLayout, "test", Snackbar.LENGTH_LONG)
+                .show();
+         */
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        //Toast.makeText(MainActivity.this, FirebaseAuth.getInstance().getCurrentUser().getEmail(), Toast.LENGTH_SHORT).show();
     }
 
     private void setMedicationAlarm(){

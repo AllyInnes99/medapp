@@ -52,7 +52,7 @@ public class UpdateMedActivity extends AppCompatActivity {
 
         Calendar c = Calendar.getInstance();
         c.add(Calendar.DATE, model.getRefillAt());
-        String date = "" + c.get(Calendar.DAY_OF_MONTH) + "/" + (c.get(Calendar.MONTH) + 1) + "/" + c.get(Calendar.YEAR);
+        final String date = "" + c.get(Calendar.DAY_OF_MONTH) + "/" + (c.get(Calendar.MONTH) + 1) + "/" + c.get(Calendar.YEAR);
 
 
         et_refill.setText(date);
@@ -107,6 +107,13 @@ public class UpdateMedActivity extends AppCompatActivity {
                     databaseHelper.updateMedication(model);
                     if(quantity != originalQuantity) {
                         databaseHelper.updateDaysUntilEmpty(model);
+
+                        Toast.makeText(UpdateMedActivity.this, Integer.toString(model.getRefillAt()), Toast.LENGTH_SHORT).show();
+                        model.setRefillAt(databaseHelper.daysUntilEmpty(model));
+                        Toast.makeText(UpdateMedActivity.this, Integer.toString(model.getRefillAt()), Toast.LENGTH_SHORT).show();
+
+                        GoogleCalendarHelper gch = new GoogleCalendarHelper(UpdateMedActivity.this);
+                        gch.updateRefillEvents(model);
                     }
 
                     Toast.makeText(UpdateMedActivity.this, "Successfully updated medication", Toast.LENGTH_SHORT).show();

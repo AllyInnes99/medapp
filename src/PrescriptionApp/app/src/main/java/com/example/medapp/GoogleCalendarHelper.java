@@ -75,7 +75,43 @@ public class GoogleCalendarHelper {
         t.start();
     }
 
-    public void deleteAllEvents() throws InterruptedException, ExecutionException {
+    public void updateRefillEvents(final MedicationModel medModel) {
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Events events = service.events().list("primary").execute();
+                    for(Event event: events.getItems()){
+
+                        String summary = event.getSummary();
+                        if (summary.equals("MedApp: " + medModel.getName() + " Empty") ||
+                                summary.equals("MedApp: " + medModel.getName() + " Refill Reminder")) {
+                            Calendar c = Calendar.getInstance();
+                            c.add(Calendar.DATE, medModel.getRefillAt());
+                            String updatedDate = createDateString(c);
+                            EventDateTime eventDateTime = new EventDateTime()
+                                    .setDateTime(new DateTime(updatedDate))
+                                    .setTimeZone("Europe/London");
+                            event.setStart(eventDateTime);
+                            event.setEnd(eventDateTime);
+                            Event updated = service.events().update("primary", event.getId(), event).execute();
+                        }
+
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        t.start();
+    }
+
+
+
+    /**
+     * Method that deletes every MedApp event in the user's Google Calendar
+     */
+    public void deleteAllEvents() {
 
         Thread t = new Thread(new Runnable() {
             @Override
@@ -96,7 +132,10 @@ public class GoogleCalendarHelper {
         t.start();
     }
 
-
+    /**
+     * Adds a reminder to take medication to Google Calendar
+     * @param medicationModel
+     */
     public void addMedReminder(MedicationModel medicationModel) {
         DatabaseHelper databaseHelper = new DatabaseHelper(context);
         List<DoseModel> doseModels = databaseHelper.selectDoseFromMedication(medicationModel);
@@ -113,8 +152,7 @@ public class GoogleCalendarHelper {
                             .setDescription("Reminder to take " + dose.getAmount()
                                     + " of " + medicationModel.getName());
 
-                    setMedReminderStart(c, e, dose);
-                    setMedReminderEnd(c, e, dose);
+                    setMedReminderTime(c, e, dose);
 
                     int daysUntilEmpty = medicationModel.getRefillAt();
                     c.add(Calendar.DATE, daysUntilEmpty);
@@ -131,7 +169,7 @@ public class GoogleCalendarHelper {
         }
     }
 
-    private void setMedReminderStart(Calendar c, Event e, DoseModel doseModel) {
+    private void setMedReminderTime(Calendar c, Event e, DoseModel doseModel) {
         String date = createDateString(c);
         String time = doseModel.getTime();
         String dateTime = date + "T" + time + ":00-00:00";
@@ -139,18 +177,8 @@ public class GoogleCalendarHelper {
                 .setDateTime(new DateTime(dateTime))
                 .setTimeZone("Europe/London");
         e.setStart(eventDateTime);
-    }
-
-    private void setMedReminderEnd(Calendar c, Event e, DoseModel doseModel) {
-        String date = createDateString(c);
-        String time = doseModel.getTime();
-        String dateTime = date + "T" + time + ":00-00:00";
-        EventDateTime eventDateTime = new EventDateTime()
-                .setDateTime(new DateTime(dateTime))
-                .setTimeZone("Europe/London");
         e.setEnd(eventDateTime);
     }
-
 
 
     /**
@@ -227,21 +255,6 @@ public class GoogleCalendarHelper {
         event.setEnd(eventDateTime);
     }
 
-    public void deleteAllEvents(final MedicationModel model) {
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    service.events().delete("primary", model.getName().toLowerCase() + 0).execute();
-                    service.events().delete("primary", model.getName().toLowerCase() + 1).execute();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        });
-        t.start();
-    }
 
 
     /**
