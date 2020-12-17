@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 public class AddMedicationActivity extends AppCompatActivity {
 
-    Button btn_add, btn_cancel;
+    Button btn_add;
     EditText et_name, et_quantity, et_dosage;
     Spinner medTypeDropdown, measurementDropdown, frequencyDropdown;
     Switch autoTake;
@@ -31,7 +31,6 @@ public class AddMedicationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_medication);
 
         btn_add = findViewById(R.id.button_update);
-        btn_cancel = findViewById(R.id.button_cancel);
         et_name = findViewById(R.id.edit_name);
         et_quantity = findViewById(R.id.edit_quantity);
         et_dosage = findViewById(R.id.et_dosage);
@@ -127,13 +126,6 @@ public class AddMedicationActivity extends AppCompatActivity {
                     Toast.makeText(AddMedicationActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
                     finish();
                 }
-            }
-        });
-
-        btn_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
             }
         });
 
