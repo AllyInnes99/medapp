@@ -1,10 +1,7 @@
 package com.example.medapp;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
-import android.widget.DatePicker;
-import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
@@ -12,19 +9,15 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.CalendarScopes;
-import com.google.api.services.calendar.model.CalendarListEntry;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.Events;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-
 
 /**
  * Helper class that represents the interaction of using the Google Calendar API
@@ -33,19 +26,19 @@ import java.util.concurrent.ExecutionException;
 public class GoogleCalendarHelper {
 
     private Context context;
+    private com.google.api.services.calendar.Calendar service;
     private static final NetHttpTransport NET_HTTP_TRANSPORT =
             new com.google.api.client.http.javanet.NetHttpTransport();
     private static final JacksonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
-    private GoogleAccountCredential credential;
-    private com.google.api.services.calendar.Calendar service;
+
 
     public GoogleCalendarHelper(Context context) {
         this.context = context;
-        credential = GoogleAccountCredential.usingOAuth2
+        GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2
                 (context, Collections.singleton(CalendarScopes.CALENDAR_EVENTS));
         credential.setSelectedAccount(GoogleSignIn.getLastSignedInAccount(context).getAccount());
 
-        service = new com.google.api.services.calendar.Calendar.Builder(
+        this.service = new com.google.api.services.calendar.Calendar.Builder(
                         NET_HTTP_TRANSPORT, JSON_FACTORY, credential)
                         .setApplicationName(context.getString(R.string.app_name))
                         .build();
@@ -62,7 +55,7 @@ public class GoogleCalendarHelper {
                 try {
                     Events events = service.events().list("primary").execute();
                     for(Event event: events.getItems()){
-                        if(event.getSummary().contains("MedApp: " + medicationModel.getName() + " Reminder")){
+                        if(event.getSummary().contains("MedApp: " + medicationModel.getName())){
                             Log.d("MedApp", event.getSummary());
                             service.events().delete("primary", event.getId()).execute();
                         }
@@ -136,38 +129,43 @@ public class GoogleCalendarHelper {
      * Adds a reminder to take medication to Google Calendar
      * @param medicationModel
      */
-    public void addMedReminder(MedicationModel medicationModel) throws Exception {
+    /**
+     * Adds a reminder to take medication to Google Calendar
+     * @param medicationModel
+     */
+    public void addMedReminder(MedicationModel medicationModel) {
         DatabaseHelper databaseHelper = new DatabaseHelper(context);
-        Calendar c = Calendar.getInstance();
         List<DoseModel> doseModels = databaseHelper.selectDoseFromMedication(medicationModel);
-        String recurrenceEndDate = createRecurrenceEndDate(medicationModel, c);
 
-        switch (medicationModel.getDayFrequency()) {
-            case "Daily":
-                String prevTime = "";
-                for (DoseModel dose : doseModels) {
-                    if (!dose.getTime().equals(prevTime)) {
-                        prevTime = dose.getTime();
-                        Event event = createMedReminderEvent(medicationModel, dose);
-                        setMedReminderTime(c, event, dose);
-                        event.setRecurrence(Arrays.asList("RRULE:FREQ=DAILY;UNTIL=" + recurrenceEndDate));
-                        addEventToCalendar(event);
-                    }
-                }
-                break;
-            case "Weekly":
-                for (DoseModel dose : doseModels) {
-                    Event event = createMedReminderEvent(medicationModel, dose);
+        if(medicationModel.getDayFrequency().equals("Daily")){
 
-                    int day = App.days.indexOf(dose.getDay());
-                    Calendar startDay = nextDayOfWeek(day);
-                    setMedReminderTime(startDay, event, dose);
-                    event.setRecurrence(Arrays.asList("RRULE:FREQ=WEEKLY;UNTIL=" + recurrenceEndDate));
-                    addEventToCalendar(event);
+            Calendar c = Calendar.getInstance();
+            String prevTime = "";
+            for(DoseModel dose: doseModels){
+                if(!dose.getTime().equals(prevTime)){
+                    prevTime = dose.getTime();
+                    Event e = new Event()
+                            .setSummary("MedApp: " + medicationModel.getName() + " Reminder")
+                            .setDescription("Reminder to take " + dose.getAmount()
+                                    + " of " + medicationModel.getName());
+
+                    setMedReminderTime(c, e, dose);
+
+                    int daysUntilEmpty = medicationModel.getRefillAt();
+                    c.add(Calendar.DATE, daysUntilEmpty);
+                    String year = Integer.toString(c.get(Calendar.YEAR));
+                    String day = padDate(c.get(Calendar.DATE));
+                    String month = padDate(c.get(Calendar.MONTH) + 1);
+                    String recurrenceEndDate = year + month + day;
+
+                    e.setRecurrence(Arrays.asList("RRULE:FREQ=DAILY;UNTIL=" + recurrenceEndDate));
+                    addEventToCalendar(e);
+                    c = Calendar.getInstance();
                 }
-                break;
+            }
         }
     }
+
 
     public Calendar nextDayOfWeek(int dow) {
         Calendar date = Calendar.getInstance();
