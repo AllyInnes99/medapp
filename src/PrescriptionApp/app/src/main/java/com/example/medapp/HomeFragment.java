@@ -71,8 +71,6 @@ public class HomeFragment extends Fragment {
                 startActivity(new Intent(getActivity(), AddMedicationActivity.class));
             }
         });
-        
-        
         return view;
     }
 
@@ -87,6 +85,7 @@ public class HomeFragment extends Fragment {
      */
     public void displayApplRecycler() {
         models = databaseHelper.selectTodaysDoseAndNotTaken();
+        Collections.sort(models);
         applicationAdapter = new ApplicationAdapter(getActivity(), models, this);
         recyclerView.setAdapter(applicationAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));

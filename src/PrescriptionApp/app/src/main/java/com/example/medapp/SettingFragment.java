@@ -12,7 +12,6 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,22 +20,10 @@ import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.client.util.DateTime;
-import com.google.api.services.calendar.CalendarScopes;
-import com.google.api.services.calendar.model.Event;
-import com.google.api.services.calendar.model.EventDateTime;
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -45,10 +32,8 @@ import java.util.concurrent.ExecutionException;
  */
 public class SettingFragment extends Fragment {
 
-
     Button btnMed, btnRefill, btnSignOut;
     NotificationManagerCompat notificationManager;
-
 
     public SettingFragment() {
         // Required empty public constructor
@@ -95,7 +80,7 @@ public class SettingFragment extends Fragment {
                 List<MedicationModel> models = databaseHelper.selectAllMedication();
 
                 for(MedicationModel model: models){
-                    gch.addEventForMedication(model);
+                    gch.addRefillEvents(model);
                 }
             }
         });
@@ -112,71 +97,6 @@ public class SettingFragment extends Fragment {
         });
 
         return view;
-    }
-
-    private void addEvent(NetHttpTransport httpTransport) {
-
-        GoogleAccountCredential gac =
-                GoogleAccountCredential.usingOAuth2(getActivity(), Collections.singleton(CalendarScopes.CALENDAR_EVENTS));
-        gac.setSelectedAccount(GoogleSignIn.getLastSignedInAccount(getActivity()).getAccount());
-
-        // Java has no aliasing of import names, need to use full path
-        final com.google.api.services.calendar.Calendar service =
-                new com.google.api.services.calendar.Calendar.Builder(
-                        httpTransport, JacksonFactory.getDefaultInstance(), gac)
-                        .setApplicationName(getString(R.string.app_name))
-                        .build();
-
-        // need to use array so that the IO thread can access
-        final Event[] event = {new Event()
-                .setSummary("THis is a test summary")
-                .setLocation("Test location")
-                .setDescription("Test description for this test event!")
-                };
-
-        DateTime startDateTime = new DateTime("2020-12-28T09:00:00-07:00");
-        EventDateTime start = new EventDateTime()
-                .setDateTime(startDateTime)
-                .setTimeZone("Europe/London");
-        event[0].setStart(start);
-
-        DateTime endDateTime = new DateTime("2020-12-28T17:00:00-07:00");
-        EventDateTime end = new EventDateTime()
-                .setDateTime(endDateTime)
-                .setTimeZone("Europe/London");
-        event[0].setEnd(end);
-
-        // Can't run IO operations on UI thread, so start new thread for operation
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try{
-                    event[0] = service.events().insert("primary", event[0]).execute();
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getActivity(), "Pass", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                } catch (final Exception e) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_SHORT).show();
-                            Log.e("MedApp", "exception", e);
-                        }
-                    });
-                }
-            }
-        });
-        t.start();
-    }
-
-
-    private void addToCalendar() throws GeneralSecurityException, IOException {
-        NetHttpTransport HTTP_TRANSPORT;
-        HTTP_TRANSPORT = new com.google.api.client.http.javanet.NetHttpTransport();
-        addEvent(HTTP_TRANSPORT);
     }
 
     private void delDatabase(){

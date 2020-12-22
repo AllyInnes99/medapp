@@ -38,6 +38,7 @@ public class GoogleCalendarHelper {
                 (context, Collections.singleton(CalendarScopes.CALENDAR_EVENTS));
         credential.setSelectedAccount(GoogleSignIn.getLastSignedInAccount(context).getAccount());
 
+        // build the service that will be used to make API calls
         this.service = new com.google.api.services.calendar.Calendar.Builder(
                         NET_HTTP_TRANSPORT, JSON_FACTORY, credential)
                         .setApplicationName(context.getString(R.string.app_name))
@@ -99,8 +100,6 @@ public class GoogleCalendarHelper {
         t.start();
     }
 
-
-
     /**
      * Method that deletes every MedApp event in the user's Google Calendar
      */
@@ -129,16 +128,11 @@ public class GoogleCalendarHelper {
      * Adds a reminder to take medication to Google Calendar
      * @param medicationModel
      */
-    /**
-     * Adds a reminder to take medication to Google Calendar
-     * @param medicationModel
-     */
     public void addMedReminder(MedicationModel medicationModel) {
         DatabaseHelper databaseHelper = new DatabaseHelper(context);
         List<DoseModel> doseModels = databaseHelper.selectDoseFromMedication(medicationModel);
 
         if(medicationModel.getDayFrequency().equals("Daily")){
-
             Calendar c = Calendar.getInstance();
             String prevTime = "";
             for(DoseModel dose: doseModels){
@@ -166,7 +160,6 @@ public class GoogleCalendarHelper {
         }
     }
 
-
     public Calendar nextDayOfWeek(int dow) {
         Calendar date = Calendar.getInstance();
         int diff = dow - date.get(Calendar.DAY_OF_WEEK);
@@ -193,17 +186,21 @@ public class GoogleCalendarHelper {
         return e;
     }
 
-
-
-    private void setMedReminderTime(Calendar c, Event e, DoseModel doseModel) {
-        String date = createDateString(c);
+    /**
+     * Helper function that is used to set the time of when the event is to take place
+     * @param calendar - Calendar obj
+     * @param event - Event obj to set the reminder time of
+     * @param doseModel - the Dose obj that we are creating the Event for
+     */
+    private void setMedReminderTime(Calendar calendar, Event event, DoseModel doseModel) {
+        String date = createDateString(calendar);
         String time = doseModel.getTime();
         String dateTime = date + "T" + time + ":00-00:00";
         EventDateTime eventDateTime = new EventDateTime()
                 .setDateTime(new DateTime(dateTime))
                 .setTimeZone("Europe/London");
-        e.setStart(eventDateTime);
-        e.setEnd(eventDateTime);
+        event.setStart(eventDateTime);
+        event.setEnd(eventDateTime);
     }
 
 
@@ -235,7 +232,7 @@ public class GoogleCalendarHelper {
      * Creates a Google Calendar Event for when the medication will run out
      * @param medModel the medication to create an event for
      */
-    public void addEventForMedication(MedicationModel medModel) {
+    public void addRefillEvents(MedicationModel medModel) {
 
         // Obtain the date of when the med will be empty
         Calendar c = Calendar.getInstance();
@@ -285,13 +282,13 @@ public class GoogleCalendarHelper {
 
     /**
      * EventDateTime objects require the DateTime to be in YYYY-MM-DD format, so we need to pad
-     * the month and day fields with a 0 if they are < 10
+     * the month and day fields with a 0 if they are a single digit
      * @param val the int to turn into String and pad if necessary
      * @return String that is valid for
      */
     private String padDate(int val){
         String valStr = Integer.toString(val);
-        if(valStr.length() == 1){
+        if(val % 10 == 0){
             valStr = "0" + valStr;
         }
         return valStr;

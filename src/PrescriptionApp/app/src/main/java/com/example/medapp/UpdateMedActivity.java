@@ -141,9 +141,11 @@ public class UpdateMedActivity extends AppCompatActivity {
         btn_cal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast.makeText(UpdateMedActivity.this, "Adding reminder events to Google Calendar", Toast.LENGTH_SHORT).show();
                 GoogleCalendarHelper gac = new GoogleCalendarHelper(UpdateMedActivity.this);
                 try {
                     gac.addMedReminder(model);
+                    gac.addRefillEvents(model);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -158,6 +160,5 @@ public class UpdateMedActivity extends AppCompatActivity {
 
         }
     }
-
 
 }
