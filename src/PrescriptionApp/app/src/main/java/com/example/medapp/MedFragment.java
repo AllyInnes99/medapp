@@ -68,7 +68,7 @@ public class MedFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_med, container, false);
         btnAdd = view.findViewById(R.id.floating_add_button_med);
         recyclerView = view.findViewById(R.id.recycler_view_med);
-        searchView = view.findViewById(R.id.searchView);
+        //searchView = view.findViewById(R.id.searchView);
 
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,6 +77,7 @@ public class MedFragment extends Fragment {
             }
         });
 
+        /*
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -90,8 +91,10 @@ public class MedFragment extends Fragment {
                 return true;
             }
         });
+        */
         return view;
     }
+
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
