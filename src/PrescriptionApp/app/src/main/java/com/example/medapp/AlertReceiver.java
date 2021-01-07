@@ -25,8 +25,6 @@ public class AlertReceiver extends BroadcastReceiver {
         takeIntent.putExtra("take", 0);
         */
 
-        Toast.makeText(context, "notif received", Toast.LENGTH_SHORT).show();
-
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
 
         int quantity = (int) intent.getSerializableExtra("quantity");
