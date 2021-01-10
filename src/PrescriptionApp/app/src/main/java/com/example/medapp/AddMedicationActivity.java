@@ -65,9 +65,11 @@ public class AddMedicationActivity extends AppCompatActivity {
                 String selectedFrequency;
                 if(radio1.isChecked()){
                     selectedFrequency = "Daily";
+                    intent = new Intent(AddMedicationActivity.this, DailyActivity.class);
                 }
                 else{
                     selectedFrequency = "Weekly";
+                    intent = new Intent(AddMedicationActivity.this, WeeklyActivity.class);
                 }
 
                 try {
@@ -83,21 +85,6 @@ public class AddMedicationActivity extends AppCompatActivity {
 
                     model = new MedicationModel(medicationName, quantity, refill, selectedType,
                                 selectedFrequency, dosage, selectedMeasurement, "me", take );
-
-
-
-                    // Determine the next activity based off the frequency selected
-                    switch(selectedFrequency){
-                        case "Daily":
-                            intent = new Intent(AddMedicationActivity.this, DailyActivity.class);
-                            break;
-                        case "Weekly":
-                            intent = new Intent(AddMedicationActivity.this, WeeklyActivity.class);
-                            break;
-                        default:
-                            throw new IllegalStateException("Unexpected value: " + selectedFrequency);
-                    }
-
                     intent.putExtra("MedModel", model);
                     startActivity(intent);
                 }
