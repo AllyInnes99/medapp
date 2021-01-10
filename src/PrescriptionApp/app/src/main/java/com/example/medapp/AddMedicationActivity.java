@@ -5,89 +5,71 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.Switch;
+import android.widget.RadioButton;
 import android.widget.Toast;
+
+import com.google.android.material.switchmaterial.SwitchMaterial;
+import com.google.android.material.textfield.TextInputEditText;
 
 public class AddMedicationActivity extends AppCompatActivity {
 
-    Button btn_add;
-    EditText et_name, et_quantity, et_dosage;
-    Spinner medTypeDropdown, measurementDropdown, frequencyDropdown;
-    Switch autoTake;
-    String selectedType, selectedMeasurement, selectedFrequency;
+    TextInputEditText et_name, et_quantity, et_strength;
+    AutoCompleteTextView dropdown_measurement, dropdown_type;
+    Button submit_btn;
+    RadioButton radio1, radio2;
+    SwitchMaterial autoTake;
+
     final String[] medTypes = new String[] {"tablet", "pill", "injection", "powder",
-                                            "drops", "inhalers", "topical"};
+            "drops", "inhalers", "topical"};
     final String[] measurements = new String[] {"g", "mg", "ml", "l"};
-    final String[] frequencies = {"Daily", "Weekly"};
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_medication);
+        setContentView(R.layout.activity_test);
 
-        btn_add = findViewById(R.id.button_update);
-        et_name = findViewById(R.id.edit_name);
-        et_quantity = findViewById(R.id.edit_quantity);
-        et_dosage = findViewById(R.id.et_dosage);
-        medTypeDropdown = findViewById(R.id.spinner1);
-        measurementDropdown = findViewById(R.id.spinner2);
-        frequencyDropdown = findViewById(R.id.spinner3);
+        et_name = findViewById(R.id.et_name);
+        et_quantity = findViewById(R.id.et_quantity);
+        et_strength = findViewById(R.id.et_strength);
+        dropdown_measurement = findViewById(R.id.dropdown_measurement);
+        dropdown_type = findViewById(R.id.dropdown_type);
+        submit_btn = findViewById(R.id.submit_btn);
+        radio1 = findViewById(R.id.radio_button_1);
+        radio2 = findViewById(R.id.radio_button_2);
         autoTake = findViewById(R.id.autotake);
 
-        ArrayAdapter<String> medTypeAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, medTypes);
-        medTypeDropdown.setAdapter(medTypeAdapter);
-        medTypeDropdown.setOnItemSelectedListener((new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedType = medTypes[position];
-            }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+        ArrayAdapter<String> measurementAdapter =
+                new ArrayAdapter<>(AddMedicationActivity.this, R.layout.list_item, measurements);
+        dropdown_measurement.setAdapter(measurementAdapter);
 
-            }
-        }));
-
-        ArrayAdapter<String> measurementAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, measurements);
-        measurementDropdown.setAdapter(measurementAdapter);
-        measurementDropdown.setOnItemSelectedListener((new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedMeasurement = measurements[position];
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        }));
-
-        ArrayAdapter<String> frequencyAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, frequencies);
-        frequencyDropdown.setAdapter(frequencyAdapter);
-        frequencyDropdown.setOnItemSelectedListener((new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedFrequency = frequencies[position];
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        }));
+        ArrayAdapter<String> typeAdapter =
+                new ArrayAdapter<String>(AddMedicationActivity.this, R.layout.list_item, medTypes);
+        dropdown_type.setAdapter(typeAdapter);
 
 
-        btn_add.setOnClickListener(new View.OnClickListener() {
+
+        submit_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
 
                 MedicationModel model;
                 Intent intent;
+
+                String selectedType = dropdown_type.getText().toString();
+                String selectedMeasurement = dropdown_measurement.getText().toString();
+                String selectedFrequency;
+                if(radio1.isChecked()){
+                    selectedFrequency = "Daily";
+                }
+                else{
+                    selectedFrequency = "Weekly";
+                }
+
                 try {
                     String medicationName =  et_name.getText().toString();
                     if(!MedicationModel.validateMedicationName(medicationName)) {
@@ -95,7 +77,7 @@ public class AddMedicationActivity extends AppCompatActivity {
                     }
                     int quantity = Integer.parseInt(et_quantity.getText().toString());
                     int refill = 0;
-                    double dosage = Double.parseDouble(et_dosage.getText().toString());
+                    double dosage = Double.parseDouble(et_strength.getText().toString());
 
                     boolean take = autoTake.isChecked();
 

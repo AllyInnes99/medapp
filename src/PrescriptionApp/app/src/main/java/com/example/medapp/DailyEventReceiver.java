@@ -62,7 +62,7 @@ public class DailyEventReceiver extends BroadcastReceiver {
         intent.putExtra("name", medModel.getName());
 
         // Register receiver
-        mContext.registerReceiver(new AlertReceiver(), new IntentFilter());
+        mContext.getApplicationContext().registerReceiver(new AlertReceiver(), new IntentFilter());
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, doseModel.getDoseId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);

@@ -65,8 +65,11 @@ public class SettingFragment extends Fragment {
         btnMed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                GoogleCalendarHelper gch = new GoogleCalendarHelper(getActivity());
-                gch.deleteAllEvents();
+                //GoogleCalendarHelper gch = new GoogleCalendarHelper(getActivity());
+                //gch.deleteAllEvents();
+
+                startActivity(new Intent(getActivity(), Test.class));
+
 
             }
         });

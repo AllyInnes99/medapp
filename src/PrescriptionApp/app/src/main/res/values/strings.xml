@@ -31,5 +31,10 @@
     <string name="autotake">Automatically Take Medication</string>
     <string name="textview">TextView</string>
     <string name="take">Take</string>
+    <string name="weekly">Weekly</string>
+    <string name="daily">Daily</string>
+    <string name="type_of_medication">Type</string>
+    <string name="measurement">Measurement</string>
+    <string name="strength">Strength</string>
 
 </resources>
