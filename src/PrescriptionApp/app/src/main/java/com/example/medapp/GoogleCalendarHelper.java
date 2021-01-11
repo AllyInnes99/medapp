@@ -134,29 +134,31 @@ public class GoogleCalendarHelper {
         List<DoseModel> doseModels = databaseHelper.selectDoseFromMedication(medicationModel);
 
         if(medicationModel.getDayFrequency().equals("Daily")){
+
+
             Calendar c = Calendar.getInstance();
-            String prevTime = "";
             for(DoseModel dose: doseModels){
-                if(!dose.getTime().equals(prevTime)){
-                    prevTime = dose.getTime();
-                    Event e = new Event()
-                            .setSummary("MedApp: " + medicationModel.getName() + " Reminder")
-                            .setDescription("Reminder to take " + dose.getAmount()
-                                    + " of " + medicationModel.getName());
 
-                    setMedReminderTime(c, e, dose);
+                Event e = new Event()
+                        .setSummary("MedApp: " + medicationModel.getName() + " Reminder")
+                        .setDescription("Reminder to take " + dose.getAmount()
+                                + " of " + medicationModel.getName());
 
-                    int daysUntilEmpty = medicationModel.getRefillAt();
-                    c.add(Calendar.DATE, daysUntilEmpty);
-                    String year = Integer.toString(c.get(Calendar.YEAR));
-                    String day = padDate(c.get(Calendar.DATE));
-                    String month = padDate(c.get(Calendar.MONTH) + 1);
-                    String recurrenceEndDate = year + month + day;
+                Calendar b = nextDayOfWeek(App.days.indexOf(dose.getDay()));
 
-                    e.setRecurrence(Arrays.asList("RRULE:FREQ=DAILY;UNTIL=" + recurrenceEndDate));
-                    addEventToCalendar(e);
-                    c = Calendar.getInstance();
-                }
+                setMedReminderTime(b, e, dose);
+
+                int daysUntilEmpty = medicationModel.getRefillAt();
+                c.add(Calendar.DATE, daysUntilEmpty);
+                String year = Integer.toString(c.get(Calendar.YEAR));
+                String day = padDate(c.get(Calendar.DATE));
+                String month = padDate(c.get(Calendar.MONTH) + 1);
+                String recurrenceEndDate = year + month + day;
+
+                e.setRecurrence(Arrays.asList("RRULE:FREQ=WEEKLY;UNTIL=" + recurrenceEndDate));
+                addEventToCalendar(e);
+                c = Calendar.getInstance();
+
             }
         }
     }
