@@ -11,15 +11,21 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class AddDailyAdapter extends RecyclerView.Adapter<AddDailyAdapter.MyViewHolder> {
 
     private Context context;
-    private List<DoseModel> doseModels;
+    private List<AddDoseModel> doseModels;
     DatabaseHelper databaseHelper;
+    List<TextView> dayIcons;
 
-    AddDailyAdapter(Context context, List<DoseModel> doseModels) {
+    AddDailyAdapter(Context context, List<AddDoseModel> doseModels) {
         this.context = context;
         this.doseModels = doseModels;
         this.databaseHelper = new DatabaseHelper(context);
@@ -35,29 +41,29 @@ public class AddDailyAdapter extends RecyclerView.Adapter<AddDailyAdapter.MyView
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        DoseModel model = doseModels.get(position);
+        AddDoseModel model = doseModels.get(position);
+        holder.appl_amount_txt.setText("Take: " + model.getQuantity());
+        holder.appl_time_txt.setText("Time: " + model.getTime());
 
-        String[] t = model.getTime().split(":");
-        t[0] = padString(t[0]);
-        t[1] = padString(t[1]);
+        Set<String> days = new HashSet<>(model.getDays());
 
+        dayIcons.add(holder.monday);
+        dayIcons.add(holder.tuesday);
+        dayIcons.add(holder.wednesday);
+        dayIcons.add(holder.thursday);
+        dayIcons.add(holder.friday);
+        dayIcons.add(holder.saturday);
+        dayIcons.add(holder.sunday);
 
-        if(t[1].length() == 1){
-            t[1] = "0" + t[1];
-            Toast.makeText(context, t[1], Toast.LENGTH_SHORT).show();
-
+        for (TextView textView : dayIcons) {
+            String tag = textView.getTag().toString();
+            if (days.contains(tag)) {
+                textView.setTextColor(Color.BLACK);
+            }
+            else {
+                textView.setTextColor(Color.LTGRAY);
+            }
         }
-
-        holder.appl_amount_txt.setText("Take: " + model.getAmount());
-        holder.appl_time_txt.setText("Time: " + t[0] + ":" + t[1]);
-
-        holder.monday.setTextColor(Color.BLACK);
-        holder.tuesday.setTextColor(Color.BLACK);
-        holder.wednesday.setTextColor(Color.BLACK);
-        holder.thursday.setTextColor(Color.BLACK);
-        holder.friday.setTextColor(Color.BLACK);
-        holder.saturday.setTextColor(Color.BLACK);
-        holder.sunday.setTextColor(Color.BLACK);
     }
 
     @Override
@@ -81,14 +87,8 @@ public class AddDailyAdapter extends RecyclerView.Adapter<AddDailyAdapter.MyView
             friday = itemView.findViewById(R.id.friday);
             saturday = itemView.findViewById(R.id.saturday);
             sunday = itemView.findViewById(R.id.sunday);
+            dayIcons = new ArrayList<>();
         }
-    }
-
-    private String padString(String target){
-        if(target.length() == 1){
-            target = "0" + target;
-        }
-        return target;
     }
 
 }

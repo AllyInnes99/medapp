@@ -50,7 +50,12 @@ public class DailyActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == SECOND_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             DoseModel m = (DoseModel) data.getSerializableExtra("applModel");
+            AddDoseModel doseModel = (AddDoseModel) data.getSerializableExtra("model");
             temp.add(m);
+            tempModels.add(doseModel);
+
+            Toast.makeText(DailyActivity.this, doseModel.getTime(), Toast.LENGTH_SHORT).show();
+
             displayRecycler();
         }
     }
@@ -174,7 +179,7 @@ public class DailyActivity extends AppCompatActivity {
 
     private void displayRecycler() {
         //List<DoseModel> applModels = databaseHelper.selectDoseFromMedicationAndDay(medModel);
-        applicationAdapter = new AddDailyAdapter(DailyActivity.this, temp);
+        applicationAdapter = new AddDailyAdapter(DailyActivity.this, tempModels);
         recyclerView.setAdapter(applicationAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(DailyActivity.this));
     }

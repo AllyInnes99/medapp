@@ -48,6 +48,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
                 android:text="M"
+                android:tag="@string/monday"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/appl_time_txt"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -57,6 +58,7 @@
                 android:layout_width="34dp"
                 android:layout_height="24dp"
                 android:text="S"
+                android:tag="@string/sunday"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/saturday"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -66,6 +68,7 @@
                 android:layout_width="34dp"
                 android:layout_height="24dp"
                 android:text="T"
+                android:tag="@string/tuesday"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/monday"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -75,6 +78,7 @@
                 android:layout_width="34dp"
                 android:layout_height="24dp"
                 android:text="W"
+                android:tag="@string/wednesday"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/tuesday"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -84,6 +88,7 @@
                 android:layout_width="34dp"
                 android:layout_height="24dp"
                 android:text="T"
+                android:tag="@string/thursday"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/wednesday"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -93,6 +98,7 @@
                 android:layout_width="34dp"
                 android:layout_height="24dp"
                 android:text="F"
+                android:tag="@string/friday"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/thursday"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -102,6 +108,7 @@
                 android:layout_width="34dp"
                 android:layout_height="24dp"
                 android:text="S"
+                android:tag="@string/saturday"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/friday"
                 app:layout_constraintTop_toTopOf="parent" />

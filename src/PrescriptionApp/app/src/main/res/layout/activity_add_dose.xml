@@ -1,57 +1,130 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddDailyApplication">
+    tools:context=".AddDailyApplication"
+    >
 
-    <EditText
-        android:id="@+id/et_amount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
-        android:hint="Amount"
-        android:inputType="number"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <EditText
-        android:id="@+id/et_time"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginStart="80dp"
-        android:layout_marginLeft="80dp"
-        android:layout_marginTop="32dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_amount" />
+        <EditText
+            android:id="@+id/et_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="Amount"
+            android:inputType="number"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/btn_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="68dp"
-        android:layout_marginRight="68dp"
-        android:background="@color/ic_launcher_background"
-        android:text="SELECT TIME"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.632"
-        app:layout_constraintStart_toEndOf="@+id/et_time"
-        app:layout_constraintTop_toBottomOf="@+id/et_amount" />
+        <EditText
+            android:id="@+id/et_time"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginStart="80dp"
+            android:layout_marginLeft="80dp"
+            android:layout_marginTop="32dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_amount" />
 
-    <Button
-        android:id="@+id/btnAdd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
-        android:text="Add"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_time" />
+        <Button
+            android:id="@+id/btn_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="68dp"
+            android:layout_marginRight="68dp"
+            android:background="@color/ic_launcher_background"
+            android:text="SELECT TIME"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.632"
+            app:layout_constraintStart_toEndOf="@+id/et_time"
+            app:layout_constraintTop_toBottomOf="@+id/et_amount" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="32dp"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_time">
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/monday"
+                android:tag="Monday"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/monday" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/tuesday"
+                android:tag="@string/tuesday"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/tuesday" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/wednesday"
+                android:tag="@string/wednesday"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/wednesday" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/thursday"
+                android:tag="@string/thursday"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/thursday" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/friday"
+                android:tag="@string/friday"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/friday" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/saturday"
+                android:tag="@string/saturday"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/saturday" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/sunday"
+                android:tag="@string/sunday"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/sunday" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnAdd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Add"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>
+

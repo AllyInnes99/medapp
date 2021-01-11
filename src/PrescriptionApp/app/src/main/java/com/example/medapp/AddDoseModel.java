@@ -1,9 +1,13 @@
 package com.example.medapp;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddDoseModel {
+/**
+ * Class that represents an object of a dose to be added to the database for a medication.
+ */
+public class AddDoseModel implements Serializable {
 
     private String time;
     private int quantity;
