@@ -30,6 +30,7 @@ public class GoogleCalendarHelper {
     private static final NetHttpTransport NET_HTTP_TRANSPORT =
             new com.google.api.client.http.javanet.NetHttpTransport();
     private static final JacksonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
+    private static final String CALENDAR_ID = "primary";
 
 
     public GoogleCalendarHelper(Context context) {
@@ -47,7 +48,7 @@ public class GoogleCalendarHelper {
 
     /**
      * Method that deletes all events in a user's Google Calendar that are related to a given med
-     * @param medicationModel the med to remove all events from
+     * @param medicationModel the med to remove all events from user's Google Calendar
      */
     public void deleteMedEvents(final MedicationModel medicationModel){
         Thread t = new Thread(new Runnable() {
@@ -58,7 +59,7 @@ public class GoogleCalendarHelper {
                     for(Event event: events.getItems()){
                         if(event.getSummary().contains("MedApp: " + medicationModel.getName())){
                             Log.d("MedApp", event.getSummary());
-                            service.events().delete("primary", event.getId()).execute();
+                            service.events().delete(CALENDAR_ID, event.getId()).execute();
                         }
                     }
                 } catch (IOException e) {
@@ -74,7 +75,7 @@ public class GoogleCalendarHelper {
             @Override
             public void run() {
                 try {
-                    Events events = service.events().list("primary").execute();
+                    Events events = service.events().list(CALENDAR_ID).execute();
                     for(Event event: events.getItems()){
 
                         String summary = event.getSummary();
@@ -88,7 +89,7 @@ public class GoogleCalendarHelper {
                                     .setTimeZone("Europe/London");
                             event.setStart(eventDateTime);
                             event.setEnd(eventDateTime);
-                            Event updated = service.events().update("primary", event.getId(), event).execute();
+                            Event updated = service.events().update(CALENDAR_ID, event.getId(), event).execute();
                         }
 
                     }
@@ -113,7 +114,7 @@ public class GoogleCalendarHelper {
                     for(Event event: events.getItems()){
                         if(event.getSummary().contains("MedApp:")){
                             Log.d("MedApp", event.getSummary());
-                            service.events().delete("primary", event.getId()).execute();
+                            service.events().delete(CALENDAR_ID, event.getId()).execute();
                         }
                     }
                 } catch (IOException e) {
@@ -217,7 +218,7 @@ public class GoogleCalendarHelper {
             @Override
             public void run() {
                 try{
-                    events[0] = service.events().insert("primary", events[0]).execute();
+                    events[0] = service.events().insert(CALENDAR_ID, events[0]).execute();
                     Log.e("MedApp", events[0].getId() + "\n");
 
                 } catch (final Exception e) {
@@ -277,8 +278,6 @@ public class GoogleCalendarHelper {
         event.setStart(eventDateTime);
         event.setEnd(eventDateTime);
     }
-
-
 
     /**
      * EventDateTime objects require the DateTime to be in YYYY-MM-DD format, so we need to pad

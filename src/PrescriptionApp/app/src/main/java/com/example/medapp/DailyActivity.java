@@ -32,6 +32,9 @@ public class DailyActivity extends AppCompatActivity {
     AddDailyAdapter applicationAdapter;
     DatabaseHelper databaseHelper = new DatabaseHelper(DailyActivity.this);
     List<DoseModel> temp = new ArrayList<>();
+
+    List<AddDoseModel> tempModels = new ArrayList<>();
+
     private static final int SECOND_ACTIVITY_REQUEST_CODE = 42;
 
     @Override
@@ -86,6 +89,15 @@ public class DailyActivity extends AppCompatActivity {
                 String [] days = {"Monday", "Tuesday", "Wednesday", "Thursday",
                         "Friday", "Saturday", "Sunday"};
 
+                /*
+                for(AddDoseModel dm: tempModels){
+                    for(String day: dm.getDays()){
+                        DoseModel m = new DoseModel(medModel.getMedicationId(), dm.getTime(), day,
+                                        dm.getQuantity(), false);
+                        databaseHelper.addDose(m);
+                    }
+                }
+                */
                 for(DoseModel m: temp){
                     m.setMedicationId(medModel.getMedicationId());
                     for(int i = 0; i < days.length; i++){
