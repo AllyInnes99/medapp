@@ -288,7 +288,7 @@ public class GoogleCalendarHelper {
      */
     private String padDate(int val){
         String valStr = Integer.toString(val);
-        if(val % 10 == 0){
+        if(val < 10){
             valStr = "0" + valStr;
         }
         return valStr;

@@ -10,176 +10,42 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="32dp"
         android:gravity="center"
         android:orientation="vertical">
 
-        <!--Medication Name-->
-        <com.google.android.material.textfield.TextInputLayout
+        <com.google.android.material.checkbox.MaterialCheckBox
             android:layout_width="match_parent"
-            android:id="@+id/layout_name"
-            android:layout_height="wrap_content"
-            android:layout_margin="32dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="32dp"
-            android:hint="@string/MedicationName"
-            app:boxBackgroundMode="outline">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            >
-
-            <!--Medication Quantity-->
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="90dp"
-                android:id="@+id/layout_quantity"
-                android:layout_height="wrap_content"
-                android:layout_margin="32dp"
-                android:layout_marginEnd="32dp"
-                android:layout_marginRight="32dp"
-                android:hint="@string/MedicationQuantity"
-                app:boxBackgroundMode="outline"
-                >
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_quantity"
-                    android:inputType="number"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/layout_type"
-                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="32dp"
-                android:layout_marginEnd="32dp"
-                android:layout_marginRight="32dp"
-                android:hint="@string/type_of_medication"
-                app:boxBackgroundMode="outline">
-
-                <AutoCompleteTextView
-                    android:id="@+id/dropdown_type"
-                    android:layout_width="match_parent"
-                    android:hint="@string/type_of_medication"
-                    android:layout_height="wrap_content"
-                    android:inputType="none" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-        </LinearLayout>
-
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:orientation="horizontal"
-            android:layout_weight="1">
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="90dp"
-                android:id="@+id/layout_strength"
-                android:layout_height="wrap_content"
-                android:layout_margin="32dp"
-                android:layout_marginEnd="32dp"
-                android:layout_marginRight="32dp"
-                android:hint="@string/strength"
-                app:boxBackgroundMode="outline">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_strength"
-                    android:inputType="numberDecimal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/layout_measurement"
-                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="30dp"
-                android:hint="@string/measurement"
-                app:boxBackgroundMode="outline">
-
-                <AutoCompleteTextView
-                    android:id="@+id/dropdown_measurement"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/measurement"
-                    android:inputType="none" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-
-            <RadioGroup
-                android:id="@+id/radioGroup"
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="32dp"
-                android:layout_marginEnd="32dp"
-                android:layout_marginRight="32dp"
-                android:checkedButton="@+id/radio_button_1">
-
-                <RadioButton
-                    android:id="@+id/radio_button_1"
-                    android:layout_width="166dp"
-                    android:layout_height="match_parent"
-                    android:text="@string/daily" />
-
-                <RadioButton
-                    android:id="@+id/radio_button_2"
-                    android:layout_width="166dp"
-                    android:layout_height="match_parent"
-                    android:text="@string/weekly" />
-            </RadioGroup>
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/autotake"
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="32dp"
-                android:layout_marginEnd="32dp"
-                android:layout_marginRight="32dp"
-                android:text="@string/autotake">
-
-            </com.google.android.material.switchmaterial.SwitchMaterial>
-
-
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/submit_btn"
-            android:layout_margin="32dp"
-            android:layout_marginEnd="32dp"
-            android:layout_marginRight="32dp"
-            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="@string/confirm">
-        </Button>
+            android:checked="true"
+            android:text="@string/monday"/>
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/tuesday"/>
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/wednesday"/>
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/thursday"/>
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:enabled="false"
+            android:text="@string/friday"/>
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:enabled="false"
+            android:text="@string/saturday"/>
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:enabled="false"
+            android:text="@string/sunday"/>
 
     </LinearLayout>
 

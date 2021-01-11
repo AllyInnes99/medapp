@@ -30,7 +30,7 @@ public class AddMedicationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_test);
+        setContentView(R.layout.activity_add_medication);
 
         et_name = findViewById(R.id.et_name);
         et_quantity = findViewById(R.id.et_quantity);
@@ -42,7 +42,6 @@ public class AddMedicationActivity extends AppCompatActivity {
         radio2 = findViewById(R.id.radio_button_2);
         autoTake = findViewById(R.id.autotake);
 
-
         ArrayAdapter<String> measurementAdapter =
                 new ArrayAdapter<>(AddMedicationActivity.this, R.layout.list_item, measurements);
         dropdown_measurement.setAdapter(measurementAdapter);
@@ -50,8 +49,6 @@ public class AddMedicationActivity extends AppCompatActivity {
         ArrayAdapter<String> typeAdapter =
                 new ArrayAdapter<String>(AddMedicationActivity.this, R.layout.list_item, medTypes);
         dropdown_type.setAdapter(typeAdapter);
-
-
 
         submit_btn.setOnClickListener(new View.OnClickListener() {
             @Override
