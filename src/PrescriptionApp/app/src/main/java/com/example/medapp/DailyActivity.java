@@ -85,24 +85,20 @@ public class DailyActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-
                 databaseHelper.addMedication(medModel);
-
                 List<MedicationModel> mModels = databaseHelper.selectAllMedication();
                 medModel = mModels.get(0);
 
-                String [] days = {"Monday", "Tuesday", "Wednesday", "Thursday",
-                        "Friday", "Saturday", "Sunday"};
-
-                /*
                 for(AddDoseModel dm: tempModels){
                     for(String day: dm.getDays()){
                         DoseModel m = new DoseModel(medModel.getMedicationId(), dm.getTime(), day,
-                                        dm.getQuantity(), false);
+                                                    dm.getQuantity(), false);
                         databaseHelper.addDose(m);
                     }
                 }
-                */
+
+
+                /*
                 for(DoseModel m: temp){
                     m.setMedicationId(medModel.getMedicationId());
                     for(int i = 0; i < days.length; i++){
@@ -112,6 +108,7 @@ public class DailyActivity extends AppCompatActivity {
                     }
                     initialiseNotification(m);
                 }
+                */
 
                 // update days until refill for med
                 databaseHelper.updateDaysUntilEmpty(medModel);
