@@ -28,7 +28,7 @@ public class AddDosesActivity extends AppCompatActivity {
     MedicationModel medModel;
     RecyclerView recyclerView;
     FloatingActionButton floatingActionButton, nextButton;
-    AddDailyAdapter applicationAdapter;
+    AddDoseAdapter applicationAdapter;
     DatabaseHelper databaseHelper = new DatabaseHelper(AddDosesActivity.this);
     List<AddDoseModel> tempModels = new ArrayList<>();
 
@@ -167,7 +167,7 @@ public class AddDosesActivity extends AppCompatActivity {
     }
 
     private void displayRecycler() {
-        applicationAdapter = new AddDailyAdapter(AddDosesActivity.this, tempModels);
+        applicationAdapter = new AddDoseAdapter(AddDosesActivity.this, tempModels);
         recyclerView.setAdapter(applicationAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(AddDosesActivity.this));
     }

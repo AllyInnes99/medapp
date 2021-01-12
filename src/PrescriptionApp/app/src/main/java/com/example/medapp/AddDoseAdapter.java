@@ -7,26 +7,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class AddDailyAdapter extends RecyclerView.Adapter<AddDailyAdapter.MyViewHolder> {
+public class AddDoseAdapter extends RecyclerView.Adapter<AddDoseAdapter.MyViewHolder> {
 
     private Context context;
     private List<AddDoseModel> doseModels;
     DatabaseHelper databaseHelper;
     List<TextView> dayIcons;
 
-    AddDailyAdapter(Context context, List<AddDoseModel> doseModels) {
+    AddDoseAdapter(Context context, List<AddDoseModel> doseModels) {
         this.context = context;
         this.doseModels = doseModels;
         this.databaseHelper = new DatabaseHelper(context);
@@ -37,7 +34,7 @@ public class AddDailyAdapter extends RecyclerView.Adapter<AddDailyAdapter.MyView
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.add_application_row, parent, false);
-        return new AddDailyAdapter.MyViewHolder(view);
+        return new AddDoseAdapter.MyViewHolder(view);
     }
 
     @Override
