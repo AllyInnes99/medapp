@@ -25,9 +25,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".UpdateMedActivity" />
-        <activity android:name=".AddWeeklyApplication" />
         <activity android:name=".AddDailyApplication" />
-        <activity android:name=".WeeklyActivity" />
         <activity android:name=".DailyActivity" />
         <activity android:name=".CreateMedicationActivity" />
         <activity android:name=".MainActivity" />

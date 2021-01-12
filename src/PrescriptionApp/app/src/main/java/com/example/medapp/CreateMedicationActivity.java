@@ -19,11 +19,10 @@ public class CreateMedicationActivity extends AppCompatActivity {
     TextInputEditText et_name, et_quantity, et_strength;
     AutoCompleteTextView dropdown_measurement, dropdown_type;
     Button submit_btn;
-    RadioButton radio1, radio2;
     SwitchMaterial autoTake;
 
     final String[] medTypes = new String[] {"tablet", "pill", "injection", "powder",
-            "drops", "inhalers", "topical"};
+                                            "drops", "inhalers", "topical"};
     final String[] measurements = new String[] {"g", "mg", "ml", "l"};
 
 
@@ -38,8 +37,6 @@ public class CreateMedicationActivity extends AppCompatActivity {
         dropdown_measurement = findViewById(R.id.dropdown_measurement);
         dropdown_type = findViewById(R.id.dropdown_type);
         submit_btn = findViewById(R.id.submit_btn);
-        radio1 = findViewById(R.id.radio_button_1);
-        radio2 = findViewById(R.id.radio_button_2);
         autoTake = findViewById(R.id.autotake);
 
         ArrayAdapter<String> measurementAdapter =
@@ -59,15 +56,8 @@ public class CreateMedicationActivity extends AppCompatActivity {
 
                 String selectedType = dropdown_type.getText().toString();
                 String selectedMeasurement = dropdown_measurement.getText().toString();
-                String selectedFrequency;
-                if(radio1.isChecked()){
-                    selectedFrequency = "Daily";
-                    intent = new Intent(CreateMedicationActivity.this, DailyActivity.class);
-                }
-                else{
-                    selectedFrequency = "Weekly";
-                    intent = new Intent(CreateMedicationActivity.this, WeeklyActivity.class);
-                }
+                String selectedFrequency = "Daily";
+                intent = new Intent(CreateMedicationActivity.this, DailyActivity.class);
 
                 try {
                     String medicationName =  et_name.getText().toString();

@@ -37,8 +37,6 @@ public class Test extends AppCompatActivity {
         dropdown_measurement = findViewById(R.id.dropdown_measurement);
         dropdown_type = findViewById(R.id.dropdown_type);
         submit_btn = findViewById(R.id.submit_btn);
-        radio1 = findViewById(R.id.radio_button_1);
-        radio2 = findViewById(R.id.radio_button_2);
         autoTake = findViewById(R.id.autotake);
 
 
