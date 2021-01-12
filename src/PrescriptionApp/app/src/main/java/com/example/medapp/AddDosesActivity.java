@@ -22,16 +22,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-
 public class AddDosesActivity extends AppCompatActivity {
-
     MedicationModel medModel;
     RecyclerView recyclerView;
     FloatingActionButton floatingActionButton, nextButton;
     AddDoseAdapter applicationAdapter;
     DatabaseHelper databaseHelper = new DatabaseHelper(AddDosesActivity.this);
     List<AddDoseModel> tempModels = new ArrayList<>();
-
     private static final int SECOND_ACTIVITY_REQUEST_CODE = 42;
 
     @Override
@@ -40,9 +37,6 @@ public class AddDosesActivity extends AppCompatActivity {
         if (requestCode == SECOND_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             AddDoseModel doseModel = (AddDoseModel) data.getSerializableExtra("model");
             tempModels.add(doseModel);
-
-            Toast.makeText(AddDosesActivity.this, doseModel.getTime(), Toast.LENGTH_SHORT).show();
-
             displayRecycler();
         }
     }
@@ -56,7 +50,6 @@ public class AddDosesActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         floatingActionButton = findViewById(R.id.addApplicationButton);
         nextButton = findViewById(R.id.nextButton);
-
         displayRecycler();
 
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
@@ -69,48 +62,47 @@ public class AddDosesActivity extends AppCompatActivity {
         });
 
         nextButton.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
-                databaseHelper.addMedication(medModel);
-                List<MedicationModel> mModels = databaseHelper.selectAllMedication();
-                medModel = mModels.get(0);
-
-
-                String daily = "Daily";
-                for(AddDoseModel dm: tempModels){
-                    if(dm.isDoseDaily()){
-                        DoseModel m = new DoseModel(medModel.getMedicationId(), dm.getTime(),
-                                            daily, dm.getQuantity(), false);
-                        Toast.makeText(AddDosesActivity.this, "here", Toast.LENGTH_SHORT).show();
-
-                        databaseHelper.addDose(m);
-                    }
-                    else {
-                        for(String day: dm.getDays()){
-                            DoseModel m = new DoseModel(medModel.getMedicationId(), dm.getTime(),
-                                    day, dm.getQuantity(), false);
-                            databaseHelper.addDose(m);
-                        }
-                    }
+                if(!tempModels.isEmpty()) {
+                    addToDatabase();
                 }
-
-                // update days until refill for med
-                databaseHelper.updateDaysUntilEmpty(medModel);
-
-                Intent intent = new Intent(AddDosesActivity.this, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+                else {
+                    Toast.makeText(AddDosesActivity.this, "Please add at least one dose.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
 
-    private void addDoseToDatabase(AddDoseModel dm, String day) {
-        DoseModel m = new DoseModel(medModel.getMedicationId(), dm.getTime(),
-                                    day, dm.getQuantity(), false);
-        databaseHelper.addDose(m);
-    }
+    private void addToDatabase() {
+        databaseHelper.addMedication(medModel);
+        List<MedicationModel> mModels = databaseHelper.selectAllMedication();
+        medModel = mModels.get(0);
+        String daily = "Daily";
+        for(AddDoseModel dm: tempModels){
+            if(dm.isDoseDaily()){
+                DoseModel m = new DoseModel(medModel.getMedicationId(), dm.getTime(),
+                        daily, dm.getQuantity(), false);
+                Toast.makeText(AddDosesActivity.this, "here", Toast.LENGTH_SHORT).show();
 
+                databaseHelper.addDose(m);
+            }
+            else {
+                for(String day: dm.getDays()){
+                    DoseModel m = new DoseModel(medModel.getMedicationId(), dm.getTime(),
+                            day, dm.getQuantity(), false);
+                    databaseHelper.addDose(m);
+                }
+            }
+        }
+
+        // update days until refill for med
+        databaseHelper.updateDaysUntilEmpty(medModel);
+
+        Intent intent = new Intent(AddDosesActivity.this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+    }
 
     /**
      * Helper method that creates a new notification channel for a newly added medication

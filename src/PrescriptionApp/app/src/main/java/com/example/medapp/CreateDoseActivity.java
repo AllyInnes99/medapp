@@ -92,21 +92,15 @@ public class CreateDoseActivity extends AppCompatActivity {
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DoseModel doseModel;
                 AddDoseModel addDoseModel;
                 daysToBeTakenOn.clear();
                 try {
-                    int medID = medModel.getMedicationId();
                     String time = et_time.getText().toString();
                     int amount = Integer.parseInt(et_amount.getText().toString());
-                    doseModel = new DoseModel(medID, time, "Monday", amount, false);
-
                     addDoseModel = new AddDoseModel(time, amount);
                     checkSelectedBoxes();
                     addDoseModel.setDays(daysToBeTakenOn);
-
                     Intent output = new Intent();
-                    output.putExtra("applModel", doseModel);
                     output.putExtra("model", addDoseModel);
                     setResult(RESULT_OK, output);
                     finish();
