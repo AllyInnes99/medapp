@@ -43,5 +43,6 @@
     <string name="wednesday">Wednesday</string>
     <string name="tuesday">Tuesday</string>
     <string name="monday">Monday</string>
+    <string name="select_all">Select All</string>
 
 </resources>

@@ -283,7 +283,7 @@ public class GoogleCalendarHelper {
      * EventDateTime objects require the DateTime to be in YYYY-MM-DD format, so we need to pad
      * the month and day fields with a 0 if they are a single digit
      * @param val the int to turn into String and pad if necessary
-     * @return String that is valid for
+     * @return String that is valid for DateTime obj
      */
     private String padDate(int val){
         String valStr = Integer.toString(val);

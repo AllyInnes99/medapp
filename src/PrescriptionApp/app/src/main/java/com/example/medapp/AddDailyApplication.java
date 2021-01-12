@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.google.android.material.checkbox.MaterialCheckBox;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -24,7 +25,8 @@ public class AddDailyApplication extends AppCompatActivity {
     int currentHour, currentMinutes;
     MedicationModel medModel;
     DatabaseHelper databaseHelper;
-    MaterialCheckBox monday, tuesday, wednesday, thursday, friday, saturday, sunday;
+    MaterialCheckBox monday, tuesday, wednesday, thursday, friday, saturday, sunday, select_all;
+    List<MaterialCheckBox> checkBoxes;
     List<String> temp;
 
     @Override
@@ -39,6 +41,7 @@ public class AddDailyApplication extends AppCompatActivity {
         btn_time = findViewById(R.id.btn_time);
         btn_add = findViewById(R.id.btnAdd);
 
+        select_all = findViewById(R.id.select_all);
         monday = findViewById(R.id.monday);
         tuesday = findViewById(R.id.tuesday);
         wednesday = findViewById(R.id.wednesday);
@@ -47,6 +50,9 @@ public class AddDailyApplication extends AppCompatActivity {
         saturday = findViewById(R.id.saturday);
         sunday = findViewById(R.id.sunday);
 
+
+        checkBoxes = Arrays.asList(monday, tuesday, wednesday, thursday,
+                                    friday, saturday, sunday);
         temp = new ArrayList<>();
 
         databaseHelper = new DatabaseHelper(AddDailyApplication.this);
@@ -68,6 +74,16 @@ public class AddDailyApplication extends AppCompatActivity {
                     }
                 }, currentHour, currentMinutes, false);
                 timePickerDialog.show();
+            }
+        });
+
+        select_all.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean checked = select_all.isChecked();
+                for(MaterialCheckBox checkBox: checkBoxes) {
+                    checkBox.setChecked(checked);
+                }
             }
         });
 
@@ -112,13 +128,9 @@ public class AddDailyApplication extends AppCompatActivity {
     }
 
     private void checkSelectedBoxes() {
-        checkToList(monday);
-        checkToList(tuesday);
-        checkToList(wednesday);
-        checkToList(thursday);
-        checkToList(friday);
-        checkToList(saturday);
-        checkToList(sunday);
+        for(MaterialCheckBox checkBox: checkBoxes) {
+            checkToList(checkBox);
+        }
     }
 
 

@@ -63,7 +63,15 @@
             app:layout_constraintTop_toBottomOf="@+id/et_time">
 
             <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/select_all"
+                android:tag="Select"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/select_all" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/monday"
+                android:layout_marginLeft="16dp"
                 android:tag="Monday"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -71,6 +79,7 @@
 
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/tuesday"
+                android:layout_marginLeft="16dp"
                 android:tag="@string/tuesday"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -78,6 +87,7 @@
 
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/wednesday"
+                android:layout_marginLeft="16dp"
                 android:tag="@string/wednesday"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -85,6 +95,7 @@
 
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/thursday"
+                android:layout_marginLeft="16dp"
                 android:tag="@string/thursday"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -92,6 +103,7 @@
 
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/friday"
+                android:layout_marginLeft="16dp"
                 android:tag="@string/friday"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -99,6 +111,7 @@
 
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/saturday"
+                android:layout_marginLeft="16dp"
                 android:tag="@string/saturday"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -106,6 +119,7 @@
 
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/sunday"
+                android:layout_marginLeft="16dp"
                 android:tag="@string/sunday"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
