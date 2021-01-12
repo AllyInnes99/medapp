@@ -144,9 +144,16 @@ public class GoogleCalendarHelper {
                         .setDescription("Reminder to take " + dose.getAmount()
                                 + " of " + medicationModel.getName());
 
-                Calendar b = nextDayOfWeek(App.days.indexOf(dose.getDay()));
-
-                setMedReminderTime(b, e, dose);
+                String recurrence;
+                if(dose.getDay().equals("Daily")) {
+                    setMedReminderTime(c, e, dose);
+                    recurrence = "RRULE:FREQ=DAILY;UNTIL=";
+                }
+                else {
+                    Calendar b = nextDayOfWeek(App.days.indexOf(dose.getDay()));
+                    setMedReminderTime(b, e, dose);
+                    recurrence = "RRULE:FREQ=WEEKLY;UNTIL=";
+                }
 
                 int daysUntilEmpty = medicationModel.getRefillAt();
                 c.add(Calendar.DATE, daysUntilEmpty);
@@ -155,10 +162,9 @@ public class GoogleCalendarHelper {
                 String month = padDate(c.get(Calendar.MONTH) + 1);
                 String recurrenceEndDate = year + month + day;
 
-                e.setRecurrence(Arrays.asList("RRULE:FREQ=WEEKLY;UNTIL=" + recurrenceEndDate));
+                e.setRecurrence(Arrays.asList(recurrence + recurrenceEndDate));
                 addEventToCalendar(e);
                 c = Calendar.getInstance();
-
             }
         }
     }
