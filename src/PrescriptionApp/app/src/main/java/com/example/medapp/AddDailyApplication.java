@@ -138,6 +138,10 @@ public class AddDailyApplication extends AppCompatActivity {
             if(checkBox.isChecked()) {
                 daysToBeTakenOn.add(checkBox.getTag().toString());
             }
+            if(daysToBeTakenOn.size() == 7){
+                daysToBeTakenOn.clear();
+                daysToBeTakenOn.add("Daily");
+            }
         }
     }
 

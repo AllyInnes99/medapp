@@ -245,8 +245,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String day = days.get(calendar.get(Calendar.DAY_OF_WEEK));
 
         // In query, we check taken == 0 as this is how false is represented in SQLite
-        String rawQuery = "SELECT * FROM " + DOSE_TABLE + " WHERE (" + COL_DAY + " = '" + day +
-                "' AND " + COL_TAKEN + " = 0 )";
+        String rawQuery = "SELECT * FROM " + DOSE_TABLE +
+                " WHERE (" + COL_DAY + " = '" + day +
+                "' OR " + COL_DAY + " = 'Daily')"  +
+                " AND (" + COL_TAKEN + " = 0 )";
         return selectDoseHelper(rawQuery);
     }
 
@@ -413,7 +415,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         List<DoseModel> doses = selectDoseFromMedication(model);
         Map<String, Integer> takenPerDay = new HashMap<>();
-
+        takenPerDay.put("Monday", 0);
+        takenPerDay.put("Tuesday", 0);
+        takenPerDay.put("Wednesday", 0);
+        takenPerDay.put("Thursday", 0);
+        takenPerDay.put("Friday", 0);
+        takenPerDay.put("Saturday", 0);
+        takenPerDay.put("Sunday", 0);
 
         for(DoseModel doseModel: doses) {
             String d = doseModel.getDay();
@@ -421,7 +429,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             if(takenPerDay.get(d) != null){
                 count += takenPerDay.get(d);
             }
-            takenPerDay.put(d, count);
+
+            if(d.equals("Daily")) {
+                for(String key: takenPerDay.keySet()){
+                    takenPerDay.put(key, count);
+                }
+            }
+            else {
+                takenPerDay.put(d, count);
+            }
+
         }
 
         Map<Integer, Integer> m = new HashMap<>();

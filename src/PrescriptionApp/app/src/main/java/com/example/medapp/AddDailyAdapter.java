@@ -57,7 +57,7 @@ public class AddDailyAdapter extends RecyclerView.Adapter<AddDailyAdapter.MyView
 
         for (TextView textView : dayIcons) {
             String tag = textView.getTag().toString();
-            if (days.contains(tag)) {
+            if (days.contains(tag) || days.contains("Daily")) {
                 textView.setTextColor(Color.BLACK);
             }
             else {

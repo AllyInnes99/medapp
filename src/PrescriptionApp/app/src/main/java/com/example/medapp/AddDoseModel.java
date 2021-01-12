@@ -19,6 +19,10 @@ public class AddDoseModel implements Serializable {
         this.days = new ArrayList<>();
     }
 
+    public boolean isDoseDaily(){
+        return getDays().size() == 7;
+    }
+
     private void addDay(String day){
         this.days.add(day);
     }

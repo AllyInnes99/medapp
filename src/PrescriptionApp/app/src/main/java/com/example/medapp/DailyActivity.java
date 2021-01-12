@@ -76,12 +76,23 @@ public class DailyActivity extends AppCompatActivity {
                 databaseHelper.addMedication(medModel);
                 List<MedicationModel> mModels = databaseHelper.selectAllMedication();
                 medModel = mModels.get(0);
+                
 
+                String daily = "Daily";
                 for(AddDoseModel dm: tempModels){
-                    for(String day: dm.getDays()){
-                        DoseModel m = new DoseModel(medModel.getMedicationId(), dm.getTime(), day,
-                                                    dm.getQuantity(), false);
+                    if(dm.isDoseDaily()){
+                        DoseModel m = new DoseModel(medModel.getMedicationId(), dm.getTime(),
+                                            daily, dm.getQuantity(), false);
+                        Toast.makeText(DailyActivity.this, "here", Toast.LENGTH_SHORT).show();
+
                         databaseHelper.addDose(m);
+                    }
+                    else {
+                        for(String day: dm.getDays()){
+                            DoseModel m = new DoseModel(medModel.getMedicationId(), dm.getTime(),
+                                    day, dm.getQuantity(), false);
+                            databaseHelper.addDose(m);
+                        }
                     }
                 }
 
@@ -94,6 +105,13 @@ public class DailyActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void addDoseToDatabase(AddDoseModel dm, String day) {
+        DoseModel m = new DoseModel(medModel.getMedicationId(), dm.getTime(),
+                                    day, dm.getQuantity(), false);
+        databaseHelper.addDose(m);
+    }
+
 
     /**
      * Helper method that creates a new notification channel for a newly added medication
