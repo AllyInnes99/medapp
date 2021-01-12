@@ -18,7 +18,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
-public class AddDailyApplication extends AppCompatActivity {
+public class CreateDoseActivity extends AppCompatActivity {
 
     Button btn_time, btn_add;
     EditText et_time, et_dosage, et_amount;
@@ -32,7 +32,7 @@ public class AddDailyApplication extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_dose);
+        setContentView(R.layout.activity_create_dose);
 
         medModel = (MedicationModel) getIntent().getSerializableExtra("MedModel");
         et_time = findViewById(R.id.et_time);
@@ -55,7 +55,7 @@ public class AddDailyApplication extends AppCompatActivity {
         checkBoxes = Arrays.asList(monday, tuesday, wednesday, thursday,
                                     friday, saturday, sunday);
 
-        databaseHelper = new DatabaseHelper(AddDailyApplication.this);
+        databaseHelper = new DatabaseHelper(CreateDoseActivity.this);
 
         btn_time.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,7 +66,7 @@ public class AddDailyApplication extends AppCompatActivity {
                 currentMinutes = calendar.get(Calendar.MINUTE);
 
                 // launch time picker dialog
-                TimePickerDialog timePickerDialog = new TimePickerDialog(AddDailyApplication.this, new TimePickerDialog.OnTimeSetListener() {
+                TimePickerDialog timePickerDialog = new TimePickerDialog(CreateDoseActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                         String s = padString(hourOfDay) + ":" + padString(minute);
@@ -92,11 +92,9 @@ public class AddDailyApplication extends AppCompatActivity {
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 DoseModel doseModel;
                 AddDoseModel addDoseModel;
                 daysToBeTakenOn.clear();
-
                 try {
                     int medID = medModel.getMedicationId();
                     String time = et_time.getText().toString();
@@ -115,7 +113,7 @@ public class AddDailyApplication extends AppCompatActivity {
 
                 }
                 catch (Exception e) {
-                    Toast.makeText(AddDailyApplication.this, e.toString(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CreateDoseActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
                 }
             }
         });

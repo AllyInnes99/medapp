@@ -25,7 +25,7 @@ public class HomeFragment extends Fragment {
 
     FloatingActionButton btnAdd;
     RecyclerView recyclerView;
-    ApplicationAdapter applicationAdapter;
+    DoseAdapter applicationAdapter;
     DatabaseHelper databaseHelper = new DatabaseHelper(getContext());
     List<DoseModel> models;
 
@@ -81,7 +81,7 @@ public class HomeFragment extends Fragment {
     public void displayApplRecycler() {
         models = databaseHelper.selectTodaysDoseAndNotTaken();
         Collections.sort(models);
-        applicationAdapter = new ApplicationAdapter(getActivity(), models, this);
+        applicationAdapter = new DoseAdapter(getActivity(), models, this);
         recyclerView.setAdapter(applicationAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }

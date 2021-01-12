@@ -13,7 +13,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Toast;
 
@@ -24,13 +23,13 @@ import java.util.Calendar;
 import java.util.List;
 
 
-public class DailyActivity extends AppCompatActivity {
+public class AddDosesActivity extends AppCompatActivity {
 
     MedicationModel medModel;
     RecyclerView recyclerView;
     FloatingActionButton floatingActionButton, nextButton;
     AddDailyAdapter applicationAdapter;
-    DatabaseHelper databaseHelper = new DatabaseHelper(DailyActivity.this);
+    DatabaseHelper databaseHelper = new DatabaseHelper(AddDosesActivity.this);
     List<AddDoseModel> tempModels = new ArrayList<>();
 
     private static final int SECOND_ACTIVITY_REQUEST_CODE = 42;
@@ -42,7 +41,7 @@ public class DailyActivity extends AppCompatActivity {
             AddDoseModel doseModel = (AddDoseModel) data.getSerializableExtra("model");
             tempModels.add(doseModel);
 
-            Toast.makeText(DailyActivity.this, doseModel.getTime(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(AddDosesActivity.this, doseModel.getTime(), Toast.LENGTH_SHORT).show();
 
             displayRecycler();
         }
@@ -51,7 +50,7 @@ public class DailyActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_daily);
+        setContentView(R.layout.activity_add_doses);
 
         medModel = (MedicationModel) getIntent().getSerializableExtra("MedModel");
         recyclerView = findViewById(R.id.recyclerView);
@@ -63,7 +62,7 @@ public class DailyActivity extends AppCompatActivity {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(DailyActivity.this, AddDailyApplication.class);
+                Intent intent = new Intent(AddDosesActivity.this, CreateDoseActivity.class);
                 intent.putExtra("MedModel", medModel);
                 startActivityForResult(intent, SECOND_ACTIVITY_REQUEST_CODE);
             }
@@ -76,14 +75,14 @@ public class DailyActivity extends AppCompatActivity {
                 databaseHelper.addMedication(medModel);
                 List<MedicationModel> mModels = databaseHelper.selectAllMedication();
                 medModel = mModels.get(0);
-                
+
 
                 String daily = "Daily";
                 for(AddDoseModel dm: tempModels){
                     if(dm.isDoseDaily()){
                         DoseModel m = new DoseModel(medModel.getMedicationId(), dm.getTime(),
                                             daily, dm.getQuantity(), false);
-                        Toast.makeText(DailyActivity.this, "here", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AddDosesActivity.this, "here", Toast.LENGTH_SHORT).show();
 
                         databaseHelper.addDose(m);
                     }
@@ -99,7 +98,7 @@ public class DailyActivity extends AppCompatActivity {
                 // update days until refill for med
                 databaseHelper.updateDaysUntilEmpty(medModel);
 
-                Intent intent = new Intent(DailyActivity.this, MainActivity.class);
+                Intent intent = new Intent(AddDosesActivity.this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }
@@ -153,11 +152,11 @@ public class DailyActivity extends AppCompatActivity {
         intent.putExtra("name", medModel.getName());
 
         // Register receiver
-        DailyActivity.this.registerReceiver(new AlertReceiver(), new IntentFilter());
+        AddDosesActivity.this.registerReceiver(new AlertReceiver(), new IntentFilter());
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(DailyActivity.this, doseModel.getDoseId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(AddDosesActivity.this, doseModel.getDoseId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
-        Toast.makeText(DailyActivity.this, "Registered alarm.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(AddDosesActivity.this, "Registered alarm.", Toast.LENGTH_SHORT).show();
     }
 
 
@@ -168,9 +167,9 @@ public class DailyActivity extends AppCompatActivity {
     }
 
     private void displayRecycler() {
-        applicationAdapter = new AddDailyAdapter(DailyActivity.this, tempModels);
+        applicationAdapter = new AddDailyAdapter(AddDosesActivity.this, tempModels);
         recyclerView.setAdapter(applicationAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(DailyActivity.this));
+        recyclerView.setLayoutManager(new LinearLayoutManager(AddDosesActivity.this));
     }
 
 }

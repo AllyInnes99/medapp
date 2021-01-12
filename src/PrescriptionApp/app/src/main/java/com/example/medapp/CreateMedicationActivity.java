@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
@@ -57,7 +56,7 @@ public class CreateMedicationActivity extends AppCompatActivity {
                 String selectedType = dropdown_type.getText().toString();
                 String selectedMeasurement = dropdown_measurement.getText().toString();
                 String selectedFrequency = "Daily";
-                intent = new Intent(CreateMedicationActivity.this, DailyActivity.class);
+                intent = new Intent(CreateMedicationActivity.this, AddDosesActivity.class);
 
                 try {
                     String medicationName =  et_name.getText().toString();

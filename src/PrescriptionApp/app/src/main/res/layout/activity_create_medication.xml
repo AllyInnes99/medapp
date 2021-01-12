@@ -21,6 +21,8 @@
             android:layout_margin="32dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="32dp"
+            app:counterEnabled="true"
+            app:counterMaxLength="20"
             android:hint="@string/MedicationName"
             app:boxBackgroundMode="outline">
 

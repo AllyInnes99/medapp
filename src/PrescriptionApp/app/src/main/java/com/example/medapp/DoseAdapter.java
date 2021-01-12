@@ -9,24 +9,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.MyViewHolder> {
+public class DoseAdapter extends RecyclerView.Adapter<DoseAdapter.MyViewHolder> {
 
     private Context context;
     private List<DoseModel> doseModels;
     DatabaseHelper databaseHelper;
     HomeFragment fragment;
 
-    ApplicationAdapter(Context context, List<DoseModel> doseModels, HomeFragment fragment) {
+    DoseAdapter(Context context, List<DoseModel> doseModels, HomeFragment fragment) {
         this.context = context;
         this.doseModels = doseModels;
         this.fragment = fragment;
         this.databaseHelper = new DatabaseHelper(context);
-
     }
 
     @NonNull
@@ -60,8 +58,6 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
                 fragment.displayApplRecycler();
             }
         });
-
-
     }
 
     @Override
