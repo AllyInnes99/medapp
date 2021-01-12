@@ -258,8 +258,6 @@ public class GoogleCalendarHelper {
             setTime(c, refillEvent);
             addEventToCalendar(refillEvent);
         }
-
-
     }
 
     private String createDateString(Calendar c){

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -35,6 +36,11 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.My
     @Override
     public void onBindViewHolder(@NonNull MedicationAdapter.MyViewHolder holder, int position) {
         final MedicationModel model = medicationModels.get(position);
+
+        if(model.getRefillAt() > 14) {
+            holder.imageView.setImageDrawable(null);
+        }
+
         holder.med_name_txt.setText("Medication: " + model.getName());
         holder.med_qty_txt.setText("Quantity: " + model.getQuantity());
         holder.mainLayout.setOnClickListener(new View.OnClickListener() {
@@ -54,14 +60,16 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.My
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView med_id_txt, med_name_txt, med_qty_txt, med_taken_txt;
+        TextView med_name_txt, med_qty_txt;
         LinearLayout mainLayout;
+        ImageView imageView;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             med_name_txt = itemView.findViewById(R.id.med_name_txt);
             med_qty_txt = itemView.findViewById(R.id.med_qty_txt);
             mainLayout = itemView.findViewById(R.id.mainLayout);
+            imageView = itemView.findViewById(R.id.imageView);
         }
     }
 
