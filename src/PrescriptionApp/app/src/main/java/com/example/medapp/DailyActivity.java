@@ -31,27 +31,15 @@ public class DailyActivity extends AppCompatActivity {
     FloatingActionButton floatingActionButton, nextButton;
     AddDailyAdapter applicationAdapter;
     DatabaseHelper databaseHelper = new DatabaseHelper(DailyActivity.this);
-    List<DoseModel> temp = new ArrayList<>();
-
     List<AddDoseModel> tempModels = new ArrayList<>();
 
     private static final int SECOND_ACTIVITY_REQUEST_CODE = 42;
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event){
-        if(keyCode == KeyEvent.KEYCODE_BACK){
-            temp.clear();
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == SECOND_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
-            DoseModel m = (DoseModel) data.getSerializableExtra("applModel");
             AddDoseModel doseModel = (AddDoseModel) data.getSerializableExtra("model");
-            temp.add(m);
             tempModels.add(doseModel);
 
             Toast.makeText(DailyActivity.this, doseModel.getTime(), Toast.LENGTH_SHORT).show();
@@ -96,19 +84,6 @@ public class DailyActivity extends AppCompatActivity {
                         databaseHelper.addDose(m);
                     }
                 }
-
-
-                /*
-                for(DoseModel m: temp){
-                    m.setMedicationId(medModel.getMedicationId());
-                    for(int i = 0; i < days.length; i++){
-                        m.setDoseId((int) Calendar.getInstance().getTimeInMillis());
-                        m.setDay(days[i]);
-                        databaseHelper.addDose(m);
-                    }
-                    initialiseNotification(m);
-                }
-                */
 
                 // update days until refill for med
                 databaseHelper.updateDaysUntilEmpty(medModel);
@@ -175,7 +150,6 @@ public class DailyActivity extends AppCompatActivity {
     }
 
     private void displayRecycler() {
-        //List<DoseModel> applModels = databaseHelper.selectDoseFromMedicationAndDay(medModel);
         applicationAdapter = new AddDailyAdapter(DailyActivity.this, tempModels);
         recyclerView.setAdapter(applicationAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(DailyActivity.this));

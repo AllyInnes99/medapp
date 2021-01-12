@@ -27,7 +27,7 @@ public class AddDailyApplication extends AppCompatActivity {
     DatabaseHelper databaseHelper;
     MaterialCheckBox monday, tuesday, wednesday, thursday, friday, saturday, sunday, select_all;
     List<MaterialCheckBox> checkBoxes;
-    List<String> temp;
+    List<String> daysToBeTakenOn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,9 +51,9 @@ public class AddDailyApplication extends AppCompatActivity {
         sunday = findViewById(R.id.sunday);
 
 
+        daysToBeTakenOn = new ArrayList<>();
         checkBoxes = Arrays.asList(monday, tuesday, wednesday, thursday,
                                     friday, saturday, sunday);
-        temp = new ArrayList<>();
 
         databaseHelper = new DatabaseHelper(AddDailyApplication.this);
 
@@ -77,6 +77,8 @@ public class AddDailyApplication extends AppCompatActivity {
             }
         });
 
+
+        // When the select all box is checked, check all of the other checkboxes
         select_all.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,7 +95,7 @@ public class AddDailyApplication extends AppCompatActivity {
 
                 DoseModel doseModel;
                 AddDoseModel addDoseModel;
-                temp.clear();
+                daysToBeTakenOn.clear();
 
                 try {
                     int medID = medModel.getMedicationId();
@@ -103,7 +105,7 @@ public class AddDailyApplication extends AppCompatActivity {
 
                     addDoseModel = new AddDoseModel(time, amount);
                     checkSelectedBoxes();
-                    addDoseModel.setDays(temp);
+                    addDoseModel.setDays(daysToBeTakenOn);
 
                     Intent output = new Intent();
                     output.putExtra("applModel", doseModel);
@@ -127,16 +129,15 @@ public class AddDailyApplication extends AppCompatActivity {
         return output;
     }
 
+    /**
+     * Helper method that checks which of the day checkboxes are selected, and adds their String
+     * representation to the list maintaining which days the dose is to be taken on
+     */
     private void checkSelectedBoxes() {
         for(MaterialCheckBox checkBox: checkBoxes) {
-            checkToList(checkBox);
-        }
-    }
-
-
-    private void checkToList(MaterialCheckBox box) {
-        if(box.isChecked()) {
-            temp.add(box.getTag().toString());
+            if(checkBox.isChecked()) {
+                daysToBeTakenOn.add(checkBox.getTag().toString());
+            }
         }
     }
 
