@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,7 +41,7 @@ public class AddDailyAdapter extends RecyclerView.Adapter<AddDailyAdapter.MyView
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
         AddDoseModel model = doseModels.get(position);
         holder.appl_amount_txt.setText("Take: " + model.getQuantity());
         holder.appl_time_txt.setText("Time: " + model.getTime());
@@ -64,6 +65,16 @@ public class AddDailyAdapter extends RecyclerView.Adapter<AddDailyAdapter.MyView
                 textView.setTextColor(Color.LTGRAY);
             }
         }
+
+        holder.clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                doseModels.remove(position);
+                notifyItemRemoved(position);
+                notifyItemRangeChanged(position, doseModels.size());
+                holder.itemView.setVisibility(View.GONE);
+            }
+        });
     }
 
     @Override
@@ -75,6 +86,7 @@ public class AddDailyAdapter extends RecyclerView.Adapter<AddDailyAdapter.MyView
 
         TextView appl_amount_txt, appl_time_txt;
         TextView monday, tuesday, wednesday, thursday, friday, saturday, sunday;
+        ImageView clear;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -87,6 +99,7 @@ public class AddDailyAdapter extends RecyclerView.Adapter<AddDailyAdapter.MyView
             friday = itemView.findViewById(R.id.friday);
             saturday = itemView.findViewById(R.id.saturday);
             sunday = itemView.findViewById(R.id.sunday);
+            clear = itemView.findViewById(R.id.clear);
             dayIcons = new ArrayList<>();
         }
     }
