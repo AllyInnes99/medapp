@@ -339,6 +339,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    public void refreshDailyDoses() {
+        ContentValues cv = new ContentValues();
+        cv.put(COL_TAKEN, false);
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.update(DOSE_TABLE, cv, COL_DAY + " = 'Daily'", null);
+        db.close();
+    }
+
 
     public void updateMedication(MedicationModel model) {
         ContentValues cv = new ContentValues();

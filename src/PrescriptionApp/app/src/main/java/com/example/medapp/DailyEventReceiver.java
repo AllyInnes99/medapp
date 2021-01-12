@@ -25,8 +25,7 @@ public class DailyEventReceiver extends BroadcastReceiver {
         mContext = context;
         setTodaysNotifications();
         autoTakeMedication();
-
-
+        resetDailyMed();
     }
 
     private void setTodaysNotifications() {
@@ -74,6 +73,7 @@ public class DailyEventReceiver extends BroadcastReceiver {
      */
     private void autoTakeMedication() {
         Toast.makeText(mContext, "AutoTake activated", Toast.LENGTH_SHORT).show();
+
         // Obtain what day it was yesterday
         Calendar c = Calendar.getInstance();
         c.add(Calendar.DATE, -1);
@@ -89,11 +89,15 @@ public class DailyEventReceiver extends BroadcastReceiver {
 
             for(DoseModel d: doseModels) {
                 String day = d.getDay();
-                if(App.days.indexOf(day) == cDay && !d.isTaken()){
+                if((App.days.indexOf(day) == cDay || day.equals("Daily"))&& !d.isTaken()){
                     databaseHelper.takeMedication(d, m);
                 }
             }
         }
+    }
+
+    private void resetDailyMed() {
+        databaseHelper.refreshDailyDoses();
     }
 
 }
