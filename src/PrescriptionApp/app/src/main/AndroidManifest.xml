@@ -29,7 +29,7 @@
         <activity android:name=".AddDailyApplication" />
         <activity android:name=".WeeklyActivity" />
         <activity android:name=".DailyActivity" />
-        <activity android:name=".AddMedicationActivity" />
+        <activity android:name=".CreateMedicationActivity" />
         <activity android:name=".MainActivity" />
 
         <receiver

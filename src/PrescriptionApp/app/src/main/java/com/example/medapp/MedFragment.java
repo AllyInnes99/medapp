@@ -73,7 +73,7 @@ public class MedFragment extends Fragment {
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
-                startActivity(new Intent(getActivity(), AddMedicationActivity.class));
+                startActivity(new Intent(getActivity(), CreateMedicationActivity.class));
             }
         });
 

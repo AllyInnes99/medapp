@@ -1,6 +1,5 @@
 package com.example.medapp;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -11,12 +10,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Collections;
 import java.util.List;
@@ -68,7 +63,7 @@ public class HomeFragment extends Fragment {
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
-                startActivity(new Intent(getActivity(), AddMedicationActivity.class));
+                startActivity(new Intent(getActivity(), CreateMedicationActivity.class));
             }
         });
         return view;

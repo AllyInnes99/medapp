@@ -14,7 +14,7 @@ import android.widget.Toast;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 
-public class AddMedicationActivity extends AppCompatActivity {
+public class CreateMedicationActivity extends AppCompatActivity {
 
     TextInputEditText et_name, et_quantity, et_strength;
     AutoCompleteTextView dropdown_measurement, dropdown_type;
@@ -30,7 +30,7 @@ public class AddMedicationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_medication);
+        setContentView(R.layout.activity_create_medication);
 
         et_name = findViewById(R.id.et_name);
         et_quantity = findViewById(R.id.et_quantity);
@@ -43,11 +43,11 @@ public class AddMedicationActivity extends AppCompatActivity {
         autoTake = findViewById(R.id.autotake);
 
         ArrayAdapter<String> measurementAdapter =
-                new ArrayAdapter<>(AddMedicationActivity.this, R.layout.list_item, measurements);
+                new ArrayAdapter<>(CreateMedicationActivity.this, R.layout.list_item, measurements);
         dropdown_measurement.setAdapter(measurementAdapter);
 
         ArrayAdapter<String> typeAdapter =
-                new ArrayAdapter<String>(AddMedicationActivity.this, R.layout.list_item, medTypes);
+                new ArrayAdapter<String>(CreateMedicationActivity.this, R.layout.list_item, medTypes);
         dropdown_type.setAdapter(typeAdapter);
 
         submit_btn.setOnClickListener(new View.OnClickListener() {
@@ -62,11 +62,11 @@ public class AddMedicationActivity extends AppCompatActivity {
                 String selectedFrequency;
                 if(radio1.isChecked()){
                     selectedFrequency = "Daily";
-                    intent = new Intent(AddMedicationActivity.this, DailyActivity.class);
+                    intent = new Intent(CreateMedicationActivity.this, DailyActivity.class);
                 }
                 else{
                     selectedFrequency = "Weekly";
-                    intent = new Intent(AddMedicationActivity.this, WeeklyActivity.class);
+                    intent = new Intent(CreateMedicationActivity.this, WeeklyActivity.class);
                 }
 
                 try {
@@ -86,10 +86,10 @@ public class AddMedicationActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
                 catch (NumberFormatException e) {
-                    Toast.makeText(AddMedicationActivity.this, "Invalid number for quantity", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CreateMedicationActivity.this, "Invalid number for quantity", Toast.LENGTH_SHORT).show();
                 }
                 catch (Exception e) {
-                    Toast.makeText(AddMedicationActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CreateMedicationActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
                     finish();
                 }
             }
