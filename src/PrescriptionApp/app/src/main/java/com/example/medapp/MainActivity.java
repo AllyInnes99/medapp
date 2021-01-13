@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity{
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         navController = Navigation.findNavController(this, R.id.navFragment);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
-        setAutoTakeAlarm();
+        setDailyEventAlarm();
         setRefreshAlarm();
 
     }
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity{
      * Helper function that is called on creation to start the daily cycle of "automatically" taking
      * medication that the user wishes to do so.
      */
-    private void setAutoTakeAlarm() {
+    private void setDailyEventAlarm() {
         AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
 
         // set calendar to begin at midnight the next day

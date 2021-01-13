@@ -12,7 +12,8 @@ import java.util.Calendar;
 import java.util.List;
 
 /**
- * Class that extends Broadcast receiver, for daily events in the app
+ * Class that extends Broadcast receiver, events that are to occur at the "end of day"
+ * within the app
  */
 public class DailyEventReceiver extends BroadcastReceiver {
 
@@ -23,12 +24,12 @@ public class DailyEventReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         databaseHelper = new DatabaseHelper(context);
         mContext = context;
-        setTodaysNotifications();
+        setNotificationsForToday();
         autoTakeMedication();
         resetDailyMed();
     }
 
-    private void setTodaysNotifications() {
+    private void setNotificationsForToday() {
         List<DoseModel> doses = databaseHelper.selectTodaysDoseAndNotTaken();
         for(DoseModel dose: doses) {
             MedicationModel m = databaseHelper.selectMedicationFromDose(dose);
@@ -36,10 +37,11 @@ public class DailyEventReceiver extends BroadcastReceiver {
                 createNotification(m, dose);
             }
         }
-
     }
 
     private void createNotification(MedicationModel medModel, DoseModel doseModel) {
+
+
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(System.currentTimeMillis());
 
@@ -60,6 +62,9 @@ public class DailyEventReceiver extends BroadcastReceiver {
         intent.putExtra("quantity", doseModel.getAmount());
         intent.putExtra("name", medModel.getName());
 
+        intent.putExtra("medID", medModel.getMedicationId());
+        intent.putExtra("doseID", doseModel.getDoseId());
+
         // Register receiver
         mContext.getApplicationContext().registerReceiver(new AlertReceiver(), new IntentFilter());
 
@@ -72,8 +77,6 @@ public class DailyEventReceiver extends BroadcastReceiver {
      * been selected for this for the previous day
      */
     private void autoTakeMedication() {
-        Toast.makeText(mContext, "AutoTake activated", Toast.LENGTH_SHORT).show();
-
         // Obtain what day it was yesterday
         Calendar c = Calendar.getInstance();
         c.add(Calendar.DATE, -1);

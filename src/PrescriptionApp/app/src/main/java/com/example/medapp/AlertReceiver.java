@@ -10,6 +10,8 @@ import android.widget.Toast;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import org.w3c.dom.CDATASection;
+
 public class AlertReceiver extends BroadcastReceiver {
 
     @Override
@@ -19,17 +21,26 @@ public class AlertReceiver extends BroadcastReceiver {
         tapIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, tapIntent, 0);
 
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+
+        int medID = intent.getIntExtra("medID", 0);
+        int doseID = intent.getIntExtra("doseID", 0);
+
         /*
         Intent takeIntent = new Intent(context, TakeReceiver.class);
         takeIntent.setAction(Intent.ACTION_EDIT);
         takeIntent.putExtra("take", 0);
         */
 
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        DatabaseHelper databaseHelper = new DatabaseHelper(context);
+        MedicationModel medModel = databaseHelper.selectMedicationFromID(medID);
+        DoseModel doseModel = databaseHelper.selectDoseFromID(doseID);
 
-        int quantity = (int) intent.getSerializableExtra("quantity");
-        //int id = (int) intent.getSerializableExtra("medID");
-        String name = (String) intent.getSerializableExtra("name");
+        Toast.makeText(context, Integer.toString(medID), Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, Integer.toString(doseID), Toast.LENGTH_SHORT).show();
+
+        int quantity = doseModel.getAmount();
+        String name = medModel.getName();
 
         String title = "MedApp: Take " + name;
         String msg = "Time to take " + quantity + " of " + name;

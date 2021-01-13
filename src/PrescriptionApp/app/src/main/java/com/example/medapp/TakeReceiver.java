@@ -11,10 +11,10 @@ public class TakeReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
 
         DatabaseHelper databaseHelper = new DatabaseHelper(context);
-
-        DoseModel doseModel = (DoseModel)intent.getSerializableExtra("dose");
-        MedicationModel medModel = (MedicationModel) intent.getSerializableExtra("dose");
-        databaseHelper.takeMedication(doseModel, medModel);
+        int medID = intent.getIntExtra("medID", 0);
+        int doseID = intent.getIntExtra("doseID", 0);
+        MedicationModel medicationModel = databaseHelper.selectMedicationFromID(medID);
+        DoseModel doseModel = databaseHelper.selectDoseFromID(doseID);
 
 
     }

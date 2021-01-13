@@ -238,6 +238,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return selectDoseHelper(rawQuery);
     }
 
+    public DoseModel selectDoseFromID(int id) {
+        String rawQuery = "SELECT * FROM " + DOSE_TABLE
+                + " WHERE " + COL_DOSE_ID + " = " + id;
+        return selectDoseHelper(rawQuery).get(0);
+    }
+
 
     public List<DoseModel> selectTodaysDoseAndNotTaken() {
 
