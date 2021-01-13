@@ -12,11 +12,8 @@ public class DoseModel implements Comparable<DoseModel>, Serializable {
     private String day;
     private int amount;
     private boolean isTaken;
-    private static String[] days = {"Sunday", "Monday", "Tuesday", "Wednesday",
-                                    "Thursday", "Friday", "Saturday"};
-    private static List<String> dayList = Arrays.asList(days);
-    private static int id = 0;
-
+    private static List<String> dayList = Arrays.asList("Sunday", "Monday", "Tuesday", "Wednesday",
+                                                        "Thursday", "Friday", "Saturday");
 
     /**
      * Initialise an ApplicationModel instance
