@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
@@ -26,18 +27,16 @@ public class AlertReceiver extends BroadcastReceiver {
         int medID = intent.getIntExtra("medID", 0);
         int doseID = intent.getIntExtra("doseID", 0);
 
-        /*
         Intent takeIntent = new Intent(context, TakeReceiver.class);
-        takeIntent.setAction(Intent.ACTION_EDIT);
-        takeIntent.putExtra("take", 0);
-        */
+        takeIntent.setAction("action.intent.action.NOTIFY");
+        takeIntent.putExtra("doseID", doseID);
+        takeIntent.putExtra("medID", medID);
+        PendingIntent takePendingIntent = PendingIntent.getBroadcast(context, 1, takeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        context.getApplicationContext().registerReceiver(new TakeReceiver(), new IntentFilter());
 
         DatabaseHelper databaseHelper = new DatabaseHelper(context);
         MedicationModel medModel = databaseHelper.selectMedicationFromID(medID);
         DoseModel doseModel = databaseHelper.selectDoseFromID(doseID);
-
-        Toast.makeText(context, Integer.toString(medID), Toast.LENGTH_SHORT).show();
-        Toast.makeText(context, Integer.toString(doseID), Toast.LENGTH_SHORT).show();
 
         int quantity = doseModel.getAmount();
         String name = medModel.getName();
@@ -53,6 +52,7 @@ public class AlertReceiver extends BroadcastReceiver {
                 .setCategory(NotificationCompat.CATEGORY_REMINDER)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
+                .addAction(R.drawable.ic_healing, context.getApplicationContext().getString(R.string.take), takePendingIntent)
                 .build();
         notificationManager.notify(1, notification);
     }
