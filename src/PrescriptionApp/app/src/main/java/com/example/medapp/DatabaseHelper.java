@@ -285,6 +285,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             } while(cursor.moveToNext());
         }
+        cursor.close();
         return returnList;
     }
 
@@ -301,7 +302,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             deleteDose(appl);
         }
         Cursor cursor = db.rawQuery(queryString, null);
-        return cursor.moveToFirst();
+        boolean deleted = cursor.moveToFirst();
+        cursor.close();
+        return deleted;
     }
     /**
      * Method that finds the target application model in database, and if found it is deleted.
@@ -312,7 +315,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         String queryString = "DELETE FROM " + DOSE_TABLE + " WHERE " + COL_DOSE_ID + " = " + model.getDoseId();
         Cursor cursor = db.rawQuery(queryString, null);
-        return cursor.moveToFirst();
+        boolean deleted = cursor.moveToFirst();
+        cursor.close();
+        return deleted;
     }
 
     /**
