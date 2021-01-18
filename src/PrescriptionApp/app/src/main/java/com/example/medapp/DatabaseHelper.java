@@ -346,7 +346,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void updateEmptyID(MedicationModel medicationModel, String id) {
         ContentValues cv = new ContentValues(1);
-        cv.put(COL_CALENDAR_REFILL, id);
+        cv.put(COL_CALENDAR_EMPTY, id);
         updateMedicationRow(medicationModel, cv);
     }
 
