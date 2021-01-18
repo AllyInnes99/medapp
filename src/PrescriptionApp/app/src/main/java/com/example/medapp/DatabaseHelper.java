@@ -90,7 +90,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Method that adds a row to the medication table from medication object
-     * @param medicationModel
+     * @param medicationModel model to be added to the database
      * @return true if added successfully, false otherwise
      */
     public boolean addMedication(MedicationModel medicationModel) {
@@ -180,8 +180,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             } while(cursor.moveToNext());
         }
-        else {
-        }
+
         cursor.close();
         db.close();
         return returnList;
@@ -292,9 +291,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * Method that finds the target medication model in database, and if found it is deleted.
      * @param model - object that represents the medication that is to be removed.
-     * @return true if model is found and deleted successfully, false if not
      */
-    public boolean deleteMedication(MedicationModel model) {
+    public void deleteMedication(MedicationModel model) {
         SQLiteDatabase db = this.getWritableDatabase();
         String queryString = "DELETE FROM " + MEDICATION_TABLE + " WHERE " + COL_MEDICATION_ID + " = " + model.getMedicationId();
         List<DoseModel> doseModels = selectDoseFromMedication(model);
@@ -302,22 +300,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             deleteDose(appl);
         }
         Cursor cursor = db.rawQuery(queryString, null);
-        boolean deleted = cursor.moveToFirst();
         cursor.close();
-        return deleted;
     }
     /**
      * Method that finds the target application model in database, and if found it is deleted.
      * @param model - object that represents the application that is to be removed.
      * @return true if model is found and deleted successfully, false if not
      */
-    public boolean deleteDose(DoseModel model){
+    public void deleteDose(DoseModel model){
         SQLiteDatabase db = this.getWritableDatabase();
         String queryString = "DELETE FROM " + DOSE_TABLE + " WHERE " + COL_DOSE_ID + " = " + model.getDoseId();
         Cursor cursor = db.rawQuery(queryString, null);
-        boolean deleted = cursor.moveToFirst();
         cursor.close();
-        return deleted;
     }
 
     /**
@@ -429,7 +423,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public int daysUntilEmpty(MedicationModel model) {
 
         Calendar c = Calendar.getInstance();
-        int day = c.get(Calendar.DAY_OF_WEEK);
 
         List<DoseModel> doses = selectDoseFromMedication(model);
         Map<String, Integer> takenPerDay = new HashMap<>();
@@ -487,11 +480,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COL_REFILL, days);
         updateMedicationRow(medModel, cv);
 
-    }
-
-    public boolean isRefillNeeded(MedicationModel m) {
-        int days = daysUntilEmpty(m);
-        return days < 14;
     }
 
     private int mapFiller(Map<String, Integer> takenMap, String target){
