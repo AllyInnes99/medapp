@@ -26,7 +26,7 @@ public class AddDosesActivity extends AppCompatActivity {
     MedicationModel medModel;
     RecyclerView recyclerView;
     FloatingActionButton floatingActionButton, nextButton;
-    AddDoseAdapter applicationAdapter;
+    AddDoseAdapter doseAdapter;
     DatabaseHelper databaseHelper = new DatabaseHelper(AddDosesActivity.this);
     List<AddDoseModel> tempModels = new ArrayList<>();
     private static final int SECOND_ACTIVITY_REQUEST_CODE = 42;
@@ -159,8 +159,8 @@ public class AddDosesActivity extends AppCompatActivity {
     }
 
     private void displayRecycler() {
-        applicationAdapter = new AddDoseAdapter(AddDosesActivity.this, tempModels);
-        recyclerView.setAdapter(applicationAdapter);
+        doseAdapter = new AddDoseAdapter(AddDosesActivity.this, tempModels);
+        recyclerView.setAdapter(doseAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(AddDosesActivity.this));
     }
 

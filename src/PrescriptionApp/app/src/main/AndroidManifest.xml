@@ -14,8 +14,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".EditMedDosesActivity"></activity>
-        <!-- ACTIVITIES -->
+        <activity android:name=".EditMedDosesActivity" /> <!-- ACTIVITIES -->
         <activity android:name=".Test" />
         <activity
             android:name=".SignInActivity"

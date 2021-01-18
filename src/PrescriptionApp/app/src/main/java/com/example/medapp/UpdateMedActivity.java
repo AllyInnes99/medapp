@@ -2,6 +2,7 @@ package com.example.medapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,7 +18,7 @@ import java.util.List;
 
 public class UpdateMedActivity extends AppCompatActivity {
 
-    Button btn_update, btn_delete, btn_cal;
+    Button btn_update, btn_delete, btn_cal, btn_dose;
     EditText et_name, et_quantity, et_refill, et_dosage;
     Spinner medTypeDropdown, measurementDropdown;
     String selectedType, selectedMeasurement;
@@ -25,9 +26,9 @@ public class UpdateMedActivity extends AppCompatActivity {
     DatabaseHelper databaseHelper = new DatabaseHelper(UpdateMedActivity.this);
     int originalQuantity;
 
-    final List<String> medTypes = Arrays.asList(new String[] {"tablet", "pill", "injection", "powder",
-                                                                "drops", "inhalers", "topical"});
-    final List<String> measurements = Arrays.asList(new String[] {"g", "mg", "ml", "l"});
+    final List<String> medTypes = Arrays.asList("tablet", "pill", "injection", "powder",
+                                                "drops", "inhalers", "topical");
+    final List<String> measurements = Arrays.asList("g", "mg", "ml", "l");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +38,7 @@ public class UpdateMedActivity extends AppCompatActivity {
         btn_update = findViewById(R.id.button_update);
         btn_delete = findViewById(R.id.button_cancel);
         btn_cal = findViewById(R.id.btn_cal);
+        btn_dose = findViewById(R.id.btn_dose);
         et_name = findViewById(R.id.edit_name);
         et_quantity = findViewById(R.id.edit_quantity);
         et_refill = findViewById(R.id.edit_refill);
@@ -151,6 +153,16 @@ public class UpdateMedActivity extends AppCompatActivity {
                 }
             }
         });
+
+        btn_dose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(UpdateMedActivity.this, EditMedDosesActivity.class);
+                i.putExtra("medID", model.getMedicationId());
+                startActivity(i);
+            }
+        });
+
 
     }
 
