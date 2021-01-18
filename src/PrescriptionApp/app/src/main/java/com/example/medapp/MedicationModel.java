@@ -30,33 +30,6 @@ public class MedicationModel implements Serializable {
         this.profile = profile;
     }
 
-    public MedicationModel(String name, int quantity, int refillAt, String type,
-                           double dosage, String measurement, String profile) {
-        this.medicationId = ++App.medId;
-        this.name = name;
-        this.quantity = quantity;
-        this.refillAt = refillAt;
-        this.type = type;
-        this.dosage = dosage;
-        this.measurement = measurement;
-        this.autoTake = false;
-        this.profile = profile;
-    }
-
-    public MedicationModel(int medicationId, String name, int quantity,
-                           int refillAt, String type, double dosage,
-                           String measurement, String profile) {
-        this.medicationId = medicationId;
-        this.name = name;
-        this.quantity = quantity;
-        this.refillAt = refillAt;
-        this.type = type;
-        this.dosage = dosage;
-        this.measurement = measurement;
-        this.autoTake = false;
-        this.profile = profile;
-    }
-
     public MedicationModel(int medicationId, String name, int quantity, int refillAt,
                            String type, double dosage, String measurement, String profile, boolean autoTake) {
         this.medicationId = medicationId;
