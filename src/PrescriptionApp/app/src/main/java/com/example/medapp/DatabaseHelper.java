@@ -269,14 +269,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         if(cursor.moveToFirst()) {
             do {
-                int doseID = cursor.getInt(0);
-                int medID = cursor.getInt(1);
-                int timeHour = cursor.getInt(2);
-                int timeMinute = cursor.getInt(3);
+                int i = 0;
+                int doseID = cursor.getInt(i++);
+                int medID = cursor.getInt(i++);
+                int timeHour = cursor.getInt(i++);
+                int timeMinute = cursor.getInt(i++);
 
-                String day = cursor.getString(4);
-                int amount = cursor.getInt(5);
-                boolean isTaken = SQLiteIntToBool(cursor.getInt(6));
+                String day = cursor.getString(i++);
+                int amount = cursor.getInt(i++);
+                boolean isTaken = SQLiteIntToBool(cursor.getInt(i++));
 
                 DoseModel m = new DoseModel(doseID, medID, timeMinute,
                         timeHour, day, amount, isTaken);
