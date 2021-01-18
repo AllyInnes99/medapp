@@ -167,25 +167,6 @@ public class GoogleCalendarHelper {
         }
     }
 
-    public void testThread(){
-
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    DatabaseHelper databaseHelper = new DatabaseHelper(context);
-                    MedicationModel model = new MedicationModel("new",5,5, "tablet",  0.1, "g", "me", false);
-                    databaseHelper.addMedication(model);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        t.start();
-
-    }
-
-
     private Calendar nextDayOfWeek(int dow) {
         Calendar date = Calendar.getInstance();
         int diff = dow - date.get(Calendar.DAY_OF_WEEK);
@@ -270,7 +251,7 @@ public class GoogleCalendarHelper {
 
 
         setTime(c, emptyEvent);
-        addEventToCalendar(emptyEvent);
+        addEmptyEvent(medModel, emptyEvent);
 
         // Set a refill reminder event to remind users to refill their medication before it becomes empty
         if(medModel.getRefillAt() >= 14){
@@ -279,9 +260,48 @@ public class GoogleCalendarHelper {
                     .setDescription(medModel.getName() + " will run out of supply in 14 days. Please order a new prescription.")
                     .setSummary("MedApp: " + medModel.getName() + " Refill Reminder");
             setTime(c, refillEvent);
-            addEventToCalendar(refillEvent);
+            addRefillReminderEvent(medModel, refillEvent);
         }
     }
+
+    private void addRefillReminderEvent(final MedicationModel medicationModel, Event event) {
+        final Event[] events = {event};
+        // Can't run IO operations on UI thread, so start new thread for operation
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    events[0] = service.events().insert(CALENDAR_ID, events[0]).execute();
+                    String eventID = events[0].getId();
+                    DatabaseHelper databaseHelper = new DatabaseHelper(context);
+                    databaseHelper.updateRefillID(medicationModel, eventID);
+                } catch (final Exception e) {
+                    Log.e("MedApp", "exception", e);
+                }
+            }
+        });
+        t.start();
+    }
+
+    private void addEmptyEvent(final MedicationModel medicationModel, Event event) {
+        final Event[] events = {event};
+        // Can't run IO operations on UI thread, so start new thread for operation
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    events[0] = service.events().insert(CALENDAR_ID, events[0]).execute();
+                    String eventID = events[0].getId();
+                    DatabaseHelper databaseHelper = new DatabaseHelper(context);
+                    databaseHelper.updateEmptyID(medicationModel, eventID);
+                } catch (final Exception e) {
+                    Log.e("MedApp", "exception", e);
+                }
+            }
+        });
+        t.start();
+    }
+
 
     private String createDateString(Calendar c){
         String year = Integer.toString(c.get(Calendar.YEAR));

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,7 +16,6 @@ import java.util.Map;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    private Context context;
     public static final String DATABASE_NAME = "MedicationApp.db";
     public static final int DATABASE_VERSION = 1;
 
@@ -336,6 +336,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         cvAppl.put(COL_TAKEN, true);
         updateDose(doseModel, cvAppl);
+    }
+
+    public void updateRefillID(MedicationModel medicationModel, String id) {
+        ContentValues cv = new ContentValues(1);
+        cv.put(COL_CALENDAR_REFILL, id);
+        updateMedicationRow(medicationModel, cv);
+    }
+
+    public void updateEmptyID(MedicationModel medicationModel, String id) {
+        ContentValues cv = new ContentValues(1);
+        cv.put(COL_CALENDAR_REFILL, id);
+        updateMedicationRow(medicationModel, cv);
     }
 
     /**
