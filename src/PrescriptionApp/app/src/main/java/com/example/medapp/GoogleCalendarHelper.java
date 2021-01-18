@@ -169,7 +169,26 @@ public class GoogleCalendarHelper {
         }
     }
 
-    public Calendar nextDayOfWeek(int dow) {
+    public void testThread(){
+
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    DatabaseHelper databaseHelper = new DatabaseHelper(context);
+                    MedicationModel model = new MedicationModel("new",5,5, "tablet", "Daily", 0.1, "g", "me", false);
+                    databaseHelper.addMedication(model);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        t.start();
+
+    }
+
+
+    private Calendar nextDayOfWeek(int dow) {
         Calendar date = Calendar.getInstance();
         int diff = dow - date.get(Calendar.DAY_OF_WEEK);
         if (diff < 0) {
