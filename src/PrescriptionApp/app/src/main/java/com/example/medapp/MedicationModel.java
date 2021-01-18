@@ -15,6 +15,8 @@ public class MedicationModel implements Serializable {
     private String measurement;
     private String profile;
     private boolean autoTake;
+    private String calendarRefill;
+    private String calendarEmpty;
 
 
     public MedicationModel(String name, int quantity, int refillAt, String type, double dosage,
@@ -28,6 +30,8 @@ public class MedicationModel implements Serializable {
         this.measurement = measurement;
         this.autoTake = autoTake;
         this.profile = profile;
+        this.calendarRefill = "";
+        this.calendarEmpty = "";
     }
 
     public MedicationModel(int medicationId, String name, int quantity, int refillAt,
@@ -41,6 +45,21 @@ public class MedicationModel implements Serializable {
         this.measurement = measurement;
         this.autoTake = autoTake;
         this.profile = profile;
+    }
+
+    public MedicationModel(int medicationId, String name, int quantity, int refillAt, String type, double dosage,
+                           String measurement, String profile, boolean autoTake, String calendarRefill, String calendarEmpty) {
+        this.medicationId = medicationId;
+        this.name = name;
+        this.quantity = quantity;
+        this.refillAt = refillAt;
+        this.type = type;
+        this.dosage = dosage;
+        this.measurement = measurement;
+        this.autoTake = autoTake;
+        this.profile = profile;
+        this.calendarRefill = calendarRefill;
+        this.calendarEmpty = calendarEmpty;
     }
 
     /**
@@ -153,4 +172,22 @@ public class MedicationModel implements Serializable {
     public void setProfile(String profile) {
         this.profile = profile;
     }
+
+
+    public String getCalendarRefill() {
+        return calendarRefill;
+    }
+
+    public void setCalendarRefill(String calendarRefill) {
+        this.calendarRefill = calendarRefill;
+    }
+
+    public String getCalendarEmpty() {
+        return calendarEmpty;
+    }
+
+    public void setCalendarEmpty(String calendarEmpty) {
+        this.calendarEmpty = calendarEmpty;
+    }
+
 }

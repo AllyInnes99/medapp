@@ -30,6 +30,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_PROFILE = "PROFILE";
     public static final String COL_REFILL = "REFILL_AT";
     public static final String COL_AUTO_TAKE = "AUTO_TAKE";
+    public static final String COL_CALENDAR_REFILL = "CALENDAR_REFILL";
+    public static final String COL_CALENDAR_EMPTY = "CALENDAR_EMPTY";
 
     // Const variables for the application table
     public static final String DOSE_TABLE = "DOSE_TABLE";
@@ -41,8 +43,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_TAKEN = "IS_TAKEN";
 
     Calendar calendar = Calendar.getInstance();
-    List<String> days = Arrays.asList(
-            "", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday");
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -58,7 +58,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                         + COL_MEASUREMENT + " TEXT, "
                                         + COL_TYPE + " TEXT, " + COL_PROFILE + " TEXT, "
                                         + COL_REFILL + " INT,"
-                                        + COL_AUTO_TAKE + " BOOL)";
+                                        + COL_AUTO_TAKE + " BOOL, "
+                                        + COL_CALENDAR_REFILL + " STRING, "
+                                        + COL_CALENDAR_EMPTY + " STRING)";
 
         String createAppTableStatement = onCreateHelper(DOSE_TABLE) + " ("
                                         + COL_DOSE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -105,6 +107,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COL_PROFILE, medicationModel.getProfile());
         cv.put(COL_REFILL, medicationModel.getRefillAt());
         cv.put(COL_AUTO_TAKE, medicationModel.isAutoTake());
+        cv.put(COL_CALENDAR_REFILL, medicationModel.getCalendarRefill());
+        cv.put(COL_CALENDAR_EMPTY, medicationModel.getCalendarEmpty());
         long insert = db.insert(MEDICATION_TABLE, null, cv);
         return isAdded(insert);
     }
@@ -174,8 +178,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String profile = cursor.getString(i++);
                 int refill = cursor.getInt(i++);
                 boolean autoTake = SQLiteIntToBool(cursor.getInt(i++));
-                MedicationModel model = new MedicationModel(id, name, qty, refill, type, dosage,
-                                                            measurement, profile, autoTake);
+                String calendarRefill = cursor.getString(i++);
+                String calendarEmpty = cursor.getString(i++);
+                MedicationModel model = new MedicationModel(id, name, qty, refill, type, dosage, measurement,
+                                                            profile, autoTake, calendarRefill, calendarEmpty);
                 returnList.add(model);
 
             } while(cursor.moveToNext());
@@ -246,7 +252,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public List<DoseModel> selectTodaysDoseAndNotTaken() {
 
         // Get the day as a string
-        String day = days.get(calendar.get(Calendar.DAY_OF_WEEK));
+        String day = App.days.get(calendar.get(Calendar.DAY_OF_WEEK));
 
         // In query, we check taken == 0 as this is how false is represented in SQLite
         String rawQuery = "SELECT * FROM " + DOSE_TABLE +
