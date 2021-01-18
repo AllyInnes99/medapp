@@ -66,6 +66,9 @@ public class AddDosesActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(!tempModels.isEmpty()) {
                     addToDatabase();
+                    Intent intent = new Intent(AddDosesActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
                 }
                 else {
                     Toast.makeText(AddDosesActivity.this, "Please add at least one dose.", Toast.LENGTH_SHORT).show();
@@ -82,15 +85,13 @@ public class AddDosesActivity extends AppCompatActivity {
         for(AddDoseModel dm: tempModels){
             if(dm.isDoseDaily()){
                 DoseModel m = new DoseModel(medModel.getMedicationId(), dm.getTime(),
-                        daily, dm.getQuantity(), false);
-                Toast.makeText(AddDosesActivity.this, "here", Toast.LENGTH_SHORT).show();
-
+                                            daily, dm.getQuantity(), false);
                 databaseHelper.addDose(m);
             }
             else {
                 for(String day: dm.getDays()){
                     DoseModel m = new DoseModel(medModel.getMedicationId(), dm.getTime(),
-                            day, dm.getQuantity(), false);
+                                                day, dm.getQuantity(), false);
                     databaseHelper.addDose(m);
                 }
             }
@@ -98,10 +99,6 @@ public class AddDosesActivity extends AppCompatActivity {
 
         // update days until refill for med
         databaseHelper.updateDaysUntilEmpty(medModel);
-
-        Intent intent = new Intent(AddDosesActivity.this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
     }
 
     /**

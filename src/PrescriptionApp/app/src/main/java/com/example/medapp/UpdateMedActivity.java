@@ -25,10 +25,19 @@ public class UpdateMedActivity extends AppCompatActivity {
     MedicationModel model;
     DatabaseHelper databaseHelper = new DatabaseHelper(UpdateMedActivity.this);
     int originalQuantity;
-
+    private static final int SECOND_ACTIVITY_REQUEST_CODE = 42;
     final List<String> medTypes = Arrays.asList("tablet", "pill", "injection", "powder",
                                                 "drops", "inhalers", "topical");
     final List<String> measurements = Arrays.asList("g", "mg", "ml", "l");
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == SECOND_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+            String msg = "Updated the doses of " + model.getName();
+            Toast.makeText(UpdateMedActivity.this, msg, Toast.LENGTH_SHORT).show();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,7 +168,7 @@ public class UpdateMedActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent i = new Intent(UpdateMedActivity.this, EditMedDosesActivity.class);
                 i.putExtra("medID", model.getMedicationId());
-                startActivity(i);
+                startActivityForResult(i, SECOND_ACTIVITY_REQUEST_CODE);
             }
         });
 

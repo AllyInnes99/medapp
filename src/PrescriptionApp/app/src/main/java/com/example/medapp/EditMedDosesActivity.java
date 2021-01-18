@@ -28,6 +28,7 @@ public class EditMedDosesActivity extends AppCompatActivity {
     Context context = EditMedDosesActivity.this;
     DatabaseHelper databaseHelper = new DatabaseHelper(context);
     List<AddDoseModel> tempModels;
+    List<DoseModel> doseModels;
     private static final int SECOND_ACTIVITY_REQUEST_CODE = 42;
 
     @Override
@@ -47,6 +48,7 @@ public class EditMedDosesActivity extends AppCompatActivity {
         tempModels = new ArrayList<>();
         int id = getIntent().getIntExtra("medID", 0);
         medModel = databaseHelper.selectMedicationFromID(id);
+        doseModels = databaseHelper.selectDoseFromMedication(medModel);
         getData();
 
         recyclerView = findViewById(R.id.recyclerView);
@@ -69,6 +71,9 @@ public class EditMedDosesActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(!tempModels.isEmpty()) {
                     addToDatabase();
+                    Intent output = new Intent();
+                    setResult(RESULT_OK, output);
+                    finish();
                 }
                 else {
                     Toast.makeText(EditMedDosesActivity.this, "Please add at least one dose.", Toast.LENGTH_SHORT).show();
@@ -78,11 +83,36 @@ public class EditMedDosesActivity extends AppCompatActivity {
 
     }
 
-    private void addToDatabase(){}
+    private void addToDatabase(){
+
+        // remove all previous doseModels from db
+        for(DoseModel dm: doseModels) {
+            databaseHelper.deleteDose(dm);
+        }
+
+        String daily = "Daily";
+        for(AddDoseModel dm: tempModels){
+            if(dm.isDoseDaily()){
+                DoseModel m = new DoseModel(medModel.getMedicationId(), dm.getTime(),
+                        daily, dm.getQuantity(), false);
+                databaseHelper.addDose(m);
+            }
+            else {
+                for(String day: dm.getDays()){
+                    DoseModel m = new DoseModel(medModel.getMedicationId(), dm.getTime(),
+                            day, dm.getQuantity(), false);
+                    databaseHelper.addDose(m);
+                }
+            }
+        }
+
+        // update days until refill for med
+        databaseHelper.updateDaysUntilEmpty(medModel);
+
+    }
 
 
     private void getData() {
-        List<DoseModel> doseModels = databaseHelper.selectDoseFromMedication(medModel);
         List<String> tempDays = new ArrayList<>();
         String prevTime = "";
         int prevAmount = 0;
@@ -126,14 +156,10 @@ public class EditMedDosesActivity extends AppCompatActivity {
         // if the last dose was not daily, then add it to the list
         if(!tempDays.isEmpty()) {
             DoseModel dm = doseModels.get(doseModels.size() - 1);
-            //Toast.makeText(context, dm.getTime(), Toast.LENGTH_SHORT).show();
             AddDoseModel addDoseModel = new AddDoseModel(dm.getTime(), dm.getAmount());
             addDoseModel.setDays(new ArrayList<>(tempDays));
             tempModels.add(addDoseModel);
         }
-
-
-        //tempModels = new ArrayList<>(new HashSet<>(tempModels));
     }
 
     private void displayRecycler() {
