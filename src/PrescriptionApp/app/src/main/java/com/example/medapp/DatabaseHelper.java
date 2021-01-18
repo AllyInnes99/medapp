@@ -25,7 +25,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_MEDICATION_NAME = "MEDICATION_NAME";
     public static final String COL_QUANTITY = "QUANTITY";
     public static final String COL_DOSAGE = "DOSAGE";
-    public static final String COL_FREQUENCY = "FREQUENCY";
     public static final String COL_MEASUREMENT = "MEASUREMENT";
     public static final String COL_TYPE = "TYPE";
     public static final String COL_PROFILE = "PROFILE";
@@ -43,7 +42,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     Calendar calendar = Calendar.getInstance();
     List<String> days = Arrays.asList(
-            new String[] {"", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"});
+            "", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday");
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -55,7 +54,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String createMedTableStatement = onCreateHelper(MEDICATION_TABLE) + " ("
                                         + COL_MEDICATION_ID + " INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT, "
                                         + COL_MEDICATION_NAME + " TEXT, " + COL_QUANTITY + " INT, "
-                                        + COL_FREQUENCY + " TEXT,"
                                         + COL_DOSAGE + " REAL, "
                                         + COL_MEASUREMENT + " TEXT, "
                                         + COL_TYPE + " TEXT, " + COL_PROFILE + " TEXT, "
@@ -101,7 +99,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         cv.put(COL_MEDICATION_NAME, medicationModel.getName());
         cv.put(COL_QUANTITY, medicationModel.getQuantity());
-        cv.put(COL_FREQUENCY, medicationModel.getDayFrequency());
         cv.put(COL_DOSAGE, medicationModel.getDosage());
         cv.put(COL_MEASUREMENT, medicationModel.getMeasurement());
         cv.put(COL_TYPE, medicationModel.getType());
@@ -167,17 +164,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()){
             do {
-                int id = cursor.getInt(0);
-                String name = cursor.getString(1);
-                int qty = cursor.getInt(2);
-                String freq = cursor.getString(3);
-                double dosage = cursor.getDouble(4);
-                String measurement = cursor.getString(5);
-                String type = cursor.getString(6);
-                String profile = cursor.getString(7);
-                int refill = cursor.getInt(8);
-                boolean autoTake = SQLiteIntToBool(cursor.getInt(9));
-                MedicationModel model = new MedicationModel(id, name, qty, refill, type, freq, dosage,
+                int i = 0;
+                int id = cursor.getInt(i++);
+                String name = cursor.getString(i++);
+                int qty = cursor.getInt(i++);
+                double dosage = cursor.getDouble(i++);
+                String measurement = cursor.getString(i++);
+                String type = cursor.getString(i++);
+                String profile = cursor.getString(i++);
+                int refill = cursor.getInt(i++);
+                boolean autoTake = SQLiteIntToBool(cursor.getInt(i++));
+                MedicationModel model = new MedicationModel(id, name, qty, refill, type, dosage,
                                                             measurement, profile, autoTake);
                 returnList.add(model);
 
@@ -208,7 +205,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return selectMedicationHelper(rawQuery);
     }
 
-    // SELECT QUERIES FOR DOSE_TABLE
+    /*
+     --- SELECT QUERIES FOR DOSE_TABLE ---
+    */
 
     /**
      * Method that gets all of the applications set up in the database
@@ -359,7 +358,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         cv.put(COL_MEDICATION_NAME, model.getName());
         cv.put(COL_QUANTITY, model.getQuantity());
-        cv.put(COL_FREQUENCY, model.getDayFrequency());
         cv.put(COL_DOSAGE, model.getDosage());
         cv.put(COL_MEASUREMENT, model.getMeasurement());
         cv.put(COL_TYPE, model.getType());
@@ -388,7 +386,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void updateDose(DoseModel applModel, ContentValues cv) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.update(DOSE_TABLE, cv, COL_DOSE_ID + "= "
-                                        + applModel.getDoseId(), null);
+                    + applModel.getDoseId(), null);
         db.close();
     }
 

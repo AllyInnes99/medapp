@@ -133,39 +133,37 @@ public class GoogleCalendarHelper {
         DatabaseHelper databaseHelper = new DatabaseHelper(context);
         List<DoseModel> doseModels = databaseHelper.selectDoseFromMedication(medicationModel);
 
-        if(medicationModel.getDayFrequency().equals("Daily")){
 
+        Calendar c = Calendar.getInstance();
+        for(DoseModel dose: doseModels){
 
-            Calendar c = Calendar.getInstance();
-            for(DoseModel dose: doseModels){
+            Event e = new Event()
+                    .setSummary("MedApp: " + medicationModel.getName() + " Reminder")
+                    .setDescription("Reminder to take " + dose.getAmount()
+                            + " of " + medicationModel.getName());
 
-                Event e = new Event()
-                        .setSummary("MedApp: " + medicationModel.getName() + " Reminder")
-                        .setDescription("Reminder to take " + dose.getAmount()
-                                + " of " + medicationModel.getName());
-
-                String recurrence;
-                if(dose.getDay().equals("Daily")) {
-                    setMedReminderTime(c, e, dose);
-                    recurrence = "RRULE:FREQ=DAILY;UNTIL=";
-                }
-                else {
-                    Calendar b = nextDayOfWeek(App.days.indexOf(dose.getDay()));
-                    setMedReminderTime(b, e, dose);
-                    recurrence = "RRULE:FREQ=WEEKLY;UNTIL=";
-                }
-
-                int daysUntilEmpty = medicationModel.getRefillAt();
-                c.add(Calendar.DATE, daysUntilEmpty);
-                String year = Integer.toString(c.get(Calendar.YEAR));
-                String day = padDate(c.get(Calendar.DATE));
-                String month = padDate(c.get(Calendar.MONTH) + 1);
-                String recurrenceEndDate = year + month + day;
-
-                e.setRecurrence(Arrays.asList(recurrence + recurrenceEndDate));
-                addEventToCalendar(e);
-                c = Calendar.getInstance();
+            String recurrence;
+            if(dose.getDay().equals("Daily")) {
+                setMedReminderTime(c, e, dose);
+                recurrence = "RRULE:FREQ=DAILY;UNTIL=";
             }
+            else {
+                Calendar b = nextDayOfWeek(App.days.indexOf(dose.getDay()));
+                setMedReminderTime(b, e, dose);
+                recurrence = "RRULE:FREQ=WEEKLY;UNTIL=";
+            }
+
+            int daysUntilEmpty = medicationModel.getRefillAt();
+            c.add(Calendar.DATE, daysUntilEmpty);
+            String year = Integer.toString(c.get(Calendar.YEAR));
+            String day = padDate(c.get(Calendar.DATE));
+            String month = padDate(c.get(Calendar.MONTH) + 1);
+            String recurrenceEndDate = year + month + day;
+
+            e.setRecurrence(Arrays.asList(recurrence + recurrenceEndDate));
+            addEventToCalendar(e);
+            c = Calendar.getInstance();
+
         }
     }
 
@@ -176,7 +174,7 @@ public class GoogleCalendarHelper {
             public void run() {
                 try {
                     DatabaseHelper databaseHelper = new DatabaseHelper(context);
-                    MedicationModel model = new MedicationModel("new",5,5, "tablet", "Daily", 0.1, "g", "me", false);
+                    MedicationModel model = new MedicationModel("new",5,5, "tablet",  0.1, "g", "me", false);
                     databaseHelper.addMedication(model);
                 } catch (Exception e) {
                     e.printStackTrace();

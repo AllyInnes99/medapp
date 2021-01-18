@@ -55,7 +55,6 @@ public class CreateMedicationActivity extends AppCompatActivity {
 
                 String selectedType = dropdown_type.getText().toString();
                 String selectedMeasurement = dropdown_measurement.getText().toString();
-                String selectedFrequency = "Daily";
                 intent = new Intent(CreateMedicationActivity.this, AddDosesActivity.class);
 
                 try {
@@ -70,7 +69,7 @@ public class CreateMedicationActivity extends AppCompatActivity {
                     boolean take = autoTake.isChecked();
 
                     model = new MedicationModel(medicationName, quantity, refill, selectedType,
-                                selectedFrequency, dosage, selectedMeasurement, "me", take );
+                                 dosage, selectedMeasurement, "me", take );
                     intent.putExtra("MedModel", model);
                     startActivity(intent);
                 }

@@ -11,35 +11,32 @@ public class MedicationModel implements Serializable {
     private int quantity;
     private int refillAt;
     private String type;
-    private String dayFrequency;
     private double dosage;
     private String measurement;
     private String profile;
     private boolean autoTake;
 
 
-    public MedicationModel(String name, int quantity, int refillAt, String type, String dayFrequency,
-                           double dosage, String measurement, String profile, boolean autoTake) {
+    public MedicationModel(String name, int quantity, int refillAt, String type, double dosage,
+                           String measurement, String profile, boolean autoTake) {
         this.medicationId = (int) System.currentTimeMillis();
         this.name = name;
         this.quantity = quantity;
         this.refillAt = refillAt;
         this.type = type;
-        this.dayFrequency = dayFrequency;
         this.dosage = dosage;
         this.measurement = measurement;
         this.autoTake = autoTake;
         this.profile = profile;
     }
 
-    public MedicationModel(String name, int quantity, int refillAt, String type, String dayFrequency,
+    public MedicationModel(String name, int quantity, int refillAt, String type,
                            double dosage, String measurement, String profile) {
         this.medicationId = ++App.medId;
         this.name = name;
         this.quantity = quantity;
         this.refillAt = refillAt;
         this.type = type;
-        this.dayFrequency = dayFrequency;
         this.dosage = dosage;
         this.measurement = measurement;
         this.autoTake = false;
@@ -47,29 +44,26 @@ public class MedicationModel implements Serializable {
     }
 
     public MedicationModel(int medicationId, String name, int quantity,
-                           int refillAt, String type, String dayFrequency,
-                           double dosage, String measurement, String profile) {
+                           int refillAt, String type, double dosage,
+                           String measurement, String profile) {
         this.medicationId = medicationId;
         this.name = name;
         this.quantity = quantity;
         this.refillAt = refillAt;
         this.type = type;
-        this.dayFrequency = dayFrequency;
         this.dosage = dosage;
         this.measurement = measurement;
         this.autoTake = false;
         this.profile = profile;
     }
 
-    public MedicationModel(int medicationId, String name, int quantity,
-                           int refillAt, String type, String dayFrequency,
-                           double dosage, String measurement, String profile, boolean autoTake) {
+    public MedicationModel(int medicationId, String name, int quantity, int refillAt,
+                           String type, double dosage, String measurement, String profile, boolean autoTake) {
         this.medicationId = medicationId;
         this.name = name;
         this.quantity = quantity;
         this.refillAt = refillAt;
         this.type = type;
-        this.dayFrequency = dayFrequency;
         this.dosage = dosage;
         this.measurement = measurement;
         this.autoTake = autoTake;
@@ -154,13 +148,6 @@ public class MedicationModel implements Serializable {
         this.type = type;
     }
 
-    public String getDayFrequency() {
-        return dayFrequency;
-    }
-
-    public void setDayFrequency(String dayFrequency) {
-        this.dayFrequency = dayFrequency;
-    }
 
     public double getDosage() {
         return dosage;
