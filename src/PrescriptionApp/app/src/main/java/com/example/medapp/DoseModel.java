@@ -12,6 +12,9 @@ public class DoseModel implements Comparable<DoseModel>, Serializable {
     private String day;
     private int amount;
     private boolean isTaken;
+
+    private String calendarID;
+
     private static List<String> dayList = Arrays.asList("Sunday", "Monday", "Tuesday", "Wednesday",
                                                         "Thursday", "Friday", "Saturday");
 
@@ -29,16 +32,19 @@ public class DoseModel implements Comparable<DoseModel>, Serializable {
         this.day = day;
         this.amount = amount;
         this.isTaken = isTaken;
+        this.calendarID = "a";
     }
 
 
-    public DoseModel(int doseId, int medicationId, int timeMinutes, int timeHour, String day, int amount, boolean isTaken) {
+    public DoseModel(int doseId, int medicationId, int timeMinutes, int timeHour, String day,
+                     int amount, boolean isTaken, String calendarID) {
         this.doseId = doseId;
         this.medicationId = medicationId;
         this.time = intTimeToString(timeHour) +":"+ intTimeToString(timeMinutes);
         this.day = day;
         this.amount = amount;
         this.isTaken = isTaken;
+        this.calendarID = calendarID;
     }
 
     public String[] timeToHourAndMin(){
@@ -105,11 +111,19 @@ public class DoseModel implements Comparable<DoseModel>, Serializable {
         this.medicationId = medicationId;
     }
 
+    public String getCalendarID() {
+        return calendarID;
+    }
+
+    public void setCalendarID(String calendarID) {
+        this.calendarID = calendarID;
+    }
+
     @Override
     public int compareTo(DoseModel o) {
         String thisTime = this.getTime();
         String otherTime = o.getTime();
-        if(thisTime.equals(null) || otherTime.equals(null)) return 0;
+        if(thisTime.equals(otherTime)) return 0;
         return thisTime.compareTo(otherTime);
     }
 }

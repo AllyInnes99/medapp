@@ -41,6 +41,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_DAY = "DAY";
     public static final String COL_AMOUNT = "AMOUNT";
     public static final String COL_TAKEN = "IS_TAKEN";
+    public static final String COL_CALENDAR_ID = "CALENDAR_ID";
 
     Calendar calendar = Calendar.getInstance();
 
@@ -64,9 +65,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         String createAppTableStatement = onCreateHelper(DOSE_TABLE) + " ("
                                         + COL_DOSE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                                        + COL_MEDICATION_ID + " INT, " + COL_TIME_HOUR + " INT, "
+                                        + COL_MEDICATION_ID + " INT, "
+                                        + COL_TIME_HOUR + " INT, "
                                         + COL_TIME_MINUTE + " INT, "
-                                        + COL_DAY + " TEXT, " + COL_AMOUNT + " INT, " + COL_TAKEN + " BOOL,"
+                                        + COL_DAY + " TEXT, "
+                                        + COL_AMOUNT + " INT, "
+                                        + COL_TAKEN + " BOOL, "
+                                        + COL_CALENDAR_ID + " STRING, "
                                         + "FOREIGN KEY (" + COL_MEDICATION_ID + ") REFERENCES " + MEDICATION_TABLE
                                         + "(" + COL_MEDICATION_ID + "))";
 
@@ -131,6 +136,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COL_DAY, doseModel.getDay());
         cv.put(COL_AMOUNT, doseModel.getAmount());
         cv.put(COL_TAKEN, doseModel.isTaken());
+        cv.put(COL_CALENDAR_ID, doseModel.getCalendarID());
         long insert = db.insert(DOSE_TABLE, null, cv);
         return isAdded(insert);
     }
@@ -283,9 +289,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String day = cursor.getString(i++);
                 int amount = cursor.getInt(i++);
                 boolean isTaken = SQLiteIntToBool(cursor.getInt(i++));
+                String calID = cursor.getString(i++);
 
-                DoseModel m = new DoseModel(doseID, medID, timeMinute,
-                        timeHour, day, amount, isTaken);
+                DoseModel m = new DoseModel(doseID, medID, timeMinute, timeHour,
+                                            day, amount, isTaken, calID);
                 returnList.add(m);
 
             } while(cursor.moveToNext());
