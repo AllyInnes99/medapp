@@ -65,8 +65,13 @@ public class SettingFragment extends Fragment {
         btnMed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //DatabaseHelper databaseHelper = new DatabaseHelper(requireContext());
-                //databaseHelper.refreshDailyDoses();
+                Toast.makeText(getActivity(), "Deleting from Google Calendar", Toast.LENGTH_SHORT).show();
+
+                DatabaseHelper databaseHelper = new DatabaseHelper(requireContext());
+                GoogleCalendarHelper gch = new GoogleCalendarHelper(requireContext());
+                for(MedicationModel m: databaseHelper.selectAllMedication()){
+                    gch.deleteMedEvents(m);
+                }
 
 
             }

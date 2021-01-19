@@ -357,6 +357,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         updateMedicationRow(medicationModel, cv);
     }
 
+    public void updateDoseCalendarID(DoseModel doseModel, String id) {
+        ContentValues cv = new ContentValues();
+        cv.put(COL_CALENDAR_ID, id);
+        updateDose(doseModel, cv);
+    }
+
     /**
      * Method that is called weekly that refreshes the every application in the db so that its
      * IS_TAKEN column is reset to false

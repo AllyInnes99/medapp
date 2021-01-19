@@ -26,6 +26,7 @@ import java.util.List;
 public class GoogleCalendarHelper {
 
     private Context context;
+    private DatabaseHelper databaseHelper;
     private com.google.api.services.calendar.Calendar service;
     private static final NetHttpTransport NET_HTTP_TRANSPORT =
             new com.google.api.client.http.javanet.NetHttpTransport();
@@ -35,6 +36,7 @@ public class GoogleCalendarHelper {
 
     public GoogleCalendarHelper(Context context) {
         this.context = context;
+        this.databaseHelper = new DatabaseHelper(context);
         GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2
                 (context, Collections.singleton(CalendarScopes.CALENDAR_EVENTS));
         credential.setSelectedAccount(GoogleSignIn.getLastSignedInAccount(context).getAccount());
@@ -55,12 +57,11 @@ public class GoogleCalendarHelper {
             @Override
             public void run() {
                 try {
-                    Events events = service.events().list("primary").execute();
-                    for(Event event: events.getItems()){
-                        if(event.getSummary().contains("MedApp: " + medicationModel.getName())){
-                            Log.d("MedApp", event.getSummary());
-                            service.events().delete(CALENDAR_ID, event.getId()).execute();
-                        }
+                    service.events().delete(CALENDAR_ID, medicationModel.getCalendarRefill()).execute();
+                    service.events().delete(CALENDAR_ID, medicationModel.getCalendarEmpty()).execute();
+                    DatabaseHelper databaseHelper = new DatabaseHelper(context);
+                    for(DoseModel doseModel: databaseHelper.selectDoseFromMedication(medicationModel)) {
+                        service.events().delete(CALENDAR_ID, doseModel.getCalendarID()).execute();
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -130,26 +131,23 @@ public class GoogleCalendarHelper {
      * @param medicationModel
      */
     public void addMedReminder(MedicationModel medicationModel) {
-        DatabaseHelper databaseHelper = new DatabaseHelper(context);
         List<DoseModel> doseModels = databaseHelper.selectDoseFromMedication(medicationModel);
-
-
         Calendar c = Calendar.getInstance();
         for(DoseModel dose: doseModels){
 
-            Event e = new Event()
+            Event event = new Event()
                     .setSummary("MedApp: " + medicationModel.getName() + " Reminder")
                     .setDescription("Reminder to take " + dose.getAmount()
                             + " of " + medicationModel.getName());
 
             String recurrence;
             if(dose.getDay().equals("Daily")) {
-                setMedReminderTime(c, e, dose);
+                setMedReminderTime(c, event, dose);
                 recurrence = "RRULE:FREQ=DAILY;UNTIL=";
             }
             else {
                 Calendar b = nextDayOfWeek(App.days.indexOf(dose.getDay()));
-                setMedReminderTime(b, e, dose);
+                setMedReminderTime(b, event, dose);
                 recurrence = "RRULE:FREQ=WEEKLY;UNTIL=";
             }
 
@@ -160,8 +158,8 @@ public class GoogleCalendarHelper {
             String month = padDate(c.get(Calendar.MONTH) + 1);
             String recurrenceEndDate = year + month + day;
 
-            e.setRecurrence(Arrays.asList(recurrence + recurrenceEndDate));
-            addEventToCalendar(e);
+            event.setRecurrence(Collections.singletonList(recurrence + recurrenceEndDate));
+            addDoseEvent(dose, event);
             c = Calendar.getInstance();
 
         }
@@ -273,7 +271,6 @@ public class GoogleCalendarHelper {
                 try{
                     events[0] = service.events().insert(CALENDAR_ID, events[0]).execute();
                     String eventID = events[0].getId();
-                    DatabaseHelper databaseHelper = new DatabaseHelper(context);
                     databaseHelper.updateRefillID(medicationModel, eventID);
                 } catch (final Exception e) {
                     Log.e("MedApp", "exception", e);
@@ -292,9 +289,8 @@ public class GoogleCalendarHelper {
                 try{
                     events[0] = service.events().insert(CALENDAR_ID, events[0]).execute();
                     String eventID = events[0].getId();
-                    DatabaseHelper databaseHelper = new DatabaseHelper(context);
                     databaseHelper.updateEmptyID(medicationModel, eventID);
-                } catch (final Exception e) {
+                } catch (IOException e) {
                     Log.e("MedApp", "exception", e);
                 }
             }
@@ -302,13 +298,30 @@ public class GoogleCalendarHelper {
         t.start();
     }
 
+    private void addDoseEvent(final DoseModel doseModel, Event event) {
+        final Event[] events = {event};
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    events[0] = service.events().insert(CALENDAR_ID, events[0]).execute();
+                    String eventID = events[0].getId();
+                    databaseHelper.updateDoseCalendarID(doseModel, eventID);
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+    }
+
 
     private String createDateString(Calendar c){
         String year = Integer.toString(c.get(Calendar.YEAR));
         String day = padDate(c.get(Calendar.DATE));
         String month = padDate(c.get(Calendar.MONTH) + 1);
-        String date = String.format("%s-%s-%s", year, month, day);
-        return date;
+        return String.format("%s-%s-%s", year, month, day);
     }
 
 
