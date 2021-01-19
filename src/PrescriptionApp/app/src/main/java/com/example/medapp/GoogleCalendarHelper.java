@@ -106,7 +106,6 @@ public class GoogleCalendarHelper {
             updateDoseEvent(medModel, dose);
         }
 
-
     }
 
 
@@ -153,18 +152,19 @@ public class GoogleCalendarHelper {
         final Calendar c = Calendar.getInstance();
         c.add(Calendar.DATE, medModel.getRefillAt() - 14);
 
-
         if(eventID != null && !eventID.equals("a")) {
+            //Toast.makeText(context, "here", Toast.LENGTH_SHORT).show();
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         Event event = service.events().get(CALENDAR_ID, eventID).execute();
+                        Log.d("UpdateRefill", event.getSummary());
                         setTime(c, event);
                         Event updated = service.events().update(CALENDAR_ID, eventID, event).execute();
-                        databaseHelper.updateRefillID(medModel, updated.getId());
+                        //databaseHelper.updateRefillID(medModel, updated.getId());
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        Log.d("MedApp", e.toString());
                     }
 
                 }
@@ -182,10 +182,12 @@ public class GoogleCalendarHelper {
                 public void run() {
                     try {
                         Event event = service.events().get(CALENDAR_ID, eventID).execute();
+                        Log.d("UpdateEmpty", event.getSummary());
                         setTime(c, event);
                         Event updated = service.events().update(CALENDAR_ID, eventID, event).execute();
-                        databaseHelper.updateRefillID(medModel, updated.getId());
+                        //databaseHelper.updateRefillID(medModel, updated.getId());
                     } catch (IOException e) {
+                        Log.d("MedApp", "error");
                         e.printStackTrace();
                     }
 
