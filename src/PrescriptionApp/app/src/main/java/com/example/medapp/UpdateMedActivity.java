@@ -118,13 +118,9 @@ public class UpdateMedActivity extends AppCompatActivity {
                     databaseHelper.updateMedication(model);
                     if(quantity != originalQuantity) {
                         databaseHelper.updateDaysUntilEmpty(model);
-
-                        Toast.makeText(UpdateMedActivity.this, Integer.toString(model.getRefillAt()), Toast.LENGTH_SHORT).show();
                         model.setRefillAt(databaseHelper.daysUntilEmpty(model));
-                        Toast.makeText(UpdateMedActivity.this, Integer.toString(model.getRefillAt()), Toast.LENGTH_SHORT).show();
-
                         GoogleCalendarHelper gch = new GoogleCalendarHelper(UpdateMedActivity.this);
-                        gch.updateRefillEvents(model);
+                        gch.updateMedEvents(model);
                     }
 
                     Toast.makeText(UpdateMedActivity.this, "Successfully updated medication", Toast.LENGTH_SHORT).show();
