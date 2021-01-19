@@ -44,9 +44,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_CALENDAR_ID = "CALENDAR_ID";
 
     Calendar calendar = Calendar.getInstance();
+    private Context context;
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
     }
 
     @Override
@@ -307,13 +309,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public void deleteMedication(MedicationModel model) {
         SQLiteDatabase db = this.getWritableDatabase();
-        String queryString = "DELETE FROM " + MEDICATION_TABLE + " WHERE " + COL_MEDICATION_ID + " = " + model.getMedicationId();
         List<DoseModel> doseModels = selectDoseFromMedication(model);
         for(DoseModel appl: doseModels){
             deleteDose(appl);
         }
-        Cursor cursor = db.rawQuery(queryString, null);
-        cursor.close();
+        db.delete(MEDICATION_TABLE, COL_MEDICATION_ID + " = " + model.getMedicationId(), null);
+
+
     }
     /**
      * Method that finds the target application model in database, and if found it is deleted.
@@ -322,9 +324,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public void deleteDose(DoseModel model){
         SQLiteDatabase db = this.getWritableDatabase();
-        String queryString = "DELETE FROM " + DOSE_TABLE + " WHERE " + COL_DOSE_ID + " = " + model.getDoseId();
-        Cursor cursor = db.rawQuery(queryString, null);
-        cursor.close();
+        db.delete(DOSE_TABLE, COL_MEDICATION_ID + " = " + model.getDoseId(), null);
     }
 
     /**
