@@ -79,6 +79,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.execSQL(createMedTableStatement);
         db.execSQL(createAppTableStatement);
+
     }
 
     @Override
@@ -86,6 +87,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     }
+
 
     @Override
     public void onOpen(SQLiteDatabase db) {

@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity{
         c.set(Calendar.MINUTE, 0);
         c.set(Calendar.SECOND, 0);
         c.set(Calendar.MILLISECOND, 0);
+        c.add(Calendar.DATE, 1);
 
         // Use time as a unique ID for the pending intent
         int id = (int) System.currentTimeMillis();
