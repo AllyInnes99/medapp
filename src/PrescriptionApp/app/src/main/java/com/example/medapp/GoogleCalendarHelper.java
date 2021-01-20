@@ -89,9 +89,6 @@ public class GoogleCalendarHelper {
 
     public void updateMedEvents(MedicationModel medModel) {
 
-        // update the empty event
-        updateEmptyEvent(medModel);
-
         // update the refill reminder event
         if(medModel.getRefillAt() >= 14) {
             updateRefillEvent(medModel);
@@ -100,6 +97,11 @@ public class GoogleCalendarHelper {
         else {
             deleteRefillEvent(medModel);
         }
+
+        // update the empty event
+        updateEmptyEvent(medModel);
+
+
 
         List<DoseModel> doses = databaseHelper.selectDoseFromMedication(medModel);
         for(DoseModel dose: doses) {

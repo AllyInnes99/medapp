@@ -4,10 +4,12 @@ import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
@@ -20,6 +22,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Calendar;
@@ -32,7 +35,7 @@ import java.util.List;
  */
 public class SettingFragment extends Fragment {
 
-    Button btnMed, btnRefill, btnSignOut;
+    Button btnMed, btnRefill, btnSignOut, btnTest;
     NotificationManagerCompat notificationManager;
 
     public SettingFragment() {
@@ -56,10 +59,40 @@ public class SettingFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_setting, container, false);
+        btnTest = view.findViewById(R.id.btn_test);
         btnMed = view.findViewById(R.id.btnMed);
         btnRefill = view.findViewById(R.id.btnRefill);
         btnSignOut = view.findViewById(R.id.sign_out_btn);
-        notificationManager = NotificationManagerCompat.from(getActivity());
+        notificationManager = NotificationManagerCompat.from(requireActivity());
+
+        btnTest.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+
+                new MaterialAlertDialogBuilder(requireContext())
+                        .setTitle("Delete entry")
+                        .setMessage("Are you sure you want to delete this entry?")
+
+                        // Specifying a listener allows you to take an action before dismissing the dialog.
+                        // The dialog is automatically dismissed when a dialog button is clicked.
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(requireContext(), "Yes", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+
+                        // A null listener allows the button to dismiss the dialog and take no further action.
+                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(requireContext(), "No", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+
+            }
+        });
+
 
 
         btnMed.setOnClickListener(new View.OnClickListener() {

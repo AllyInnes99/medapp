@@ -153,6 +153,7 @@ public class UpdateMedActivity extends AppCompatActivity {
                 try {
                     gac.addMedReminder(model);
                     gac.addRefillEvents(model);
+                    gac.updateMedEvents(model);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
