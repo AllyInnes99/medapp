@@ -88,7 +88,7 @@ public class EditMedDosesActivity extends AppCompatActivity {
     private void addToDatabase(){
 
         // remove all previous doseModels from db
-        for(DoseModel dm: originalDoses) {
+        for(DoseModel dm: doseModels) {
             databaseHelper.deleteDose(dm);
         }
 
@@ -109,9 +109,7 @@ public class EditMedDosesActivity extends AppCompatActivity {
         }
         // update days until refill for med
         databaseHelper.updateDaysUntilEmpty(medModel);
-
     }
-
 
     private void getData() {
         List<String> tempDays = new ArrayList<>();

@@ -146,5 +146,4 @@ public class MainActivity extends AppCompatActivity{
         // Set repeating alarm that calls onReceive() of RefreshReceiver at supplied time
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
     }
-
 }

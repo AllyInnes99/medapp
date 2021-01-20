@@ -335,7 +335,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void deleteDose(DoseModel model){
         Toast.makeText(context, "Del", Toast.LENGTH_SHORT).show();
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(DOSE_TABLE, COL_MEDICATION_ID + " = " + model.getDoseId(), null);
+        db.delete(DOSE_TABLE, COL_DOSE_ID + " = " + model.getDoseId(), null);
     }
 
     /**
