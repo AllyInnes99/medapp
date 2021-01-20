@@ -29,6 +29,7 @@ public class EditMedDosesActivity extends AppCompatActivity {
     DatabaseHelper databaseHelper = new DatabaseHelper(context);
     List<AddDoseModel> tempModels;
     List<DoseModel> doseModels;
+    List<DoseModel> originalDoses;
     private static final int SECOND_ACTIVITY_REQUEST_CODE = 42;
 
     @Override
@@ -49,6 +50,7 @@ public class EditMedDosesActivity extends AppCompatActivity {
         int id = getIntent().getIntExtra("medID", 0);
         medModel = databaseHelper.selectMedicationFromID(id);
         doseModels = databaseHelper.selectDoseFromMedication(medModel);
+        originalDoses = new ArrayList<>(doseModels);
         getData();
 
         recyclerView = findViewById(R.id.recyclerView);
@@ -86,7 +88,7 @@ public class EditMedDosesActivity extends AppCompatActivity {
     private void addToDatabase(){
 
         // remove all previous doseModels from db
-        for(DoseModel dm: doseModels) {
+        for(DoseModel dm: originalDoses) {
             databaseHelper.deleteDose(dm);
         }
 
@@ -105,7 +107,6 @@ public class EditMedDosesActivity extends AppCompatActivity {
                 }
             }
         }
-
         // update days until refill for med
         databaseHelper.updateDaysUntilEmpty(medModel);
 

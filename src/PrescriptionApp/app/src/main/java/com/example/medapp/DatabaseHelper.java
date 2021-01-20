@@ -74,8 +74,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                         + COL_AMOUNT + " INT, "
                                         + COL_TAKEN + " BOOL, "
                                         + COL_CALENDAR_ID + " STRING, "
-                                        + "FOREIGN KEY (" + COL_MEDICATION_ID + ") REFERENCES " + MEDICATION_TABLE
-                                        + "(" + COL_MEDICATION_ID + "))";
+                                        + "FOREIGN KEY (" + COL_MEDICATION_ID + ") REFERENCES " + MEDICATION_TABLE + " ( " + COL_MEDICATION_ID + ") ON DELETE CASCADE)"
+                                        ;
 
         db.execSQL(createMedTableStatement);
         db.execSQL(createAppTableStatement);
@@ -85,6 +85,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
 
+    }
+
+    @Override
+    public void onOpen(SQLiteDatabase db) {
+        super.onOpen(db);
+        db.execSQL("PRAGMA foreign_keys=ON");
     }
 
 
@@ -309,10 +315,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public void deleteMedication(MedicationModel model) {
         SQLiteDatabase db = this.getWritableDatabase();
-        List<DoseModel> doseModels = selectDoseFromMedication(model);
+        //List<DoseModel> doseModels = selectDoseFromMedication(model);
+        /*
         for(DoseModel appl: doseModels){
             deleteDose(appl);
         }
+        */
         db.delete(MEDICATION_TABLE, COL_MEDICATION_ID + " = " + model.getMedicationId(), null);
 
 
@@ -323,6 +331,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @return true if model is found and deleted successfully, false if not
      */
     public void deleteDose(DoseModel model){
+        Toast.makeText(context, "Del", Toast.LENGTH_SHORT).show();
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(DOSE_TABLE, COL_MEDICATION_ID + " = " + model.getDoseId(), null);
     }

@@ -85,7 +85,6 @@ public class DoseAdapter extends RecyclerView.Adapter<DoseAdapter.MyViewHolder> 
                             .setIcon(android.R.drawable.ic_dialog_alert)
                             .show();
                     }
-
                     else {
                         takeMed(doseModel, medModel);
                     }
