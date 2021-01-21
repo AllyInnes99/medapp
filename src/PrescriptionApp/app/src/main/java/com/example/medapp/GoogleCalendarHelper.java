@@ -81,6 +81,21 @@ public class GoogleCalendarHelper {
 
     }
 
+    public void deleteEventsById(final List<String> ids) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for(String id: ids) {
+                    try {
+                        service.events().delete(CALENDAR_ID, id).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
+    }
+
     /**
      * Method that deletes the corresponding event for a dose from a user's Google Calendar
      * @param doseModel the medication dose that is to be removed from the user's Google Calendar
