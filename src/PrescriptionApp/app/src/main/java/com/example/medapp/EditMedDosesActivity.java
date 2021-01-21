@@ -23,6 +23,7 @@ public class EditMedDosesActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     FloatingActionButton floatingActionButton, nextButton;
     AddDoseAdapter doseAdapter;
+    GoogleCalendarHelper gch;
     List<String> days = Arrays.asList("Monday", "Tuesday", "Wednesday", "Thursday",
                                         "Friday", "Saturday", "Sunday");
     Context context = EditMedDosesActivity.this;
@@ -51,6 +52,7 @@ public class EditMedDosesActivity extends AppCompatActivity {
         medModel = databaseHelper.selectMedicationFromID(id);
         doseModels = databaseHelper.selectDoseFromMedication(medModel);
         originalDoses = new ArrayList<>(doseModels);
+        gch = new GoogleCalendarHelper(context);
         getData();
 
         recyclerView = findViewById(R.id.recyclerView);
@@ -74,6 +76,7 @@ public class EditMedDosesActivity extends AppCompatActivity {
                 if(!tempModels.isEmpty()) {
                     addToDatabase();
                     Intent output = new Intent();
+                    output.putExtra("refill", medModel.getRefillAt());
                     setResult(RESULT_OK, output);
                     finish();
                 }
@@ -85,10 +88,14 @@ public class EditMedDosesActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Method that makes changes to the database to accommodate the newly created/removed doses
+     */
     private void addToDatabase(){
 
-        // remove all previous doseModels from db
+        // remove all previous doseModels from db and Google Calendar
         for(DoseModel dm: doseModels) {
+            gch.deleteDoseEvent(dm);
             databaseHelper.deleteDose(dm);
         }
 
@@ -109,7 +116,17 @@ public class EditMedDosesActivity extends AppCompatActivity {
         }
         // update days until refill for med
         databaseHelper.updateDaysUntilEmpty(medModel);
+        medModel = databaseHelper.selectMedicationFromID(medModel.getMedicationId());
+
+        // add the new Doses to Google Calendar
+        if(medModel.getCalendarRefill() != null) {
+            gch.updateRefillEvent(medModel);
+            gch.updateEmptyEvent(medModel);
+            gch.addDoseReminder(medModel);
+        }
     }
+
+
 
     private void getData() {
         List<String> tempDays = new ArrayList<>();

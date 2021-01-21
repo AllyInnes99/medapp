@@ -34,6 +34,8 @@ public class UpdateMedActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == SECOND_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+            int refill = data.getIntExtra("refill", 0);
+            displayRefillDate(refill);
             String msg = "Updated the doses of " + model.getName();
             Toast.makeText(UpdateMedActivity.this, msg, Toast.LENGTH_SHORT).show();
         }
@@ -61,12 +63,8 @@ public class UpdateMedActivity extends AppCompatActivity {
         et_name.setText(model.getName());
         et_quantity.setText(Integer.toString(model.getQuantity()));
 
-        Calendar c = Calendar.getInstance();
-        c.add(Calendar.DATE, model.getRefillAt());
-        final String date = "" + c.get(Calendar.DAY_OF_MONTH) + "/" + (c.get(Calendar.MONTH) + 1) + "/" + c.get(Calendar.YEAR);
+        displayRefillDate(model.getRefillAt());
 
-
-        et_refill.setText(date);
         et_dosage.setText(Double.toString(model.getDosage()));
 
         ArrayAdapter<String> medTypeAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, medTypes);
@@ -151,7 +149,7 @@ public class UpdateMedActivity extends AppCompatActivity {
                 Toast.makeText(UpdateMedActivity.this, "Adding reminder events to Google Calendar", Toast.LENGTH_SHORT).show();
                 GoogleCalendarHelper gac = new GoogleCalendarHelper(UpdateMedActivity.this);
                 try {
-                    gac.addMedReminder(model);
+                    gac.addDoseReminder(model);
                     gac.addRefillEvents(model);
                     gac.updateMedEvents(model);
                 } catch (Exception e) {
@@ -171,6 +169,14 @@ public class UpdateMedActivity extends AppCompatActivity {
 
 
     }
+
+    private void displayRefillDate(int daysUntilRefill) {
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DATE, daysUntilRefill);
+        final String date = "" + c.get(Calendar.DAY_OF_MONTH) + "/" + (c.get(Calendar.MONTH) + 1) + "/" + c.get(Calendar.YEAR);
+        et_refill.setText(date);
+    }
+
 
     private void cancelNotification(MedicationModel model){
         List<DoseModel> doseModels = databaseHelper.selectDoseFromMedication(model);

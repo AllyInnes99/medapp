@@ -56,7 +56,7 @@ public class GoogleCalendarHelper {
      */
     public void deleteMedEvents(final MedicationModel medModel){
         if(medModel.getCalendarEmpty() != null || medModel.getCalendarRefill() != null) {
-            Thread t = new Thread(new Runnable() {
+            new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
@@ -70,11 +70,33 @@ public class GoogleCalendarHelper {
                         e.printStackTrace();
                     }
                 }
-            });
-            t.start();
+            }).start();
         }
     }
 
+    /**
+     * Method that deletes the corresponding event for a dose from a user's Google Calendar
+     * @param doseModel the medication dose that is to be removed from the user's Google Calendar
+     */
+    public void deleteDoseEvent(final DoseModel doseModel) {
+        if(doseModel.getCalendarID() != null) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        service.events().delete(CALENDAR_ID, doseModel.getCalendarID()).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+        }
+    }
+
+    /**
+     * Method that deletes the refill event for a medication
+     * @param medModel the medication that wants the refill event to be removed
+     */
     public void deleteRefillEvent(final MedicationModel medModel) {
         if(medModel.getCalendarRefill() != null){
             new Thread(new Runnable() {
@@ -213,7 +235,7 @@ public class GoogleCalendarHelper {
      * Adds a reminder to take medication to Google Calendar
      * @param medicationModel
      */
-    public void addMedReminder(MedicationModel medicationModel) {
+    public void addDoseReminder(MedicationModel medicationModel) {
         List<DoseModel> doseModels = databaseHelper.selectDoseFromMedication(medicationModel);
         Calendar c = Calendar.getInstance();
         for(DoseModel dose: doseModels){

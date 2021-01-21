@@ -4,7 +4,9 @@ import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Build;
+import android.provider.CalendarContract;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -18,15 +20,13 @@ public class App extends Application {
     public static final String CREDENTIALS_FILE_PATH = "../credentials.json";
     public static Map<MedicationModel, NotificationChannel> channels = new HashMap<>();
     public static Map<MedicationModel, String> channelIDs = new HashMap<>();
-    public static int medId = 0;
-
-
     public static List<String> days = Arrays.asList("", "Sunday", "Monday", "Tuesday", "Wednesday",
                                                     "Thursday", "Friday", "Saturday");
 
     @Override
     public void onCreate(){
         super.onCreate();
+        Resources res = getResources();
         createNotificationChannels();
     }
 
