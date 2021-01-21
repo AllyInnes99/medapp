@@ -54,24 +54,31 @@ public class GoogleCalendarHelper {
      * Method that deletes all events in a user's Google Calendar that are related to a given med
      * @param medModel the med to remove all events from user's Google Calendar
      */
-    public void deleteMedEvents(final MedicationModel medModel){
-        if(medModel.getCalendarEmpty() != null || medModel.getCalendarRefill() != null) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        service.events().delete(CALENDAR_ID, medModel.getCalendarRefill()).execute();
-                        service.events().delete(CALENDAR_ID, medModel.getCalendarEmpty()).execute();
-                        DatabaseHelper databaseHelper = new DatabaseHelper(context);
-                        for(DoseModel doseModel: databaseHelper.selectDoseFromMedication(medModel)) {
-                            service.events().delete(CALENDAR_ID, doseModel.getCalendarID()).execute();
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
+    public void deleteMedEvents(final MedicationModel medModel, final List<DoseModel> doses) {
+
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String medRefill = medModel.getCalendarRefill();
+                    //Log.d("MedApp", medRefill);
+                    service.events().delete(CALENDAR_ID, medRefill).execute();
+
+                    String medEmpty= medModel.getCalendarEmpty();
+                    //Log.d("MedApp", medEmpty);
+                    service.events().delete(CALENDAR_ID, medEmpty).execute();
+
+                    for(DoseModel doseModel: doses) {
+                        //Log.d("MedApp", "deleting dose event");
+                        service.events().delete(CALENDAR_ID, doseModel.getCalendarID()).execute();
                     }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            }).start();
-        }
+            }
+        });
+        t.start();
+
     }
 
     /**
@@ -218,16 +225,6 @@ public class GoogleCalendarHelper {
                     }
                 }
             }).start();
-        }
-    }
-
-    /**
-     * Method that deletes every MedApp event in the user's Google Calendar
-     */
-    public void deleteAllEvents() {
-        List<MedicationModel> medModels = databaseHelper.selectAllMedication();
-        for (MedicationModel medModel : medModels) {
-            deleteMedEvents(medModel);
         }
     }
 

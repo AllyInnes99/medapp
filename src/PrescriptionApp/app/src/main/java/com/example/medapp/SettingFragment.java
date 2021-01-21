@@ -103,7 +103,7 @@ public class SettingFragment extends Fragment {
                 DatabaseHelper databaseHelper = new DatabaseHelper(requireContext());
                 GoogleCalendarHelper gch = new GoogleCalendarHelper(requireContext());
                 for(MedicationModel m: databaseHelper.selectAllMedication()){
-                    gch.deleteMedEvents(m);
+                    //gch.deleteMedEvents(m);
                 }
 
 

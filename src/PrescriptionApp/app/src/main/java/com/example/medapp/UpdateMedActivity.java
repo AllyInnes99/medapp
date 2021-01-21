@@ -57,7 +57,9 @@ public class UpdateMedActivity extends AppCompatActivity {
         medTypeDropdown = findViewById(R.id.spinner1);
         measurementDropdown = findViewById(R.id.spinner2);
 
-        model = (MedicationModel) getIntent().getSerializableExtra("MedModel");
+
+        int id = getIntent().getIntExtra("medID", 0);
+        model = databaseHelper.selectMedicationFromID(id);
         originalQuantity = model.getQuantity();
 
         et_name.setText(model.getName());
@@ -116,7 +118,7 @@ public class UpdateMedActivity extends AppCompatActivity {
                     databaseHelper.updateMedication(model);
                     if(quantity != originalQuantity) {
                         databaseHelper.updateDaysUntilEmpty(model);
-                        model.setRefillAt(databaseHelper.daysUntilEmpty(model));
+                        model = databaseHelper.selectMedicationFromID(model.getMedicationId());
                         GoogleCalendarHelper gch = new GoogleCalendarHelper(UpdateMedActivity.this);
                         gch.updateMedEvents(model);
                     }
@@ -136,10 +138,16 @@ public class UpdateMedActivity extends AppCompatActivity {
             @Override
             public void onClick(View v){
                 GoogleCalendarHelper gac = new GoogleCalendarHelper(UpdateMedActivity.this);
-                gac.deleteMedEvents(model);
-                databaseHelper.deleteMedication(model);
-                Toast.makeText(UpdateMedActivity.this, "Successfully deleted medication", Toast.LENGTH_SHORT).show();
-                finish();
+                try {
+                    List<DoseModel> doses = databaseHelper.selectDoseFromMedication(model);
+                    gac.deleteMedEvents(model, doses);
+                    databaseHelper.deleteMedication(model);
+                    Toast.makeText(UpdateMedActivity.this, "Successfully deleted medication", Toast.LENGTH_SHORT).show();
+                    finish();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             }
         });
 
@@ -155,6 +163,8 @@ public class UpdateMedActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                model = databaseHelper.selectMedicationFromID(model.getMedicationId());
+                finish();
             }
         });
 

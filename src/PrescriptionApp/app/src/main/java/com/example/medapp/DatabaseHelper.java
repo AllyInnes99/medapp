@@ -463,9 +463,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @return
      */
     public int daysUntilEmpty(MedicationModel model) {
-
         Calendar c = Calendar.getInstance();
-
         List<DoseModel> doses = selectDoseFromMedication(model);
         Map<String, Integer> takenPerDay = new HashMap<>();
         takenPerDay.put("Monday", 0);
@@ -490,10 +488,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 int original = takenPerDay.get(d);
                 takenPerDay.put(d, original + count);
             }
-        }
-
-        for(String day: takenPerDay.keySet()) {
-            Toast.makeText(context, Integer.toString(takenPerDay.get(day)), Toast.LENGTH_SHORT).show();
         }
 
         Map<Integer, Integer> m = new HashMap<>();
