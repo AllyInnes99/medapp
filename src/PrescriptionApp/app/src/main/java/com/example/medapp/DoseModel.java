@@ -32,7 +32,7 @@ public class DoseModel implements Comparable<DoseModel>, Serializable {
         this.day = day;
         this.amount = amount;
         this.isTaken = isTaken;
-        this.calendarID = "a";
+        this.calendarID = null;
     }
 
 

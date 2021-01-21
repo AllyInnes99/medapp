@@ -30,8 +30,8 @@ public class MedicationModel implements Serializable {
         this.measurement = measurement;
         this.autoTake = autoTake;
         this.profile = profile;
-        this.calendarRefill = "a";
-        this.calendarEmpty = "a";
+        this.calendarRefill = null;
+        this.calendarEmpty = null;
     }
 
     public MedicationModel(int medicationId, String name, int quantity, int refillAt,

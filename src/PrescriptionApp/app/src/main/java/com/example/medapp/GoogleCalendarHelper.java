@@ -52,25 +52,27 @@ public class GoogleCalendarHelper {
 
     /**
      * Method that deletes all events in a user's Google Calendar that are related to a given med
-     * @param medicationModel the med to remove all events from user's Google Calendar
+     * @param medModel the med to remove all events from user's Google Calendar
      */
-    public void deleteMedEvents(final MedicationModel medicationModel){
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    service.events().delete(CALENDAR_ID, medicationModel.getCalendarRefill()).execute();
-                    service.events().delete(CALENDAR_ID, medicationModel.getCalendarEmpty()).execute();
-                    DatabaseHelper databaseHelper = new DatabaseHelper(context);
-                    for(DoseModel doseModel: databaseHelper.selectDoseFromMedication(medicationModel)) {
-                        service.events().delete(CALENDAR_ID, doseModel.getCalendarID()).execute();
+    public void deleteMedEvents(final MedicationModel medModel){
+        if(medModel.getCalendarEmpty() != null || medModel.getCalendarRefill() != null) {
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        service.events().delete(CALENDAR_ID, medModel.getCalendarRefill()).execute();
+                        service.events().delete(CALENDAR_ID, medModel.getCalendarEmpty()).execute();
+                        DatabaseHelper databaseHelper = new DatabaseHelper(context);
+                        for(DoseModel doseModel: databaseHelper.selectDoseFromMedication(medModel)) {
+                            service.events().delete(CALENDAR_ID, doseModel.getCalendarID()).execute();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
-            }
-        });
-        t.start();
+            });
+            t.start();
+        }
     }
 
     public void deleteRefillEvent(final MedicationModel medModel) {
@@ -118,44 +120,44 @@ public class GoogleCalendarHelper {
      */
     public void updateDoseEvent(MedicationModel medModel, final DoseModel doseModel) {
         final String eventID = doseModel.getCalendarID();
-        final Calendar c = Calendar.getInstance();
-        c.add(Calendar.DATE, medModel.getRefillAt());
+        if(eventID != null) {
+            final Calendar c = Calendar.getInstance();
+            c.add(Calendar.DATE, medModel.getRefillAt());
 
-        String year = Integer.toString(c.get(Calendar.YEAR));
-        String day = padDate(c.get(Calendar.DATE));
-        String month = padDate(c.get(Calendar.MONTH) + 1);
-        final String recurrenceEndDate = year + month + day;
+            String year = Integer.toString(c.get(Calendar.YEAR));
+            String day = padDate(c.get(Calendar.DATE));
+            String month = padDate(c.get(Calendar.MONTH) + 1);
+            final String recurrenceEndDate = year + month + day;
 
-        final String recurrence;
-        if(doseModel.getDay().equals("Daily")) {
-            recurrence = "RRULE:FREQ=DAILY;UNTIL=";
-        }
-        else {
-            recurrence = "RRULE:FREQ=WEEKLY;UNTIL=";
-        }
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Event event = service.events().get(CALENDAR_ID, eventID).execute();
-                    event.setRecurrence(Collections.singletonList(recurrence + recurrenceEndDate));
-                    Event updated = service.events().update(CALENDAR_ID, eventID, event).execute();
-                    databaseHelper.updateDoseCalendarID(doseModel, updated.getId());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            final String recurrence;
+            if(doseModel.getDay().equals("Daily")) {
+                recurrence = "RRULE:FREQ=DAILY;UNTIL=";
             }
-        }).start();
+            else {
+                recurrence = "RRULE:FREQ=WEEKLY;UNTIL=";
+            }
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Event event = service.events().get(CALENDAR_ID, eventID).execute();
+                        event.setRecurrence(Collections.singletonList(recurrence + recurrenceEndDate));
+                        Event updated = service.events().update(CALENDAR_ID, eventID, event).execute();
+                        databaseHelper.updateDoseCalendarID(doseModel, updated.getId());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+        }
     }
 
     public void updateRefillEvent(final MedicationModel medModel) {
         final String eventID = medModel.getCalendarRefill();
-        final Calendar c = Calendar.getInstance();
-        c.add(Calendar.DATE, medModel.getRefillAt() - 14);
-
-        if(eventID != null && !eventID.equals("a")) {
-            //Toast.makeText(context, "here", Toast.LENGTH_SHORT).show();
+        if(eventID != null) {
+            final Calendar c = Calendar.getInstance();
+            c.add(Calendar.DATE, medModel.getRefillAt() - 14);
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -176,9 +178,9 @@ public class GoogleCalendarHelper {
 
     public void updateEmptyEvent(final MedicationModel medModel) {
         final String eventID = medModel.getCalendarEmpty();
-        final Calendar c = Calendar.getInstance();
-        c.add(Calendar.DATE, medModel.getRefillAt());
-        if(eventID != null && !eventID.equals("a")) {
+        if(eventID != null) {
+            final Calendar c = Calendar.getInstance();
+            c.add(Calendar.DATE, medModel.getRefillAt());
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -192,14 +194,9 @@ public class GoogleCalendarHelper {
                         Log.d("MedApp", "error");
                         e.printStackTrace();
                     }
-
                 }
             }).start();
         }
-    }
-
-    public void updateAllMedDoses(MedicationModel medModel) {
-
     }
 
     /**
