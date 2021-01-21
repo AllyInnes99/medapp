@@ -64,36 +64,80 @@ public class DoseAdapter extends RecyclerView.Adapter<DoseAdapter.MyViewHolder> 
 
                     long hourInMillis = 3600000;
                     if(actual.getTimeInMillis() - expected.getTimeInMillis() > hourInMillis) {
-                        new MaterialAlertDialogBuilder(context)
-                            .setTitle("Just checking...")
-                            .setMessage("This dose of " + medModel.getName() + " was set to be taken at "
-                                        + doseModel.getTime() + ". Did you take it on time?")
-
-                            .setPositiveButton("yes", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    Toast.makeText(context, "Yes", Toast.LENGTH_SHORT).show();
-                                    takeMed(doseModel, medModel);
-                                }
-                            })
-
-                            .setNegativeButton("no", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    Toast.makeText(context, "No", Toast.LENGTH_SHORT).show();
-                                    takeMed(doseModel, medModel);
-                                }
-                            })
-                            .setIcon(android.R.drawable.ic_dialog_alert)
-                            .show();
+                        medTakenTooLate(medModel, doseModel);
+                    }
+                    else if(actual.getTimeInMillis() - expected.getTimeInMillis() < hourInMillis){
+                        medTakenTooEarly(medModel, doseModel);
                     }
                     else {
-                        takeMed(doseModel, medModel);
+                        registerMedAsTaken(doseModel, medModel);
                     }
                 }
             }
         });
     }
 
-    private void takeMed(DoseModel doseModel, MedicationModel medModel) {
+    /**
+     * Method that defines the behaviour of when a medication is taken too late
+     * @param medModel the medication that is to be taken
+     * @param doseModel the dose of the medication that is to be taken
+     */
+    private void medTakenTooLate(final MedicationModel medModel, final DoseModel doseModel) {
+        new MaterialAlertDialogBuilder(context)
+                .setTitle("Just checking...")
+                .setMessage("This dose of " + medModel.getName() + " was set to be taken at "
+                        + doseModel.getTime() + ". Did you take it on time?")
+
+                .setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(context, "Yes", Toast.LENGTH_SHORT).show();
+                        registerMedAsTaken(doseModel, medModel);
+                    }
+                })
+
+                .setNegativeButton("no", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(context, "No", Toast.LENGTH_SHORT).show();
+                        registerMedAsTaken(doseModel, medModel);
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
+
+    /**
+     * Method that defines the behaviour of when a medication is taken too early
+     * @param medModel the medication that is to be taken
+     * @param doseModel the dose of the medication that is to be taken
+     */
+    private void medTakenTooEarly(final MedicationModel medModel, final DoseModel doseModel) {
+        new MaterialAlertDialogBuilder(context)
+                .setTitle("Just checking...")
+                .setMessage("This dose of " + medModel.getName() + " is set to be taken at "
+                        + doseModel.getTime() + ". Are you sure you want to take it now?")
+
+                .setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(context, "Yes", Toast.LENGTH_SHORT).show();
+                        registerMedAsTaken(doseModel, medModel);
+                    }
+                })
+
+                .setNegativeButton("no", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(context, "You did not take the medication.", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
+
+    /**
+     * Method that makes changes to the database so that the provided medication dose is listed as taken
+     * @param doseModel the dose of the medication to be taken
+     * @param medModel the medication that is to be taken
+     */
+    private void registerMedAsTaken(DoseModel doseModel, MedicationModel medModel) {
         databaseHelper.takeMedication(doseModel, medModel);
         String msg = "You have taken " + doseModel.getAmount() + " of " + medModel.getName();
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
