@@ -479,22 +479,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         for(DoseModel doseModel: doses) {
             String d = doseModel.getDay();
             int count = doseModel.getAmount();
-            if(takenPerDay.get(d) != null){
-                count += takenPerDay.get(d);
-            }
 
-            if(d.equals("Daily")) {
+            if(d.equals("Daily")){
                 for(String key: takenPerDay.keySet()){
-                    takenPerDay.put(key, count);
+                    int original = takenPerDay.get(key);
+                    takenPerDay.put(key, original + count);
                 }
             }
             else {
-                takenPerDay.put(d, count);
+                int original = takenPerDay.get(d);
+                takenPerDay.put(d, original + count);
             }
-
         }
 
-        Map<Integer, Integer> m = new HashMap<>();
+        for(String day: takenPerDay.keySet()) {
+            Toast.makeText(context, Integer.toString(takenPerDay.get(day)), Toast.LENGTH_SHORT).show();
+        }
+
+            Map<Integer, Integer> m = new HashMap<>();
         m.put(Calendar.SUNDAY, mapFiller(takenPerDay, "Sunday"));
         m.put(Calendar.MONDAY, mapFiller(takenPerDay, "Monday"));
         m.put(Calendar.TUESDAY, mapFiller(takenPerDay, "Tuesday"));
@@ -502,6 +504,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         m.put(Calendar.THURSDAY, mapFiller(takenPerDay, "Thursday"));
         m.put(Calendar.FRIDAY, mapFiller(takenPerDay, "Friday"));
         m.put(Calendar.SATURDAY, mapFiller(takenPerDay, "Saturday"));
+
+
+
         takenPerDay.clear();
 
         int current = model.getQuantity();

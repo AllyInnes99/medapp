@@ -76,17 +76,19 @@ public class GoogleCalendarHelper {
     }
 
     public void deleteRefillEvent(final MedicationModel medModel) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    service.events().delete(CALENDAR_ID, medModel.getCalendarRefill()).execute();
-                    databaseHelper.updateRefillID(medModel, "a");
-                } catch (IOException e) {
-                    e.printStackTrace();
+        if(medModel.getCalendarRefill() != null){
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        service.events().delete(CALENDAR_ID, medModel.getCalendarRefill()).execute();
+                        databaseHelper.updateRefillID(medModel, "a");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
-        }).start();
+            }).start();
+        }
     }
 
     public void updateMedEvents(MedicationModel medModel) {
@@ -103,13 +105,11 @@ public class GoogleCalendarHelper {
         // update the empty event
         updateEmptyEvent(medModel);
 
-
-
+        // update all of the dose events
         List<DoseModel> doses = databaseHelper.selectDoseFromMedication(medModel);
         for(DoseModel dose: doses) {
             updateDoseEvent(medModel, dose);
         }
-
     }
 
 
@@ -203,24 +203,10 @@ public class GoogleCalendarHelper {
      * Method that deletes every MedApp event in the user's Google Calendar
      */
     public void deleteAllEvents() {
-
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Events events = service.events().list("primary").execute();
-                    for(Event event: events.getItems()){
-                        if(event.getSummary().contains("MedApp:")){
-                            Log.d("MedApp", event.getSummary());
-                            service.events().delete(CALENDAR_ID, event.getId()).execute();
-                        }
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        t.start();
+        List<MedicationModel> medModels = databaseHelper.selectAllMedication();
+        for (MedicationModel medModel : medModels) {
+            deleteMedEvents(medModel);
+        }
     }
 
     /**
