@@ -47,7 +47,7 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.My
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, UpdateMedActivity.class);
-                intent.putExtra("MedModel", model);
+                intent.putExtra("medID", model.getMedicationId());
                 context.startActivity(intent);
             }
         });
