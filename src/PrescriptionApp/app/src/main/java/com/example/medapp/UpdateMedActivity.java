@@ -34,10 +34,11 @@ public class UpdateMedActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == SECOND_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
-            int refill = data.getIntExtra("refill", 0);
-            displayRefillDate(refill);
+            //int refill = data.getIntExtra("refill", 0);
+            //displayRefillDate(refill);
             String msg = "Updated the doses of " + model.getName();
             Toast.makeText(UpdateMedActivity.this, msg, Toast.LENGTH_SHORT).show();
+            finish();
         }
     }
 
@@ -156,6 +157,7 @@ public class UpdateMedActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Toast.makeText(UpdateMedActivity.this, "Adding reminder events to Google Calendar", Toast.LENGTH_SHORT).show();
                 GoogleCalendarHelper gac = new GoogleCalendarHelper(UpdateMedActivity.this);
+                model = databaseHelper.selectMedicationFromID(model.getMedicationId());
                 try {
                     gac.addDoseReminder(model);
                     gac.addRefillEvents(model);

@@ -60,9 +60,13 @@ public class GoogleCalendarHelper {
             @Override
             public void run() {
                 try {
-                    String medRefill = medModel.getCalendarRefill();
-                    //Log.d("MedApp", medRefill);
-                    service.events().delete(CALENDAR_ID, medRefill).execute();
+
+                    if(medModel.getRefillAt() >= 14) {
+                        String medRefill = medModel.getCalendarRefill();
+                        //Log.d("MedApp", medRefill);
+                        service.events().delete(CALENDAR_ID, medRefill).execute();
+                    }
+
 
                     String medEmpty= medModel.getCalendarEmpty();
                     //Log.d("MedApp", medEmpty);
