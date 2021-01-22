@@ -56,7 +56,7 @@ public class GoogleCalendarHelper {
      */
     public void deleteMedEvents(final MedicationModel medModel, final List<DoseModel> doses) {
 
-        Thread t = new Thread(new Runnable() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -86,8 +86,7 @@ public class GoogleCalendarHelper {
                     e.printStackTrace();
                 }
             }
-        });
-        t.start();
+        }).start();
 
     }
 
