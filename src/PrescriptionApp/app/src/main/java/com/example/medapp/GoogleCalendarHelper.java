@@ -63,18 +63,24 @@ public class GoogleCalendarHelper {
 
                     if(medModel.getRefillAt() >= 14) {
                         String medRefill = medModel.getCalendarRefill();
-                        //Log.d("MedApp", medRefill);
+                        Log.d("MedApp", "deleting refill event");
                         service.events().delete(CALENDAR_ID, medRefill).execute();
                     }
 
 
                     String medEmpty= medModel.getCalendarEmpty();
-                    //Log.d("MedApp", medEmpty);
-                    service.events().delete(CALENDAR_ID, medEmpty).execute();
+                    if(medEmpty != null) {
+                        Log.d("MedApp", "deleting empty event");
+                        service.events().delete(CALENDAR_ID, medEmpty).execute();
+                    }
+
 
                     for(DoseModel doseModel: doses) {
-                        //Log.d("MedApp", "deleting dose event");
-                        service.events().delete(CALENDAR_ID, doseModel.getCalendarID()).execute();
+                        Log.d("MedApp", "deleting dose event");
+                        String calID = doseModel.getCalendarID();
+                        if(calID != null) {
+                            service.events().delete(CALENDAR_ID, doseModel.getCalendarID()).execute();
+                        }
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
