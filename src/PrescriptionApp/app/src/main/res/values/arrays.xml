@@ -9,9 +9,8 @@
         <item>reply</item>
         <item>reply_all</item>
     </string-array>
-    
+
     <string-array name="days">
-        <item> </item>
         <item>Monday</item>
         <item>Tuesday</item>
         <item>Wednesday</item>
@@ -19,6 +18,16 @@
         <item>Friday</item>
         <item>Saturday</item>
         <item>Sunday</item>
+    </string-array>
+
+    <string-array name="refillDays">
+        <item>7 days</item>
+        <item>14 days</item>
+    </string-array>
+
+    <string-array name="refillDaysVals">
+        <item>7</item>
+        <item>14</item>
     </string-array>
 
 </resources>

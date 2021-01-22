@@ -17,19 +17,37 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/sync_header">
+    <PreferenceCategory app:title="Refill Reminders">
+        <ListPreference
+            app:key="reminderDay"
+            app:summary="Select the no. of days for refill reminder."
+            app:defaultValue="7 days"
+            app:entries="@array/refillDays"
+            app:entryValues="@array/refillDaysVals"
+            />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Google Calendar">
 
         <SwitchPreferenceCompat
-            app:key="sync"
-            app:title="@string/sync_title" />
+            app:key="calendar"
+            app:title="Enable Google Calendar"
+            app:summaryOff="Medication events won't be added to your Google Calendar"
+            app:summaryOn="Medication events will be added to your Google Calendar"/>
 
         <SwitchPreferenceCompat
-            app:dependency="sync"
-            app:key="attachment"
-            app:summaryOff="@string/attachment_summary_off"
-            app:summaryOn="@string/attachment_summary_on"
-            app:title="@string/attachment_title" />
+            app:dependency="calendar"
+            app:defaultValue="true"
+            app:key="dose_events"
+            app:title="Dose Events" />
+
+        <SwitchPreferenceCompat
+            app:dependency="calendar"
+            app:defaultValue="true"
+            app:key="refill_reminders"
+            app:title="Refill Reminders" />
 
     </PreferenceCategory>
+
 
 </PreferenceScreen>
