@@ -9,11 +9,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
-import androidx.preference.PreferenceFragmentCompat;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,14 +27,27 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.Calendar;
 import java.util.List;
 
-public class SettingFragment extends PreferenceFragmentCompat {
+/**
+ * A simple {@link Fragment} subclass.
+ * Use the {@link StatFragment#newInstance} factory method to
+ * create an instance of this fragment.
+ */
+public class StatFragment extends Fragment {
 
-    @Override
-    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-        setPreferencesFromResource(R.xml.root_preferences, rootKey);
+    Button btnMed, btnRefill, btnSignOut, btnTest;
+    NotificationManagerCompat notificationManager;
+
+    public StatFragment() {
+        // Required empty public constructor
     }
 
-    /*
+    public static StatFragment newInstance(String param1, String param2) {
+        StatFragment fragment = new StatFragment();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +57,7 @@ public class SettingFragment extends PreferenceFragmentCompat {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View view = inflater.inflate(R.layout.fragment_setting, container, false);
+        final View view = inflater.inflate(R.layout.fragment_stat, container, false);
         btnTest = view.findViewById(R.id.btn_test);
         btnMed = view.findViewById(R.id.btnMed);
         btnRefill = view.findViewById(R.id.btnRefill);
@@ -149,7 +160,7 @@ public class SettingFragment extends PreferenceFragmentCompat {
                 .setContentTitle(title)
                 .setContentText(msg)
                 .setStyle(new NotificationCompat.BigTextStyle()
-                            .bigText(msg))
+                        .bigText(msg))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_REMINDER).build();
         notificationManager.notify(1, notification);
@@ -205,8 +216,5 @@ public class SettingFragment extends PreferenceFragmentCompat {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), (int)System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
     }
-
-
-     */
 
 }
