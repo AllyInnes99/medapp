@@ -5,6 +5,8 @@ import android.telephony.mbms.MbmsErrors;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.preference.PreferenceManager;
+
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -33,12 +35,16 @@ public class GoogleCalendarHelper {
     private static final NetHttpTransport NET_HTTP_TRANSPORT =
             new com.google.api.client.http.javanet.NetHttpTransport();
     private static final JacksonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
+    private int refillReminderDays;
     private static final String CALENDAR_ID = "primary";
 
 
     public GoogleCalendarHelper(Context context) {
         this.context = context;
         this.databaseHelper = new DatabaseHelper(context);
+        this.refillReminderDays = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).
+                                                    getString("reminderDay", ""));
+
         GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2
                 (context, Collections.singleton(CalendarScopes.CALENDAR_EVENTS));
         credential.setSelectedAccount(GoogleSignIn.getLastSignedInAccount(context).getAccount());
@@ -61,7 +67,7 @@ public class GoogleCalendarHelper {
             public void run() {
                 try {
 
-                    if(medModel.getRefillAt() >= 14) {
+                    if(medModel.getRefillAt() >= refillReminderDays) {
                         String medRefill = medModel.getCalendarRefill();
                         Log.d("MedApp", "deleting refill event");
                         service.events().delete(CALENDAR_ID, medRefill).execute();
@@ -147,7 +153,7 @@ public class GoogleCalendarHelper {
     public void updateMedEvents(MedicationModel medModel) {
 
         // update the refill reminder event
-        if(medModel.getRefillAt() >= 14) {
+        if(medModel.getRefillAt() >= refillReminderDays) {
             updateRefillEvent(medModel);
         }
         // if there can be no refill reminder event, remove existing
@@ -210,7 +216,7 @@ public class GoogleCalendarHelper {
         final String eventID = medModel.getCalendarRefill();
         if(eventID != null) {
             final Calendar c = Calendar.getInstance();
-            c.add(Calendar.DATE, medModel.getRefillAt() - 14);
+            c.add(Calendar.DATE, medModel.getRefillAt() - refillReminderDays);
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -327,8 +333,8 @@ public class GoogleCalendarHelper {
         addEmptyEvent(medModel, emptyEvent);
 
         // Set a refill reminder event to remind users to refill their medication before it becomes empty
-        if(medModel.getRefillAt() >= 14){
-            c.add(Calendar.DATE, -14);
+        if(medModel.getRefillAt() >= refillReminderDays){
+            c.add(Calendar.DATE, -refillReminderDays);
             Event refillEvent = new Event()
                     .setDescription(medModel.getName() + " will run out of supply in 14 days. Please order a new prescription.")
                     .setSummary("MedApp: " + medModel.getName() + " Refill Reminder");
