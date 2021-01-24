@@ -2,6 +2,7 @@ package com.example.medapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -18,11 +20,12 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.My
 
     private Context context;
     private List<MedicationModel> medicationModels;
-    private MedicationModel medModel;
+    private SharedPreferences sp;
 
     MedicationAdapter(Context context, List<MedicationModel> medicationModels) {
         this.context = context;
         this.medicationModels = medicationModels;
+        this.sp = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     @NonNull
@@ -37,7 +40,8 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.My
     public void onBindViewHolder(@NonNull MedicationAdapter.MyViewHolder holder, int position) {
         final MedicationModel model = medicationModels.get(position);
 
-        if(model.getRefillAt() > 14) {
+        String days = sp.getString("reminderDay", "");
+        if(model.getRefillAt() > Integer.parseInt(days)) {
             holder.imageView.setImageDrawable(null);
         }
 
