@@ -1,62 +1,50 @@
 package com.example.medapp;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MedicationModel implements Serializable {
 
     private int medicationId;
     private String name;
     private int quantity;
-    private int refillAt;
+    private int daysUntilEmpty;
     private String type;
     private double dosage;
     private String measurement;
     private String profile;
     private boolean autoTake;
+    private boolean refillRequested;
     private String calendarRefill;
     private String calendarEmpty;
 
 
-    public MedicationModel(String name, int quantity, int refillAt, String type, double dosage,
+    public MedicationModel(String name, int quantity, int daysUntilEmpty, String type, double dosage,
                            String measurement, String profile, boolean autoTake) {
         this.medicationId = (int) System.currentTimeMillis();
         this.name = name;
         this.quantity = quantity;
-        this.refillAt = refillAt;
+        this.daysUntilEmpty = daysUntilEmpty;
         this.type = type;
         this.dosage = dosage;
         this.measurement = measurement;
         this.autoTake = autoTake;
+        this.refillRequested = false;
         this.profile = profile;
         this.calendarRefill = null;
         this.calendarEmpty = null;
     }
 
-    public MedicationModel(int medicationId, String name, int quantity, int refillAt,
-                           String type, double dosage, String measurement, String profile, boolean autoTake) {
+    public MedicationModel(int medicationId, String name, int quantity, int daysUntilEmpty, String type, double dosage,
+                           String measurement, String profile, boolean autoTake, boolean refillRequested, String calendarRefill, String calendarEmpty) {
         this.medicationId = medicationId;
         this.name = name;
         this.quantity = quantity;
-        this.refillAt = refillAt;
+        this.daysUntilEmpty = daysUntilEmpty;
         this.type = type;
         this.dosage = dosage;
         this.measurement = measurement;
         this.autoTake = autoTake;
-        this.profile = profile;
-    }
-
-    public MedicationModel(int medicationId, String name, int quantity, int refillAt, String type, double dosage,
-                           String measurement, String profile, boolean autoTake, String calendarRefill, String calendarEmpty) {
-        this.medicationId = medicationId;
-        this.name = name;
-        this.quantity = quantity;
-        this.refillAt = refillAt;
-        this.type = type;
-        this.dosage = dosage;
-        this.measurement = measurement;
-        this.autoTake = autoTake;
+        this.refillRequested = refillRequested;
         this.profile = profile;
         this.calendarRefill = calendarRefill;
         this.calendarEmpty = calendarEmpty;
@@ -124,12 +112,12 @@ public class MedicationModel implements Serializable {
         this.quantity = quantity;
     }
 
-    public int getRefillAt() {
-        return refillAt;
+    public int getDaysUntilEmpty() {
+        return daysUntilEmpty;
     }
 
-    public void setRefillAt(int refillAt) {
-        this.refillAt = refillAt;
+    public void setDaysUntilEmpty(int daysUntilEmpty) {
+        this.daysUntilEmpty = daysUntilEmpty;
     }
 
     public String getType() {
@@ -188,6 +176,14 @@ public class MedicationModel implements Serializable {
 
     public void setCalendarEmpty(String calendarEmpty) {
         this.calendarEmpty = calendarEmpty;
+    }
+
+    public boolean isRefillRequested() {
+        return refillRequested;
+    }
+
+    public void setRefillRequested(boolean refillRequested) {
+        this.refillRequested = refillRequested;
     }
 
 }

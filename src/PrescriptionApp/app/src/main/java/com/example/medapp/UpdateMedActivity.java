@@ -66,7 +66,7 @@ public class UpdateMedActivity extends AppCompatActivity {
         et_name.setText(model.getName());
         et_quantity.setText(Integer.toString(model.getQuantity()));
 
-        displayRefillDate(model.getRefillAt());
+        displayRefillDate(model.getDaysUntilEmpty());
 
         et_dosage.setText(Double.toString(model.getDosage()));
 

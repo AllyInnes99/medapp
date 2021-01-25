@@ -1,9 +1,7 @@
 package com.example.medapp;
 
 import android.content.Context;
-import android.telephony.mbms.MbmsErrors;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.preference.PreferenceManager;
 
@@ -15,10 +13,8 @@ import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
-import com.google.api.services.calendar.model.Events;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
@@ -67,7 +63,7 @@ public class GoogleCalendarHelper {
             public void run() {
                 try {
 
-                    if(medModel.getRefillAt() >= refillReminderDays) {
+                    if(medModel.getDaysUntilEmpty() >= refillReminderDays) {
                         String medRefill = medModel.getCalendarRefill();
                         Log.d("MedApp", "deleting refill event");
                         service.events().delete(CALENDAR_ID, medRefill).execute();
@@ -153,7 +149,7 @@ public class GoogleCalendarHelper {
     public void updateMedEvents(MedicationModel medModel) {
 
         // update the refill reminder event
-        if(medModel.getRefillAt() >= refillReminderDays) {
+        if(medModel.getDaysUntilEmpty() >= refillReminderDays) {
             updateRefillEvent(medModel);
         }
         // if there can be no refill reminder event, remove existing
@@ -181,7 +177,7 @@ public class GoogleCalendarHelper {
         final String eventID = doseModel.getCalendarID();
         if(eventID != null) {
             final Calendar c = Calendar.getInstance();
-            c.add(Calendar.DATE, medModel.getRefillAt());
+            c.add(Calendar.DATE, medModel.getDaysUntilEmpty());
 
             String year = Integer.toString(c.get(Calendar.YEAR));
             String day = padDate(c.get(Calendar.DATE));
@@ -216,7 +212,7 @@ public class GoogleCalendarHelper {
         final String eventID = medModel.getCalendarRefill();
         if(eventID != null) {
             final Calendar c = Calendar.getInstance();
-            c.add(Calendar.DATE, medModel.getRefillAt() - refillReminderDays);
+            c.add(Calendar.DATE, medModel.getDaysUntilEmpty() - refillReminderDays);
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -239,7 +235,7 @@ public class GoogleCalendarHelper {
         final String eventID = medModel.getCalendarEmpty();
         if(eventID != null) {
             final Calendar c = Calendar.getInstance();
-            c.add(Calendar.DATE, medModel.getRefillAt());
+            c.add(Calendar.DATE, medModel.getDaysUntilEmpty());
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -283,7 +279,7 @@ public class GoogleCalendarHelper {
                 recurrence = "RRULE:FREQ=WEEKLY;UNTIL=";
             }
 
-            int daysUntilEmpty = medicationModel.getRefillAt();
+            int daysUntilEmpty = medicationModel.getDaysUntilEmpty();
             c.add(Calendar.DATE, daysUntilEmpty);
             String year = Integer.toString(c.get(Calendar.YEAR));
             String day = padDate(c.get(Calendar.DATE));
@@ -322,7 +318,7 @@ public class GoogleCalendarHelper {
 
         // Obtain the date of when the med will be empty
         Calendar c = Calendar.getInstance();
-        c.add(Calendar.DATE, medModel.getRefillAt());
+        c.add(Calendar.DATE, medModel.getDaysUntilEmpty());
 
         Event emptyEvent = new Event()
                 .setDescription(medModel.getName() + " will run out of supply today.")
@@ -333,7 +329,7 @@ public class GoogleCalendarHelper {
         addEmptyEvent(medModel, emptyEvent);
 
         // Set a refill reminder event to remind users to refill their medication before it becomes empty
-        if(medModel.getRefillAt() >= refillReminderDays){
+        if(medModel.getDaysUntilEmpty() >= refillReminderDays){
             c.add(Calendar.DATE, -refillReminderDays);
             Event refillEvent = new Event()
                     .setDescription(medModel.getName() + " will run out of supply in 14 days. Please order a new prescription.")

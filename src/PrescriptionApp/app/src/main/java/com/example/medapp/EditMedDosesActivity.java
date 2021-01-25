@@ -14,7 +14,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 
 public class EditMedDosesActivity extends AppCompatActivity {
@@ -76,7 +75,7 @@ public class EditMedDosesActivity extends AppCompatActivity {
                 if(!tempModels.isEmpty()) {
                     addToDatabase();
                     Intent output = new Intent();
-                    output.putExtra("refill", medModel.getRefillAt());
+                    output.putExtra("refill", medModel.getDaysUntilEmpty());
                     setResult(RESULT_OK, output);
                     finish();
                 }

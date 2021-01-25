@@ -41,7 +41,7 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.My
         final MedicationModel model = medicationModels.get(position);
 
         String days = sp.getString("reminderDay", "");
-        if(model.getRefillAt() > Integer.parseInt(days)) {
+        if(model.getDaysUntilEmpty() > Integer.parseInt(days)) {
             holder.imageView.setImageDrawable(null);
         }
 

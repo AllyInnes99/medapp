@@ -8,7 +8,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -28,8 +27,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_MEASUREMENT = "MEASUREMENT";
     public static final String COL_TYPE = "TYPE";
     public static final String COL_PROFILE = "PROFILE";
-    public static final String COL_REFILL = "REFILL_AT";
+    public static final String COL_DAYS_UNTIL_EMPTY = "DAYS_UNTIL_EMPTY";
     public static final String COL_AUTO_TAKE = "AUTO_TAKE";
+    public static final String COL_REFILL_REQUESTED = "REFILL_REQUESTED";
     public static final String COL_CALENDAR_REFILL = "CALENDAR_REFILL";
     public static final String COL_CALENDAR_EMPTY = "CALENDAR_EMPTY";
 
@@ -60,8 +60,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                         + COL_DOSAGE + " REAL, "
                                         + COL_MEASUREMENT + " TEXT, "
                                         + COL_TYPE + " TEXT, " + COL_PROFILE + " TEXT, "
-                                        + COL_REFILL + " INT,"
+                                        + COL_DAYS_UNTIL_EMPTY + " INT,"
                                         + COL_AUTO_TAKE + " BOOL, "
+                                        + COL_REFILL_REQUESTED + " BOOL,"
                                         + COL_CALENDAR_REFILL + " STRING, "
                                         + COL_CALENDAR_EMPTY + " STRING)";
 
@@ -120,8 +121,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COL_MEASUREMENT, medicationModel.getMeasurement());
         cv.put(COL_TYPE, medicationModel.getType());
         cv.put(COL_PROFILE, medicationModel.getProfile());
-        cv.put(COL_REFILL, medicationModel.getRefillAt());
+        cv.put(COL_DAYS_UNTIL_EMPTY, medicationModel.getDaysUntilEmpty());
         cv.put(COL_AUTO_TAKE, medicationModel.isAutoTake());
+        cv.put(COL_REFILL_REQUESTED, medicationModel.isRefillRequested());
         cv.put(COL_CALENDAR_REFILL, medicationModel.getCalendarRefill());
         cv.put(COL_CALENDAR_EMPTY, medicationModel.getCalendarEmpty());
         long insert = db.insert(MEDICATION_TABLE, null, cv);
@@ -192,12 +194,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String measurement = cursor.getString(i++);
                 String type = cursor.getString(i++);
                 String profile = cursor.getString(i++);
-                int refill = cursor.getInt(i++);
+                int daysUntilEmpty = cursor.getInt(i++);
                 boolean autoTake = SQLiteIntToBool(cursor.getInt(i++));
+                boolean refillRequested = SQLiteIntToBool(cursor.getInt(i++));
                 String calendarRefill = cursor.getString(i++);
                 String calendarEmpty = cursor.getString(i++);
-                MedicationModel model = new MedicationModel(id, name, qty, refill, type, dosage, measurement,
-                                                            profile, autoTake, calendarRefill, calendarEmpty);
+                MedicationModel model = new MedicationModel(id, name, qty, daysUntilEmpty, type, dosage, measurement,
+                                                            profile, autoTake, refillRequested, calendarRefill, calendarEmpty);
                 returnList.add(model);
 
             } while(cursor.moveToNext());
@@ -209,10 +212,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Method that gets all of the applications that belong to a specific medication, by use of
+     * Method that gets all of the doses that belong to a specific medication, by use of
      * the MedicationID foreign key
-     * @param model - the medication model that we are trying to get the applications for
-     * @return a list of application models
+     * @param model - the medication model that we are trying to get the doses for
+     * @return a list of doses models
      */
     public List<DoseModel> selectDoseFromMedication(MedicationModel model) {
         int medID = model.getMedicationId();
@@ -404,7 +407,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COL_MEASUREMENT, model.getMeasurement());
         cv.put(COL_TYPE, model.getType());
         cv.put(COL_PROFILE, model.getProfile());
-        cv.put(COL_REFILL, model.getRefillAt());
+        cv.put(COL_DAYS_UNTIL_EMPTY, model.getDaysUntilEmpty());
         updateMedicationRow(model, cv);
     }
 
@@ -515,7 +518,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void updateDaysUntilEmpty(MedicationModel medModel) {
         int days = daysUntilEmpty(medModel);
         ContentValues cv = new ContentValues();
-        cv.put(COL_REFILL, days);
+        cv.put(COL_DAYS_UNTIL_EMPTY, days);
         updateMedicationRow(medModel, cv);
     }
 
