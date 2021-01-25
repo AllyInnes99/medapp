@@ -18,9 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link HomeFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * A simple {@link Fragment} subclass.t.
  */
 public class HomeFragment extends Fragment {
 
@@ -31,15 +29,7 @@ public class HomeFragment extends Fragment {
     List<DoseModel> models;
 
     public HomeFragment() {
-    }
-
-    /**
-     * @return A new instance of fragment HomeFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static HomeFragment newInstance(String param1, String param2) {
-        HomeFragment fragment = new HomeFragment();
-        return fragment;
+        // Required empty public constructor
     }
 
     @Override

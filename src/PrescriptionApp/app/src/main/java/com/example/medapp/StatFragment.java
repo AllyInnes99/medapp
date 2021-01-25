@@ -29,8 +29,6 @@ import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link StatFragment#newInstance} factory method to
- * create an instance of this fragment.
  */
 public class StatFragment extends Fragment {
 
@@ -39,13 +37,6 @@ public class StatFragment extends Fragment {
 
     public StatFragment() {
         // Required empty public constructor
-    }
-
-    public static StatFragment newInstance(String param1, String param2) {
-        StatFragment fragment = new StatFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
