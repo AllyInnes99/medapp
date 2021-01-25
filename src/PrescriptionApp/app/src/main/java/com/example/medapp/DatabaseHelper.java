@@ -400,7 +400,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void updateMedication(MedicationModel model) {
         ContentValues cv = new ContentValues();
-
         cv.put(COL_MEDICATION_NAME, model.getName());
         cv.put(COL_QUANTITY, model.getQuantity());
         cv.put(COL_DOSAGE, model.getDosage());

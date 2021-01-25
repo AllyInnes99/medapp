@@ -93,6 +93,10 @@ public class GoogleCalendarHelper {
 
     }
 
+    /**
+     * Method that deletes medication events via ID from Google Calendar
+     * @param ids list of Strings that represents the IDs of events to be deleted
+     */
     public void deleteEventsById(final List<String> ids) {
         new Thread(new Runnable() {
             @Override
@@ -147,6 +151,10 @@ public class GoogleCalendarHelper {
         }
     }
 
+    /**
+     * Method that updates all of the events in Google Calendar for a given medication
+     * @param medModel the medication to update the Google Calendar events for
+     */
     public void updateMedEvents(MedicationModel medModel) {
 
         // update the refill reminder event
@@ -209,6 +217,10 @@ public class GoogleCalendarHelper {
         }
     }
 
+    /**
+     * Method that updates the medication refill reminder event in Google Calendar
+     * @param medModel the medication that the event is to be updated for
+     */
     public void updateRefillEvent(final MedicationModel medModel) {
         final String eventID = medModel.getCalendarRefill();
         if(eventID != null) {
@@ -232,6 +244,10 @@ public class GoogleCalendarHelper {
         }
     }
 
+    /**
+     * Method that updates the medication empty event in Google Calendar
+     * @param medModel the medication that the event is to be updated for
+     */
     public void updateEmptyEvent(final MedicationModel medModel) {
         final String eventID = medModel.getCalendarEmpty();
         if(eventID != null) {
@@ -257,17 +273,17 @@ public class GoogleCalendarHelper {
 
     /**
      * Adds a reminder to take medication to Google Calendar
-     * @param medicationModel
+     * @param medModel
      */
-    public void addDoseReminder(MedicationModel medicationModel) {
-        List<DoseModel> doseModels = databaseHelper.selectDoseFromMedication(medicationModel);
+    public void addDoseReminder(MedicationModel medModel) {
+        List<DoseModel> doseModels = databaseHelper.selectDoseFromMedication(medModel);
         Calendar c = Calendar.getInstance();
         for(DoseModel dose: doseModels){
 
             Event event = new Event()
-                    .setSummary("MedApp: " + medicationModel.getName() + " Reminder")
+                    .setSummary("MedApp: " + medModel.getName() + " Reminder")
                     .setDescription("Reminder to take " + dose.getAmount()
-                            + " of " + medicationModel.getName());
+                            + " of " + medModel.getName());
 
             String recurrence;
             if(dose.getDay().equals("Daily")) {
@@ -280,7 +296,7 @@ public class GoogleCalendarHelper {
                 recurrence = "RRULE:FREQ=WEEKLY;UNTIL=";
             }
 
-            int daysUntilEmpty = medicationModel.getDaysUntilEmpty();
+            int daysUntilEmpty = medModel.getDaysUntilEmpty();
             c.add(Calendar.DATE, daysUntilEmpty);
             String year = Integer.toString(c.get(Calendar.YEAR));
             String day = padDate(c.get(Calendar.DATE));
@@ -312,7 +328,7 @@ public class GoogleCalendarHelper {
 
 
     /**
-     * Creates a Google Calendar Event for when the medication will run out
+     * Method that created
      * @param medModel the medication to create an event for
      */
     public void addRefillEvents(MedicationModel medModel) {
@@ -340,7 +356,13 @@ public class GoogleCalendarHelper {
         }
     }
 
-    private void addRefillReminderEvent(final MedicationModel medicationModel, Event event) {
+    /**
+     * Method that adds the event to Google Calendar that acts as a warning to the user that their
+     * medication supply is running low and needs to resupplied
+     * @param medModel the medication that the event is for
+     * @param event the event to be added to the calendar
+     */
+    private void addRefillReminderEvent(final MedicationModel medModel, Event event) {
         final Event[] events = {event};
         // Can't run IO operations on UI thread, so start new thread for operation
         Thread t = new Thread(new Runnable() {
@@ -349,7 +371,7 @@ public class GoogleCalendarHelper {
                 try{
                     events[0] = service.events().insert(CALENDAR_ID, events[0]).execute();
                     String eventID = events[0].getId();
-                    databaseHelper.updateRefillID(medicationModel, eventID);
+                    databaseHelper.updateRefillID(medModel, eventID);
                 } catch (final Exception e) {
                     Log.e("MedApp", "exception", e);
                 }
@@ -358,7 +380,13 @@ public class GoogleCalendarHelper {
         t.start();
     }
 
-    private void addEmptyEvent(final MedicationModel medicationModel, Event event) {
+    /**
+     * Method that adds the event to Google Calendar that indicates when the medication will
+     * run out of supply
+     * @param medModel the medication that the event is for
+     * @param event the event to be added to the calendar
+     */
+    private void addEmptyEvent(final MedicationModel medModel, Event event) {
         final Event[] events = {event};
         // Can't run IO operations on UI thread, so start new thread for operation
         Thread t = new Thread(new Runnable() {
@@ -367,7 +395,7 @@ public class GoogleCalendarHelper {
                 try{
                     events[0] = service.events().insert(CALENDAR_ID, events[0]).execute();
                     String eventID = events[0].getId();
-                    databaseHelper.updateEmptyID(medicationModel, eventID);
+                    databaseHelper.updateEmptyID(medModel, eventID);
                 } catch (IOException e) {
                     Log.e("MedApp", "exception", e);
                 }
@@ -376,6 +404,11 @@ public class GoogleCalendarHelper {
         t.start();
     }
 
+    /**
+     * Method that adds the recurring event that reminds users to take their medication
+     * @param doseModel the dose of medication that is to be taken
+     * @param event the event that is to be added to the calendar
+     */
     private void addDoseEvent(final DoseModel doseModel, Event event) {
         final Event[] events = {event};
         new Thread(new Runnable() {
@@ -394,8 +427,13 @@ public class GoogleCalendarHelper {
 
     }
 
-    private void setTime(Calendar c, Event event){
-        String date = createDateString(c);
+    /**
+     * Method that sets the date/time of when a given Google Calendar event is to take place
+     * @param cal calendar obj that represents the date/time of when the event is to occur
+     * @param event the event that is to be added to the calendar
+     */
+    private void setTime(Calendar cal, Event event){
+        String date = createDateString(cal);
         DateTime dateTime = new DateTime(date);
         EventDateTime eventDateTime = new EventDateTime()
                 .setDate(dateTime)

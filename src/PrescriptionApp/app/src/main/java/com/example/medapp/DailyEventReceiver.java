@@ -99,6 +99,19 @@ public class DailyEventReceiver extends BroadcastReceiver {
         }
     }
 
+    /**
+     * Method that decreases the daysUntilEmpty field for each medication by one.
+     */
+    private void decrementDaysUntilEmpty(){
+        List<MedicationModel> medModels = databaseHelper.selectAllMedication();
+        for(MedicationModel med: medModels) {
+            int dec = med.getDaysUntilEmpty() - 1;
+            med.setDaysUntilEmpty(dec);
+            databaseHelper.updateMedication(med);
+        }
+    }
+
+
     private void resetDailyMed() {
         databaseHelper.refreshDailyDoses();
     }
