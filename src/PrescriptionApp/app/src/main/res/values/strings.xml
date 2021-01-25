@@ -44,5 +44,8 @@
     <string name="tuesday">Tuesday</string>
     <string name="monday">Monday</string>
     <string name="select_all">Select All</string>
+    <string name="empty_on">Empty On</string>
+    <string name="refill">Refill</string>
+    <string name="edit_doses">Edit Doses</string>
 
 </resources>

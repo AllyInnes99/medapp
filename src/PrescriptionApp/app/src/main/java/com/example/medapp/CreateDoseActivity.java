@@ -21,7 +21,7 @@ import java.util.List;
 public class CreateDoseActivity extends AppCompatActivity {
 
     Button btn_time, btn_add;
-    EditText et_time, et_dosage, et_amount;
+    EditText et_time, et_amount;
     int currentHour, currentMinutes;
     MedicationModel medModel;
     DatabaseHelper databaseHelper;
@@ -36,7 +36,6 @@ public class CreateDoseActivity extends AppCompatActivity {
 
         medModel = (MedicationModel) getIntent().getSerializableExtra("MedModel");
         et_time = findViewById(R.id.et_time);
-        et_dosage = findViewById(R.id.et_dosage);
         et_amount = findViewById(R.id.et_amount);
         btn_time = findViewById(R.id.btn_time);
         btn_add = findViewById(R.id.btnAdd);
