@@ -63,13 +63,9 @@ public class CreateMedicationActivity extends AppCompatActivity {
                         throw new Exception("Invalid medication name");
                     }
                     int quantity = Integer.parseInt(et_quantity.getText().toString());
-                    int refill = 0;
                     double dosage = Double.parseDouble(et_strength.getText().toString());
-
                     boolean take = autoTake.isChecked();
-
-                    model = new MedicationModel(medicationName, quantity, refill, selectedType,
-                                 dosage, selectedMeasurement, "me", take );
+                    model = new MedicationModel(medicationName, quantity, selectedType, dosage, selectedMeasurement, take);
                     intent.putExtra("MedModel", model);
                     startActivity(intent);
                 }

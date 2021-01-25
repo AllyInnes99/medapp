@@ -2,6 +2,9 @@ package com.example.medapp;
 
 import java.io.Serializable;
 
+/**
+ * Class that represents a medication that a user is to take
+ */
 public class MedicationModel implements Serializable {
 
     private int medicationId;
@@ -18,22 +21,45 @@ public class MedicationModel implements Serializable {
     private String calendarEmpty;
 
 
-    public MedicationModel(String name, int quantity, int daysUntilEmpty, String type, double dosage,
-                           String measurement, String profile, boolean autoTake) {
+    /**
+     * Constructor that is used when first creating a medication
+     * @param name String for the name of the medication
+     * @param quantity int for the current quantity of the medication
+     * @param type string for the type of the medication, e.g. it is a tablet
+     * @param dosage double for the strength of a medication
+     * @param measurement string for what the medication is measured in, e.g. grams, milliliters
+     * @param autoTake boolean for if the user has selected this medication to be taken automatically
+     */
+    public MedicationModel(String name, int quantity, String type, double dosage, String measurement, boolean autoTake) {
         this.medicationId = (int) System.currentTimeMillis();
         this.name = name;
         this.quantity = quantity;
-        this.daysUntilEmpty = daysUntilEmpty;
+        this.daysUntilEmpty = 0;
         this.type = type;
         this.dosage = dosage;
         this.measurement = measurement;
         this.autoTake = autoTake;
         this.refillRequested = false;
-        this.profile = profile;
+        this.profile = null;
         this.calendarRefill = null;
         this.calendarEmpty = null;
     }
 
+    /**
+     * Constructor that creates medication object when retrieving from database
+     * @param medicationId int for the unique ID that identifies the medication in the db
+     * @param name String for the name of the medication
+     * @param quantity int for the current quantity of the medication
+     * @param daysUntilEmpty int for the no. of days until the medication will run out of supply
+     * @param type String for the type of the medication, e.g. it is a tablet
+     * @param dosage double for the strength of a medication
+     * @param measurement String for measurement what the medication is measured in, e.g. grams, milliliters
+     * @param profile String for who the medication is for
+     * @param autoTake boolean for if the user has selected this medication to be taken automatically
+     * @param refillRequested boolean for if the user has requested a refill for the medication
+     * @param calendarRefill String ID of the Google Calendar event for the refill reminder
+     * @param calendarEmpty String ID of the Google Calendar event for when the medication becomes empty
+     */
     public MedicationModel(int medicationId, String name, int quantity, int daysUntilEmpty, String type, double dosage,
                            String measurement, String profile, boolean autoTake, boolean refillRequested, String calendarRefill, String calendarEmpty) {
         this.medicationId = medicationId;
