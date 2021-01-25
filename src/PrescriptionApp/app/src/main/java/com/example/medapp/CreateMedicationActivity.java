@@ -13,6 +13,9 @@ import android.widget.Toast;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class CreateMedicationActivity extends AppCompatActivity {
 
     TextInputEditText et_name, et_quantity, et_strength;
@@ -37,7 +40,6 @@ public class CreateMedicationActivity extends AppCompatActivity {
         dropdown_type = findViewById(R.id.dropdown_type);
         submit_btn = findViewById(R.id.submit_btn);
         autoTake = findViewById(R.id.autotake);
-
         ArrayAdapter<String> measurementAdapter =
                 new ArrayAdapter<>(CreateMedicationActivity.this, R.layout.list_item, measurements);
         dropdown_measurement.setAdapter(measurementAdapter);

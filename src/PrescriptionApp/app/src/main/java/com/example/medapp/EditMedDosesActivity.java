@@ -102,13 +102,13 @@ public class EditMedDosesActivity extends AppCompatActivity {
         for(AddDoseModel dm: tempModels){
             if(dm.isDoseDaily()){
                 DoseModel m = new DoseModel(medModel.getMedicationId(), dm.getTime(),
-                        daily, dm.getQuantity(), false);
+                                            daily, dm.getQuantity());
                 databaseHelper.addDose(m);
             }
             else {
                 for(String day: dm.getDays()){
                     DoseModel m = new DoseModel(medModel.getMedicationId(), dm.getTime(),
-                            day, dm.getQuantity(), false);
+                                                day, dm.getQuantity());
                     databaseHelper.addDose(m);
                 }
             }
