@@ -63,7 +63,8 @@ public class GoogleCalendarHelper {
             public void run() {
                 try {
 
-                    if(medModel.getDaysUntilEmpty() >= refillReminderDays) {
+                    String refillID = medModel.getCalendarRefill();
+                    if(refillID != null) {
                         String medRefill = medModel.getCalendarRefill();
                         Log.d("MedApp", "deleting refill event");
                         service.events().delete(CALENDAR_ID, medRefill).execute();
