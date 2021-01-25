@@ -26,9 +26,12 @@ public class DailyEventReceiver extends BroadcastReceiver {
         mContext = context;
         setNotificationsForToday();
         autoTakeMedication();
-        resetDailyMed();
+        databaseHelper.refreshDailyDoses();
     }
 
+    /**
+     * Method that sets all the notifications that are required for a given day
+     */
     private void setNotificationsForToday() {
         List<DoseModel> doses = databaseHelper.selectTodaysDoseAndNotTaken();
         for(DoseModel dose: doses) {
@@ -39,8 +42,12 @@ public class DailyEventReceiver extends BroadcastReceiver {
         }
     }
 
+    /**
+     * Method that creates a notification for a given dose of medication
+     * @param medModel the medication that is to be taken
+     * @param doseModel the dose of the medication
+     */
     private void createNotification(MedicationModel medModel, DoseModel doseModel) {
-
 
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(System.currentTimeMillis());
@@ -109,11 +116,6 @@ public class DailyEventReceiver extends BroadcastReceiver {
             med.setDaysUntilEmpty(dec);
             databaseHelper.updateMedication(med);
         }
-    }
-
-
-    private void resetDailyMed() {
-        databaseHelper.refreshDailyDoses();
     }
 
 }
