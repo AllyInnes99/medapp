@@ -47,6 +47,7 @@ public class AddDosesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_doses);
 
         medModel = (MedicationModel) getIntent().getSerializableExtra("MedModel");
+        Toast.makeText(AddDosesActivity.this, Boolean.toString(medModel.isAutoTake()), Toast.LENGTH_SHORT).show();
         recyclerView = findViewById(R.id.recyclerView);
         floatingActionButton = findViewById(R.id.addApplicationButton);
         nextButton = findViewById(R.id.nextButton);

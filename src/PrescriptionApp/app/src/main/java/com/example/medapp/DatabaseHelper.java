@@ -407,6 +407,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COL_TYPE, model.getType());
         cv.put(COL_PROFILE, model.getProfile());
         cv.put(COL_DAYS_UNTIL_EMPTY, model.getDaysUntilEmpty());
+        cv.put(COL_AUTO_TAKE, model.isAutoTake());
+        cv.put(COL_REFILL_REQUESTED, model.isRefillRequested());
         updateMedicationRow(model, cv);
     }
 
