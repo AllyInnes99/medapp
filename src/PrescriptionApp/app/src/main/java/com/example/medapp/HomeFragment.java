@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -80,8 +81,16 @@ public class HomeFragment extends Fragment {
      */
     public void displayApplRecycler() {
         models = databaseHelper.selectTodaysDoseAndNotTaken();
-        Collections.sort(models);
-        applicationAdapter = new DoseAdapter(getActivity(), models, this);
+        List<DoseModel> filtered = new ArrayList<>();
+        for(DoseModel dm: models) {
+            MedicationModel med = databaseHelper.selectMedicationFromID(dm.getMedicationId());
+            if(!med.isAutoTake()){
+                filtered.add(dm);
+            }
+        }
+
+        Collections.sort(filtered);
+        applicationAdapter = new DoseAdapter(getActivity(), filtered, this);
         recyclerView.setAdapter(applicationAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
