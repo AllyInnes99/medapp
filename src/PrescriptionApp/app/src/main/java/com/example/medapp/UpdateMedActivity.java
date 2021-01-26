@@ -1,8 +1,10 @@
 package com.example.medapp;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -66,6 +68,8 @@ public class UpdateMedActivity extends AppCompatActivity {
         dropdown_measurement = findViewById(R.id.dropdown_measurement);
         dropdown_type = findViewById(R.id.dropdown_type);
 
+
+
         autoTake = findViewById(R.id.autotake);
 
         // get the medication via ID passed by intent
@@ -102,6 +106,7 @@ public class UpdateMedActivity extends AppCompatActivity {
                     String selectedMeasurement = dropdown_measurement.getText().toString();
                     String selectedType = dropdown_type.getText().toString();
 
+                    Toast.makeText(UpdateMedActivity.this, selectedType, Toast.LENGTH_SHORT).show();
                     medModel.setName(medicationName);
                     medModel.setQuantity(quantity);
                     medModel.setMeasurement(selectedMeasurement);

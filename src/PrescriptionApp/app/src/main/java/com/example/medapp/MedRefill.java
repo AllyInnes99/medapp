@@ -32,6 +32,7 @@ public class MedRefill extends AppCompatActivity {
 
         btn_add = findViewById(R.id.btn_add);
         btn_remove = findViewById(R.id.btn_remove);
+        btn_request = findViewById(R.id.btn_request);
         et_current = findViewById(R.id.et_current);
         et_new = findViewById(R.id.et_new);
 

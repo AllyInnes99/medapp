@@ -10,7 +10,16 @@
             />
     </PreferenceCategory>
 
+
+
     <PreferenceCategory app:title="Google Calendar">
+
+        <Preference
+            app:title="Login to Google"
+            app:key="login"
+            >
+
+        </Preference>
 
         <SwitchPreferenceCompat
             app:key="calendar"
