@@ -18,5 +18,6 @@ public class TakeReceiver extends BroadcastReceiver {
         databaseHelper.takeMedication(doseModel, medModel);
         String msg = "You have taken " + doseModel.getAmount() + " of " + medModel.getName();
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+        
     }
 }

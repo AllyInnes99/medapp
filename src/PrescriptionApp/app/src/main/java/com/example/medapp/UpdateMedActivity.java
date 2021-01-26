@@ -5,12 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
@@ -26,12 +23,12 @@ public class UpdateMedActivity extends AppCompatActivity {
     Button btn_update, btn_delete, btn_cal, btn_dose, btn_refill;
     TextInputEditText et_name, et_quantity, et_refill, et_dosage;
     AutoCompleteTextView dropdown_measurement, dropdown_type;
-    MedicationModel model;
+    MedicationModel medModel;
     SwitchMaterial autoTake;
 
     DatabaseHelper databaseHelper = new DatabaseHelper(UpdateMedActivity.this);
     int originalQuantity;
-    private static final int SECOND_ACTIVITY_REQUEST_CODE = 42;
+    private static final int DOSE_ACTIVITY_REQUEST_CODE = 42;
     final List<String> medTypes = Arrays.asList("tablet", "pill", "injection", "powder",
                                                 "drops", "inhalers", "topical");
     final List<String> measurements = Arrays.asList("g", "mg", "ml", "l");
@@ -39,13 +36,15 @@ public class UpdateMedActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == SECOND_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+        if (requestCode == DOSE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             //int refill = data.getIntExtra("refill", 0);
             //displayRefillDate(refill);
-            String msg = "Updated the doses of " + model.getName();
+            String msg = "Updated the doses of " + medModel.getName();
             Toast.makeText(UpdateMedActivity.this, msg, Toast.LENGTH_SHORT).show();
             finish();
         }
+
+
     }
 
     @Override
@@ -71,15 +70,15 @@ public class UpdateMedActivity extends AppCompatActivity {
 
         // get the medication via ID passed by intent
         int id = getIntent().getIntExtra("medID", 0);
-        model = databaseHelper.selectMedicationFromID(id);
-        originalQuantity = model.getQuantity();
+        medModel = databaseHelper.selectMedicationFromID(id);
+        originalQuantity = medModel.getQuantity();
 
         // set the values of the texts
-        et_name.setText(model.getName());
-        et_quantity.setText(String.format(Locale.UK, "%d", model.getQuantity()));
-        displayRefillDate(model.getDaysUntilEmpty());
-        et_dosage.setText(String.format(Locale.UK, "%f", model.getDosage()));
-        autoTake.setChecked(model.isAutoTake());
+        et_name.setText(medModel.getName());
+        et_quantity.setText(String.format(Locale.UK, "%d", medModel.getQuantity()));
+        displayRefillDate(medModel.getDaysUntilEmpty());
+        et_dosage.setText(String.format(Locale.UK, "%f", medModel.getDosage()));
+        autoTake.setChecked(medModel.isAutoTake());
 
         ArrayAdapter<String> measurementAdapter =
                 new ArrayAdapter<>(UpdateMedActivity.this, R.layout.list_item, measurements);
@@ -103,20 +102,20 @@ public class UpdateMedActivity extends AppCompatActivity {
                     String selectedMeasurement = dropdown_measurement.getText().toString();
                     String selectedType = dropdown_type.getText().toString();
 
-                    model.setName(medicationName);
-                    model.setQuantity(quantity);
-                    model.setMeasurement(selectedMeasurement);
-                    model.setType(selectedType);
+                    medModel.setName(medicationName);
+                    medModel.setQuantity(quantity);
+                    medModel.setMeasurement(selectedMeasurement);
+                    medModel.setType(selectedType);
 
                     Toast.makeText(UpdateMedActivity.this, Boolean.toString(autoTake.isChecked()), Toast.LENGTH_SHORT).show();
-                    model.setAutoTake(autoTake.isChecked());
+                    medModel.setAutoTake(autoTake.isChecked());
 
-                    databaseHelper.updateMedication(model);
+                    databaseHelper.updateMedication(medModel);
                     if(quantity != originalQuantity) {
-                        databaseHelper.updateDaysUntilEmpty(model);
-                        model = databaseHelper.selectMedicationFromID(model.getMedicationId());
+                        databaseHelper.updateDaysUntilEmpty(medModel);
+                        medModel = databaseHelper.selectMedicationFromID(medModel.getMedicationId());
                         GoogleCalendarHelper gch = new GoogleCalendarHelper(UpdateMedActivity.this);
-                        gch.updateMedEvents(model);
+                        gch.updateMedEvents(medModel);
                     }
 
                     Toast.makeText(UpdateMedActivity.this, "Successfully updated medication", Toast.LENGTH_SHORT).show();
@@ -135,15 +134,24 @@ public class UpdateMedActivity extends AppCompatActivity {
             public void onClick(View v){
                 GoogleCalendarHelper gac = new GoogleCalendarHelper(UpdateMedActivity.this);
                 try {
-                    List<DoseModel> doses = databaseHelper.selectDoseFromMedication(model);
-                    gac.deleteMedEvents(model, doses);
-                    databaseHelper.deleteMedication(model);
+                    List<DoseModel> doses = databaseHelper.selectDoseFromMedication(medModel);
+                    gac.deleteMedEvents(medModel, doses);
+                    databaseHelper.deleteMedication(medModel);
                     Toast.makeText(UpdateMedActivity.this, "Successfully deleted medication", Toast.LENGTH_SHORT).show();
                     finish();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
+            }
+        });
+
+        btn_refill.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(UpdateMedActivity.this, MedRefill.class);
+                intent.putExtra("medID", medModel.getMedicationId());
+                startActivity(intent);
             }
         });
 
@@ -171,8 +179,8 @@ public class UpdateMedActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(UpdateMedActivity.this, EditMedDosesActivity.class);
-                i.putExtra("medID", model.getMedicationId());
-                startActivityForResult(i, SECOND_ACTIVITY_REQUEST_CODE);
+                i.putExtra("medID", medModel.getMedicationId());
+                startActivityForResult(i, DOSE_ACTIVITY_REQUEST_CODE);
             }
         });
 
