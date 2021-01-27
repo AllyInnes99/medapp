@@ -83,6 +83,8 @@ public class MedRefill extends AppCompatActivity {
             inputVal = Integer.parseInt(v);
             int newQuantity = prevQty + inputVal;
             medModel.setQuantity(newQuantity);
+
+            // Refill has been received, so disable the refill request
             medModel.setRefillRequested(false);
             databaseHelper.updateMedication(medModel);
             databaseHelper.updateDaysUntilEmpty(medModel);

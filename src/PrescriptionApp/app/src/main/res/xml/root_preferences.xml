@@ -21,6 +21,13 @@
 
         </Preference>
 
+        <Preference
+            app:title="Logout of Google"
+            app:key="logout"
+            >
+
+        </Preference>
+
         <SwitchPreferenceCompat
             app:key="calendar"
             app:title="Enable Google Calendar"
