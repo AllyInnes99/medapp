@@ -2,6 +2,7 @@ package com.example.medapp;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.preference.PreferenceManager;
 
@@ -172,6 +173,34 @@ public class GoogleCalendarHelper {
         }
     }
 
+    /**
+     * Method that updates the refill event for every medication
+     */
+    public void updateRefillReminderEvents(int val){
+
+        List<MedicationModel> medModels = databaseHelper.selectAllMedication();
+        for(MedicationModel medModel: medModels) {
+            updateOrDeleteRefillEvent(medModel, val);
+        }
+
+    }
+
+    /**
+     * Method that updates the date of refill events, or deletes them if there can't be one
+     * @param medModel medication to update/delete event for
+     */
+    public void updateOrDeleteRefillEvent(MedicationModel medModel, int val) {
+        // update the refill reminder event
+        if(medModel.getDaysUntilEmpty() >= val) {
+            updateRefillEvent(medModel, val);
+        }
+        // if there can be no refill reminder event, remove existing
+        else {
+            deleteRefillEvent(medModel);
+        }
+    }
+
+
 
     /**
      * Update the reminders on the users Google Calendar when the quantity of medication is updated
@@ -222,6 +251,33 @@ public class GoogleCalendarHelper {
         if(eventID != null) {
             final Calendar c = Calendar.getInstance();
             c.add(Calendar.DATE, medModel.getDaysUntilEmpty() - refillReminderDays);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Event event = service.events().get(CALENDAR_ID, eventID).execute();
+                        Log.d("UpdateRefill", event.getSummary());
+                        setTime(c, event);
+                        Event updated = service.events().update(CALENDAR_ID, eventID, event).execute();
+                        //databaseHelper.updateRefillID(medModel, updated.getId());
+                    } catch (IOException e) {
+                        Log.d("MedApp", e.toString());
+                    }
+
+                }
+            }).start();
+        }
+    }
+
+    /**
+     * Method that updates the medication refill reminder event in Google Calendar
+     * @param medModel the medication that the event is to be updated for
+     */
+    public void updateRefillEvent(final MedicationModel medModel, int val) {
+        final String eventID = medModel.getCalendarRefill();
+        if(eventID != null) {
+            final Calendar c = Calendar.getInstance();
+            c.add(Calendar.DATE, medModel.getDaysUntilEmpty() - val);
             new Thread(new Runnable() {
                 @Override
                 public void run() {

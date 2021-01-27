@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
@@ -24,7 +25,35 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey);
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(requireContext());
+        final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(requireContext());
+
+
+
+
+        final ListPreference lp = findPreference("reminderDay");
+        final String i = lp.getValue();
+
+        lp.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+
+                int prev = Integer.parseInt(sp.getString("reminderDay", ""));
+                //Toast.makeText(requireContext(), newValue.toString(), Toast.LENGTH_SHORT).show();
+
+                GoogleCalendarHelper gch = new GoogleCalendarHelper(requireContext());
+                int v = Integer.parseInt(newValue.toString());
+                if(v != prev) {
+                    gch.updateRefillReminderEvents(v);
+                }
+                else{
+                    Toast.makeText(requireContext(), "a", Toast.LENGTH_SHORT).show();
+                }
+
+
+                return true;
+            }
+        });
+
 
         final Preference googleLogin = findPreference("login");
         googleLogin.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {

@@ -119,7 +119,7 @@ public class EditMedDosesActivity extends AppCompatActivity {
 
         // add the new Doses to Google Calendar
         if(medModel.getCalendarRefill() != null) {
-            gch.updateRefillEvent(medModel);
+            gch.updateRefillEvent(medModel) ;
             gch.updateEmptyEvent(medModel);
             gch.addDoseReminder(medModel);
         }

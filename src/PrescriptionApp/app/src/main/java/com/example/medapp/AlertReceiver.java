@@ -6,12 +6,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-
-import org.w3c.dom.CDATASection;
 
 public class AlertReceiver extends BroadcastReceiver {
 
