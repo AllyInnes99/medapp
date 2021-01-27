@@ -82,7 +82,7 @@ public class GoogleCalendarHelper {
                         String calID = doseModel.getCalendarID();
                         service.events().delete(CALENDAR_ID, doseModel.getCalendarID()).execute();
                     }
-                } catch (IOException e) {
+                } catch (IOException | NullPointerException e) {
                     e.printStackTrace();
                 }
             }

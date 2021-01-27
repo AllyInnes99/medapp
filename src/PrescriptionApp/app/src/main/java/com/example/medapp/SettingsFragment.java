@@ -59,10 +59,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         googleLogin.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                Toast.makeText(requireContext(), "here", Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(requireContext(), SignInActivity.class);
+                startActivity(i);
                 return true;
             }
         });
+
 
         final Preference googleSignout = findPreference("logout");
         googleSignout.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -74,7 +76,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         .requestIdToken(getString(R.string.default_web_client_id))
                         .requestEmail()
                         .build();
-                GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
+                GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(requireActivity(), gso);
 
                 FirebaseAuth.getInstance().signOut();
                 mGoogleSignInClient.signOut().addOnCompleteListener(requireActivity(),
@@ -82,17 +84,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 Toast.makeText(getActivity(), "Signed out.", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(getActivity(), SignInActivity.class);
+                                Intent intent = new Intent(getActivity(), MainActivity.class);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(intent);
                             }
                         });
-
                 return true;
-
             }
         });
-
     }
 
 }

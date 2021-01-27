@@ -21,17 +21,19 @@
         <activity
             android:name=".SignInActivity"
             android:noHistory="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".UpdateMedActivity" />
         <activity android:name=".CreateDoseActivity" />
         <activity android:name=".AddDosesActivity" />
         <activity android:name=".CreateMedicationActivity" />
-        <activity android:name=".MainActivity" /> <!-- RECEIVERS -->
+        <activity
+            android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity><!-- RECEIVERS -->
         <receiver
             android:name=".AlertReceiver"
             android:exported="true"

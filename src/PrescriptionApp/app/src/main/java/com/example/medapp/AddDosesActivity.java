@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -165,13 +166,18 @@ public class AddDosesActivity extends AppCompatActivity {
         Toast.makeText(AddDosesActivity.this, "Adding reminder events to Google Calendar", Toast.LENGTH_SHORT).show();
         GoogleCalendarHelper gac = new GoogleCalendarHelper(AddDosesActivity.this);
         medModel = databaseHelper.selectMedicationFromID(medModel.getMedicationId());
-        try {
+
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(AddDosesActivity.this);
+        if (acct != null) {
+            Toast.makeText(AddDosesActivity.this, "Adding reminder events to Google Calendar", Toast.LENGTH_SHORT).show();
             gac.addDoseReminder(medModel);
             gac.addRefillEvents(medModel);
             gac.updateMedEvents(medModel);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+        else {
+            Toast.makeText(AddDosesActivity.this, "Could not add to Google Calendar", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
 
