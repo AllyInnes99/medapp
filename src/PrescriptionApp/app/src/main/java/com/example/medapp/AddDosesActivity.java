@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -67,6 +68,9 @@ public class AddDosesActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(!tempModels.isEmpty()) {
                     addToDatabase();
+                    if(GoogleSignIn.getLastSignedInAccount(AddDosesActivity.this) != null){
+                        addToGoogleCal();
+                    }
                     Intent intent = new Intent(AddDosesActivity.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
@@ -147,6 +151,19 @@ public class AddDosesActivity extends AppCompatActivity {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(AddDosesActivity.this, doseModel.getDoseId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
         Toast.makeText(AddDosesActivity.this, "Registered alarm.", Toast.LENGTH_SHORT).show();
+    }
+
+    private void addToGoogleCal() {
+        Toast.makeText(AddDosesActivity.this, "Adding reminder events to Google Calendar", Toast.LENGTH_SHORT).show();
+        GoogleCalendarHelper gac = new GoogleCalendarHelper(AddDosesActivity.this);
+        medModel = databaseHelper.selectMedicationFromID(medModel.getMedicationId());
+        try {
+            gac.addDoseReminder(medModel);
+            gac.addRefillEvents(medModel);
+            gac.updateMedEvents(medModel);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
