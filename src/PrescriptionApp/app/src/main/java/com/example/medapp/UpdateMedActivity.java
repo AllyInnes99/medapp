@@ -81,7 +81,7 @@ public class UpdateMedActivity extends AppCompatActivity {
         et_name.setText(medModel.getName());
         et_quantity.setText(String.format(Locale.UK, "%d", medModel.getQuantity()));
         displayRefillDate(medModel.getDaysUntilEmpty());
-        et_dosage.setText(String.format(Locale.UK, "%f", medModel.getDosage()));
+        et_dosage.setText(Double.toString(medModel.getDosage()));
         autoTake.setChecked(medModel.isAutoTake());
 
         ArrayAdapter<String> measurementAdapter =

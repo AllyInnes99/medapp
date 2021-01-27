@@ -1,51 +1,52 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory app:title="Refill Reminders">
+
         <ListPreference
             app:title="No. of days for refill reminder"
             app:key="reminderDay"
             app:summary="%s"
             app:defaultValue="7"
             app:entries="@array/refillDays"
-            app:entryValues="@array/refillDaysVals"
-            />
+            app:entryValues="@array/refillDaysVals">
+        </ListPreference>
+
     </PreferenceCategory>
-
-
 
     <PreferenceCategory app:title="Google Calendar">
 
         <Preference
             app:title="Sign-in to Google"
-            app:key="login"
-            >
-
+            app:key="login">
         </Preference>
+
 
         <Preference
             app:title="Sign-out of Google"
-            app:key="logout"
-            >
-
+            app:key="logout">
         </Preference>
+
 
         <SwitchPreferenceCompat
             app:key="calendar"
             app:title="Enable Google Calendar"
             app:summaryOff="Medication events won't be added to your Google Calendar"
-            app:summaryOn="Medication events will be added to your Google Calendar"/>
+            app:summaryOn="Medication events will be added to your Google Calendar">
+        </SwitchPreferenceCompat>
 
         <SwitchPreferenceCompat
             app:dependency="calendar"
             app:defaultValue="true"
             app:key="dose_events"
-            app:title="Dose Events" />
+            app:title="Dose Events">
+        </SwitchPreferenceCompat>
 
         <SwitchPreferenceCompat
             app:dependency="calendar"
             app:defaultValue="true"
             app:key="refill_reminders"
-            app:title="Refill Reminders" />
+            app:title="Refill Reminders" >
+        </SwitchPreferenceCompat>
 
     </PreferenceCategory>
 

@@ -103,6 +103,12 @@ public class AddDosesActivity extends AppCompatActivity {
 
         // update days until refill for med
         databaseHelper.updateDaysUntilEmpty(medModel);
+
+        List<DoseModel> addedDoses = databaseHelper.selectDoseFromMedication(medModel);
+        for(DoseModel dose: addedDoses) {
+            initialiseNotification(dose);
+        }
+
     }
 
     /**
@@ -137,19 +143,22 @@ public class AddDosesActivity extends AppCompatActivity {
         c.set(Calendar.SECOND, 0);
         c.set(Calendar.MILLISECOND, 0);
 
-        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(this, AlertReceiver.class);
-        intent.setAction("android.intent.action.NOTIFY");
+        if(Calendar.getInstance().getTimeInMillis() < c.getTimeInMillis()){
+            AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+            Intent intent = new Intent(this, AlertReceiver.class);
+            intent.setAction("android.intent.action.NOTIFY");
 
-        intent.putExtra("quantity", doseModel.getAmount());
-        intent.putExtra("name", medModel.getName());
+            intent.putExtra("quantity", doseModel.getAmount());
+            intent.putExtra("name", medModel.getName());
 
-        // Register receiver
-        AddDosesActivity.this.registerReceiver(new AlertReceiver(), new IntentFilter());
+            // Register receiver
+            AddDosesActivity.this.registerReceiver(new AlertReceiver(), new IntentFilter());
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(AddDosesActivity.this, doseModel.getDoseId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
-        Toast.makeText(AddDosesActivity.this, "Registered alarm.", Toast.LENGTH_SHORT).show();
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(AddDosesActivity.this, doseModel.getDoseId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+            Toast.makeText(AddDosesActivity.this, "Registered alarm.", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     private void addToGoogleCal() {

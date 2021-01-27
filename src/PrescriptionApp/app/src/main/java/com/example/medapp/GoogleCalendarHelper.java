@@ -63,27 +63,23 @@ public class GoogleCalendarHelper {
             public void run() {
                 try {
 
-                    String refillID = medModel.getCalendarRefill();
-                    if(refillID != null) {
-                        String medRefill = medModel.getCalendarRefill();
-                        Log.d("MedApp", "deleting refill event");
-                        service.events().delete(CALENDAR_ID, medRefill).execute();
-                    }
+
+                    String medRefill = medModel.getCalendarRefill();
+                    Log.d("MedApp", "deleting refill event");
+                    service.events().delete(CALENDAR_ID, medRefill).execute();
+
 
 
                     String medEmpty= medModel.getCalendarEmpty();
-                    if(medEmpty != null) {
-                        Log.d("MedApp", "deleting empty event");
-                        service.events().delete(CALENDAR_ID, medEmpty).execute();
-                    }
+                    Log.d("MedApp", "deleting empty event");
+                    service.events().delete(CALENDAR_ID, medEmpty).execute();
+
 
 
                     for(DoseModel doseModel: doses) {
                         Log.d("MedApp", "deleting dose event");
                         String calID = doseModel.getCalendarID();
-                        if(calID != null) {
-                            service.events().delete(CALENDAR_ID, doseModel.getCalendarID()).execute();
-                        }
+                        service.events().delete(CALENDAR_ID, doseModel.getCalendarID()).execute();
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -117,18 +113,18 @@ public class GoogleCalendarHelper {
      * @param doseModel the medication dose that is to be removed from the user's Google Calendar
      */
     public void deleteDoseEvent(final DoseModel doseModel) {
-        if(doseModel.getCalendarID() != null) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        service.events().delete(CALENDAR_ID, doseModel.getCalendarID()).execute();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    service.events().delete(CALENDAR_ID, doseModel.getCalendarID()).execute();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            }).start();
-        }
+            }
+        }).start();
+
     }
 
     /**
@@ -136,19 +132,19 @@ public class GoogleCalendarHelper {
      * @param medModel the medication that wants the refill event to be removed
      */
     public void deleteRefillEvent(final MedicationModel medModel) {
-        if(medModel.getCalendarRefill() != null){
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        service.events().delete(CALENDAR_ID, medModel.getCalendarRefill()).execute();
-                        databaseHelper.updateRefillID(medModel, "a");
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    service.events().delete(CALENDAR_ID, medModel.getCalendarRefill()).execute();
+                    databaseHelper.updateRefillID(medModel, "a");
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            }).start();
-        }
+            }
+        }).start();
+
     }
 
     /**
