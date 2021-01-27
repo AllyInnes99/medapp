@@ -9,12 +9,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.textfield.TextInputEditText;
 
 public class MedRefill extends AppCompatActivity {
 
 
-    Button btn_add, btn_remove, btn_request;
+    Button btn_add, btn_remove, btn_request, btn_update;
+    MaterialButtonToggleGroup toggleGroup;
     TextInputEditText et_current, et_new;
     Context context;
     DatabaseHelper databaseHelper;
@@ -33,6 +35,8 @@ public class MedRefill extends AppCompatActivity {
         btn_add = findViewById(R.id.btn_add);
         btn_remove = findViewById(R.id.btn_remove);
         btn_request = findViewById(R.id.btn_request);
+        btn_update = findViewById(R.id.btn_update);
+        toggleGroup = findViewById(R.id.toggleGroup);
         et_current = findViewById(R.id.et_current);
         et_new = findViewById(R.id.et_new);
 
@@ -42,47 +46,25 @@ public class MedRefill extends AppCompatActivity {
 
         et_current.setText(Integer.toString(prevQty));
 
-        btn_add.setOnClickListener(new View.OnClickListener() {
+        btn_update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    inputVal = Integer.parseInt(et_new.getText().toString());
-                    int newQuantity = prevQty + inputVal;
-                    medModel.setQuantity(newQuantity);
-                    medModel.setRefillRequested(false);
-                    databaseHelper.updateMedication(medModel);
-                    databaseHelper.updateDaysUntilEmpty(medModel);
-                    Toast.makeText(context, "Updated quantity of medication", Toast.LENGTH_SHORT).show();
-                    closeActivity();
-                }
-                catch (NullPointerException e) {
-                    Toast.makeText(context, "Input value is empty.", Toast.LENGTH_SHORT).show();
-                }
+                int btnID = toggleGroup.getCheckedButtonId();
+                switch(btnID) {
+                    case R.id.btn_add:
+                        addToQuantity();
+                        break;
+                    case R.id.btn_remove:
+                        removeFromQuantity();
+                        break;
+                    default:
+                        Toast.makeText(context, "Please select a toggle option", Toast.LENGTH_SHORT).show();
 
+                }
             }
         });
 
-        btn_remove.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    inputVal = Integer.parseInt(et_new.getText().toString());
-                    int newQuantity = prevQty - inputVal;
-                    if(newQuantity < 0){
-                        newQuantity = 0;
-                    }
 
-                    medModel.setQuantity(newQuantity);
-                    databaseHelper.updateMedication(medModel);
-                    databaseHelper.updateDaysUntilEmpty(medModel);
-                    Toast.makeText(context, "Updated quantity of medication", Toast.LENGTH_SHORT).show();
-                    closeActivity();
-                }
-                catch (NullPointerException e) {
-                    Toast.makeText(context, "Input value is empty.", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
 
         btn_request.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,6 +75,47 @@ public class MedRefill extends AppCompatActivity {
             }
         });
     }
+
+    private void addToQuantity() {
+        try {
+            String v = et_new.getText().toString();
+            if(v.equals("")) throw new NullPointerException("Empty input for new quantity.");
+            inputVal = Integer.parseInt(v);
+            int newQuantity = prevQty + inputVal;
+            medModel.setQuantity(newQuantity);
+            medModel.setRefillRequested(false);
+            databaseHelper.updateMedication(medModel);
+            databaseHelper.updateDaysUntilEmpty(medModel);
+            updateGoogleCal();
+            Toast.makeText(context, "Updated quantity of medication", Toast.LENGTH_SHORT).show();
+            closeActivity();
+        }
+        catch (NullPointerException e) {
+            Toast.makeText(context, "Input value is empty.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void removeFromQuantity() {
+        try {
+            String v = et_new.getText().toString();
+            if(v.equals("")) throw new NullPointerException("Empty input for new quantity.");
+            inputVal = Integer.parseInt(v);
+            int newQuantity = prevQty - inputVal;
+            if(newQuantity < 0){
+                newQuantity = 0;
+            }
+            medModel.setQuantity(newQuantity);
+            databaseHelper.updateMedication(medModel);
+            databaseHelper.updateDaysUntilEmpty(medModel);
+            updateGoogleCal();
+            Toast.makeText(context, "Updated quantity of medication", Toast.LENGTH_SHORT).show();
+            closeActivity();
+        }
+        catch (NullPointerException e) {
+            Toast.makeText(context, "Input value is empty.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     private void updateGoogleCal() {
         medModel = databaseHelper.selectMedicationFromID(medModel.getMedicationId());

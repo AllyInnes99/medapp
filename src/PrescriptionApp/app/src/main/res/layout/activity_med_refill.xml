@@ -32,6 +32,34 @@
             android:layout_width="match_parent"
             android:layout_height="100dp">
 
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/toggleGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleSelection="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/layout_new"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <Button
+                    android:id="@+id/btn_add"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Add" />
+
+                <Button
+                    android:id="@+id/btn_remove"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Remove" />
+
+                <!-- ....  -->
+
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/layout_new"
                 android:layout_width="150dp"
@@ -54,39 +82,25 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <Button
-                android:id="@+id/btn_add"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginLeft="4dp"
-                android:layout_weight="1"
-                android:text="@string/add"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/layout_new"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <Button
-                android:id="@+id/btn_remove"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:text="@string/remove"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/btn_add"
-                app:layout_constraintTop_toTopOf="parent" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <Button
-            android:id="@+id/btn_request"
+        android:id="@+id/btn_request"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Request Refill" />
+
+        <Button
+            android:id="@+id/btn_update"
             android:layout_gravity="center_vertical|center_horizontal"
             android:layout_marginLeft="32dp"
             android:layout_marginRight="32dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Request Refill" />
+            android:text="@string/update" />
 
 
     </LinearLayout>
