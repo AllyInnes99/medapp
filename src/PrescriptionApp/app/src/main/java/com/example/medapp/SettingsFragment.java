@@ -31,8 +31,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         final Preference googleSignout = findPreference("logout");
         ListPreference lp = findPreference("reminderDay");
         Preference calendar = findPreference("calendar");
-        Preference doseEvents = findPreference("dose_events");
-        Preference refillReminders = findPreference("refill_reminders");
 
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(requireContext());
 
@@ -81,30 +79,35 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             googleSignout.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    Scope scope = new Scope("https://www.googleapis.com/auth/calendar.events");
-                    GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                            .requestScopes(scope)
-                            .requestIdToken(getString(R.string.default_web_client_id))
-                            .requestEmail()
-                            .build();
-                    GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(requireActivity(), gso);
-
-                    FirebaseAuth.getInstance().signOut();
-                    mGoogleSignInClient.signOut().addOnCompleteListener(requireActivity(),
-                            new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    Toast.makeText(getActivity(), "Signed out.", Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(getActivity(), MainActivity.class);
-                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                    startActivity(intent);
-                                }
-                            });
+                    signOutOfGoogle();
                     return true;
                 }
             });
         }
 
     }
+
+    private void signOutOfGoogle() {
+        Scope scope = new Scope("https://www.googleapis.com/auth/calendar.events");
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestScopes(scope)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(requireActivity(), gso);
+
+        FirebaseAuth.getInstance().signOut();
+        mGoogleSignInClient.signOut().addOnCompleteListener(requireActivity(),
+            new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    Toast.makeText(getActivity(), "Signed out.", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getActivity(), MainActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                }
+            });
+    }
+
 
 }
