@@ -45,7 +45,7 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.My
         if(model.isRefillRequested()){
             holder.imageView.setImageResource(R.drawable.ic_baseline_hourglass_full_24);
         }
-        if(model.getDaysUntilEmpty() > Integer.parseInt(days)) {
+        else if(model.getDaysUntilEmpty() > Integer.parseInt(days)) {
             holder.imageView.setImageDrawable(null);
         }
 
