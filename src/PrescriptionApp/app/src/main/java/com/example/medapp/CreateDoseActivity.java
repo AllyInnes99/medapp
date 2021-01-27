@@ -95,9 +95,19 @@ public class CreateDoseActivity extends AppCompatActivity {
                 daysToBeTakenOn.clear();
                 try {
                     String time = et_time.getText().toString();
-                    int amount = Integer.parseInt(et_amount.getText().toString());
+                    if(time.trim().isEmpty()){
+                        throw new Exception("Please select a time");
+                    }
+                    String amountStr = et_amount.getText().toString();
+                    if(amountStr.trim().isEmpty()){
+                        throw new Exception("Please select the amount of medication to be taken at this time");
+                    }
+                    int amount = Integer.parseInt(amountStr);
                     addDoseModel = new AddDoseModel(time, amount);
                     checkSelectedBoxes();
+                    if(daysToBeTakenOn.isEmpty()){
+                        throw new Exception("Please select the days where this medication is to be taken on");
+                    }
                     addDoseModel.setDays(daysToBeTakenOn);
                     Intent output = new Intent();
                     output.putExtra("model", addDoseModel);
@@ -106,7 +116,7 @@ public class CreateDoseActivity extends AppCompatActivity {
 
                 }
                 catch (Exception e) {
-                    Toast.makeText(CreateDoseActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CreateDoseActivity.this, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });

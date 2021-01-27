@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.CharacterPickerDialog;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -14,7 +15,10 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 
 public class CreateMedicationActivity extends AppCompatActivity {
 
@@ -54,19 +58,39 @@ public class CreateMedicationActivity extends AppCompatActivity {
 
                 MedicationModel model;
                 Intent intent;
-
-                String selectedType = dropdown_type.getText().toString();
-                String selectedMeasurement = dropdown_measurement.getText().toString();
-                intent = new Intent(CreateMedicationActivity.this, AddDosesActivity.class);
-
                 try {
+                    intent = new Intent(CreateMedicationActivity.this, AddDosesActivity.class);
                     String medicationName =  et_name.getText().toString();
-                    if(!MedicationModel.validateMedicationName(medicationName)) {
-                        throw new Exception("Invalid medication name");
+                    if(medicationName.trim().isEmpty()) {
+                        throw new Exception("Please insert a valid name.");
                     }
-                    int quantity = Integer.parseInt(et_quantity.getText().toString());
-                    double dosage = Double.parseDouble(et_strength.getText().toString());
+
+                    String qtyStr = et_quantity.getText().toString();
+                    if(qtyStr.trim().isEmpty()){
+                        throw new Exception("Please insert a value for the current quantity of medication");
+                    }
+                    int quantity = Integer.parseInt(qtyStr);
+
+                    String doseStr = et_strength.getText().toString();
+
+                    if(doseStr.trim().isEmpty()){
+                        throw new Exception("Please insert a value for the strength of one instance of medication");
+                    }
+                    double dosage = Double.parseDouble(doseStr);
+
+                    String selectedType = dropdown_type.getText().toString();
+                    if(selectedType.trim().isEmpty()){
+                        throw new Exception("Please select a type from the dropdown menu.");
+                    }
+
+                    String selectedMeasurement = dropdown_measurement.getText().toString();
+                    if(selectedMeasurement.trim().isEmpty()){
+                        throw new Exception("Please select a measurement from the dropdown menu.");
+                    }
+
                     boolean take = autoTake.isChecked();
+
+
                     model = new MedicationModel(medicationName, quantity, selectedType, dosage, selectedMeasurement, take);
                     intent.putExtra("MedModel", model);
                     startActivity(intent);
@@ -75,8 +99,8 @@ public class CreateMedicationActivity extends AppCompatActivity {
                     Toast.makeText(CreateMedicationActivity.this, "Invalid number for quantity", Toast.LENGTH_SHORT).show();
                 }
                 catch (Exception e) {
-                    Toast.makeText(CreateMedicationActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
-                    finish();
+                    Toast.makeText(CreateMedicationActivity.this, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                    //finish();
                 }
             }
         });
