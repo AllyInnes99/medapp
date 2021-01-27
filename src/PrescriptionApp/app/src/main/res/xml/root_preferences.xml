@@ -2,8 +2,9 @@
 
     <PreferenceCategory app:title="Refill Reminders">
         <ListPreference
+            app:title="No. of days for refill reminder"
             app:key="reminderDay"
-            app:summary="Select the no. of days for refill reminder."
+            app:summary="%s"
             app:defaultValue="7"
             app:entries="@array/refillDays"
             app:entryValues="@array/refillDaysVals"
@@ -15,14 +16,14 @@
     <PreferenceCategory app:title="Google Calendar">
 
         <Preference
-            app:title="Login to Google"
+            app:title="Sign-in to Google"
             app:key="login"
             >
 
         </Preference>
 
         <Preference
-            app:title="Logout of Google"
+            app:title="Sign-out of Google"
             app:key="logout"
             >
 
