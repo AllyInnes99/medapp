@@ -36,6 +36,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         if(acct != null) {
             googleLogin.setEnabled(false);
+            googleSignout.setSummary(String.format("Currently signed in as %s", acct.getDisplayName()));
         }
         else {
             googleSignout.setEnabled(false);
