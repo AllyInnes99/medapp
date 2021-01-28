@@ -43,6 +43,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_TAKEN = "IS_TAKEN";
     public static final String COL_CALENDAR_ID = "CALENDAR_ID";
 
+    // Const variables for the medLog and its columns
+    public static final String LOG_TABLE = "LOG_TABLE";
+    public static final String COL_LOG_ID = "LOG_ID";
+    public static final String COL_LOG_MSG = "MESSAGE";
+    public static final String COL_LOG_TIME = "TIME";
+    public static final String COL_ON_TIME = "ON_TIME";
+
+
+
     Calendar calendar = Calendar.getInstance();
     private Context context;
 
@@ -54,32 +63,44 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        String createMedTableStatement = onCreateHelper(MEDICATION_TABLE) + " ("
-                                        + COL_MEDICATION_ID + " INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT, "
-                                        + COL_MEDICATION_NAME + " TEXT, " + COL_QUANTITY + " INT, "
-                                        + COL_DOSAGE + " REAL, "
-                                        + COL_MEASUREMENT + " TEXT, "
-                                        + COL_TYPE + " TEXT, " + COL_PROFILE + " TEXT, "
-                                        + COL_DAYS_UNTIL_EMPTY + " INT,"
-                                        + COL_AUTO_TAKE + " BOOL, "
-                                        + COL_REFILL_REQUESTED + " BOOL,"
-                                        + COL_CALENDAR_REFILL + " STRING, "
-                                        + COL_CALENDAR_EMPTY + " STRING)";
+        String createMedTableStatement
+                = onCreateHelper(MEDICATION_TABLE) + " ("
+                + COL_MEDICATION_ID + " INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT, "
+                + COL_MEDICATION_NAME + " TEXT, " + COL_QUANTITY + " INT, "
+                + COL_DOSAGE + " REAL, "
+                + COL_MEASUREMENT + " TEXT, "
+                + COL_TYPE + " TEXT, " + COL_PROFILE + " TEXT, "
+                + COL_DAYS_UNTIL_EMPTY + " INT,"
+                + COL_AUTO_TAKE + " BOOL, "
+                + COL_REFILL_REQUESTED + " BOOL,"
+                + COL_CALENDAR_REFILL + " TEXT, "
+                + COL_CALENDAR_EMPTY + " TEXT)";
 
-        String createAppTableStatement = onCreateHelper(DOSE_TABLE) + " ("
-                                        + COL_DOSE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                                        + COL_MEDICATION_ID + " INT, "
-                                        + COL_TIME_HOUR + " INT, "
-                                        + COL_TIME_MINUTE + " INT, "
-                                        + COL_DAY + " TEXT, "
-                                        + COL_AMOUNT + " INT, "
-                                        + COL_TAKEN + " BOOL, "
-                                        + COL_CALENDAR_ID + " STRING, "
-                                        + "FOREIGN KEY (" + COL_MEDICATION_ID + ") REFERENCES " + MEDICATION_TABLE + " ( " + COL_MEDICATION_ID + ") ON DELETE CASCADE)"
-                                        ;
+        String createAppTableStatement =
+                onCreateHelper(DOSE_TABLE) + " ("
+                + COL_DOSE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + COL_MEDICATION_ID + " INT, "
+                + COL_TIME_HOUR + " INT, "
+                + COL_TIME_MINUTE + " INT, "
+                + COL_DAY + " TEXT, "
+                + COL_AMOUNT + " INT, "
+                + COL_TAKEN + " BOOL, "
+                + COL_CALENDAR_ID + " TEXT, "
+                + "FOREIGN KEY (" + COL_MEDICATION_ID + ") REFERENCES " + MEDICATION_TABLE + " ( " + COL_MEDICATION_ID + ") ON DELETE CASCADE)"
+                ;
+
+        String createLogTableStatement =
+                onCreateHelper(LOG_TABLE) + " ("
+                + COL_LOG_ID + " INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT,"
+                + COL_MEDICATION_ID + " INTEGER,"
+                + COL_LOG_MSG + " TEXT, "
+                + COL_LOG_TIME + " INTEGER, "
+                + COL_ON_TIME + " BOOL, "
+                + "FOREIGN KEY (" + COL_MEDICATION_ID + ") REFERENCES " + MEDICATION_TABLE + " ( " + COL_MEDICATION_ID + ") ON DELETE CASCADE)";
 
         db.execSQL(createMedTableStatement);
         db.execSQL(createAppTableStatement);
+        db.execSQL(createLogTableStatement);
 
     }
 
@@ -150,6 +171,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COL_TAKEN, doseModel.isTaken());
         cv.put(COL_CALENDAR_ID, doseModel.getCalendarID());
         long insert = db.insert(DOSE_TABLE, null, cv);
+        return isAdded(insert);
+    }
+
+
+    public boolean addLog(MedicationLog log) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put(COL_LOG_ID, log.getLogId());
+        cv.put(COL_MEDICATION_ID, log.getMedicationId());
+        cv.put(COL_LOG_MSG, log.getMsg());
+        cv.put(COL_LOG_TIME, log.getTime());
+        cv.put(COL_DAY, log.isOnTime());
+        long insert = db.insert(LOG_TABLE, null, cv);
         return isAdded(insert);
     }
 
@@ -326,6 +361,32 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return returnList;
     }
+
+    // SELECT QUERIES FOR LOG
+
+    private List<MedicationLog> selectLogHelper(String rawQuery) {
+        List<MedicationLog> returnList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(rawQuery, null);
+
+        if(cursor.moveToFirst()) {
+            do {
+                int i = 0;
+                int logId = cursor.getInt(i++);
+                int medId = cursor.getInt(i++);
+                String msg = cursor.getString(i++);
+                long time = cursor.getLong(i++);
+                boolean onTime = SQLiteIntToBool(cursor.getInt(i++));
+
+                MedicationLog medLog = new MedicationLog(logId, medId, msg, time, onTime);
+                returnList.add(medLog);
+
+            } while(cursor.moveToNext());
+        }
+        cursor.close();
+        return returnList;
+    }
+
 
     /**
      * Method that finds the target medication model in database, and if found it is deleted.
