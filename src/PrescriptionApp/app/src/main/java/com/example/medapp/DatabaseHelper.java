@@ -194,7 +194,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public List<MedicationModel> selectAllMedication(){
         String rawQuery = "SELECT * FROM " + MEDICATION_TABLE + " ORDER BY " + COL_MEDICATION_ID + " DESC";
-        return selectMedicationHelper(rawQuery);
+        return executeMedicationQuery(rawQuery);
     }
 
     /**
@@ -205,7 +205,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public MedicationModel selectMedicationFromID(int id) {
         String rawQuery = "SELECT * FROM " + MEDICATION_TABLE
                 + " WHERE " + COL_MEDICATION_ID + " = " + id;
-        return selectMedicationHelper(rawQuery).get(0);
+        return executeMedicationQuery(rawQuery).get(0);
     }
 
     /**
@@ -216,7 +216,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public MedicationModel selectMedicationFromDose(DoseModel doseModel) {
         String rawQuery = "SELECT * FROM " + MEDICATION_TABLE
                         + " WHERE " + COL_MEDICATION_ID + " = " + doseModel.getMedicationId();
-        return selectMedicationHelper(rawQuery).get(0);
+        return executeMedicationQuery(rawQuery).get(0);
     }
 
     /**
@@ -224,7 +224,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param rawQuery - the query to be executed on db
      * @return - list of med objs representing rows in db matching query
      */
-    private List<MedicationModel> selectMedicationHelper(String rawQuery) {
+    private List<MedicationModel> executeMedicationQuery(String rawQuery) {
         List<MedicationModel> returnList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(rawQuery, null);
@@ -265,7 +265,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public List<DoseModel> selectDoseFromMedication(MedicationModel model) {
         int medID = model.getMedicationId();
         String rawQuery = "SELECT * FROM " + DOSE_TABLE + " WHERE " + COL_MEDICATION_ID  + " = " + medID;
-        return selectDoseHelper(rawQuery);
+        return executeDoseQuery(rawQuery);
     }
 
     /**
@@ -275,7 +275,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public List<MedicationModel> selectAutoTakenMeds() {
         String rawQuery = "SELECT * FROM " + MEDICATION_TABLE
                 + " WHERE " + COL_AUTO_TAKE + " = 1";
-        return selectMedicationHelper(rawQuery);
+        return executeMedicationQuery(rawQuery);
     }
 
     /*
@@ -283,22 +283,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     */
 
     /**
-     * Method that gets all of the applications set up in the database
-     * @return a list of application models
+     * Method that gets all of the doses set up in the database
+     * @return a list of dose models
      */
     public List<DoseModel> selectAllDoses() {
         String rawQuery = "SELECT * FROM " + DOSE_TABLE;
-        return selectDoseHelper(rawQuery);
+        return executeDoseQuery(rawQuery);
     }
 
     /**
-     * Method that gets all the applications that are to be taken on a specific day
+     * Method that gets all the doses that are to be taken on a specific day
      * @param day - String denoting the day of the week
-     * @return a list of applications to be taken on the given day
+     * @return a list of dose to be taken on the given day
      */
     public List<DoseModel> selectDoseFromDay(String day) {
         String rawQuery = "SELECT * FROM " + DOSE_TABLE + " WHERE " + COL_DAY + " = " + day;
-        return selectDoseHelper(rawQuery);
+        return executeDoseQuery(rawQuery);
     }
 
     /**
@@ -309,7 +309,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public DoseModel selectDoseFromID(int id) {
         String rawQuery = "SELECT * FROM " + DOSE_TABLE
                 + " WHERE " + COL_DOSE_ID + " = " + id;
-        return selectDoseHelper(rawQuery).get(0);
+        return executeDoseQuery(rawQuery).get(0);
     }
 
     /**
@@ -326,15 +326,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 " WHERE (" + COL_DAY + " = '" + day +
                 "' OR " + COL_DAY + " = 'Daily')"  +
                 " AND (" + COL_TAKEN + " = 0 )";
-        return selectDoseHelper(rawQuery);
+        return executeDoseQuery(rawQuery);
     }
 
     /**
-     * Helper method to obtain a list of application models via provided query
+     * Helper method to obtain a list of dose models via provided query
      * @param rawQuery - SQL query to be made on db
-     * @return list of application models as a result of the query
+     * @return list of dose models as a result of the query
      */
-    private List<DoseModel> selectDoseHelper(String rawQuery) {
+    private List<DoseModel> executeDoseQuery(String rawQuery) {
         List<DoseModel> returnList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(rawQuery, null);
@@ -362,9 +362,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return returnList;
     }
 
-    // SELECT QUERIES FOR LOG
+    /*
+        SELECT QUERIES FOR LOG TABLE
+    */
 
-    private List<MedicationLog> selectLogHelper(String rawQuery) {
+    private List<MedicationLog> selectAllLogs() {
+        String rawQuery = "SELECT * FROM " + LOG_TABLE;
+        return executeLogQuery(rawQuery);
+    }
+
+    private List<MedicationLog> executeLogQuery(String rawQuery) {
         List<MedicationLog> returnList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(rawQuery, null);
@@ -414,16 +421,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param doseModel - the application model mirroring the row to have isTaken set to true
      * @param medModel - the medication model mirroring the row to have quantity updated
      */
-    public void takeMedication(DoseModel doseModel, MedicationModel medModel) {
+    public void takeMedication(DoseModel doseModel, MedicationModel medModel, boolean onTime) {
         ContentValues cvMed = new ContentValues(1);
         ContentValues cvAppl = new ContentValues(1);
 
-        int newQuantity = medModel.getQuantity() - doseModel.getAmount();
+        // reduce qty of medication
+        int amount = doseModel.getAmount();
+        int newQuantity = medModel.getQuantity() - amount;
         cvMed.put(COL_QUANTITY, newQuantity);
         updateMedicationRow(medModel, cvMed);
 
+        // register dose as taken
         cvAppl.put(COL_TAKEN, true);
         updateDose(doseModel, cvAppl);
+
+        // add log report signifying if the medication was taken on time or not
+
+
     }
 
     /**

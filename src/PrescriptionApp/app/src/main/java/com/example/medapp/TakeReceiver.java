@@ -15,7 +15,7 @@ public class TakeReceiver extends BroadcastReceiver {
         int medID = intent.getIntExtra("medID", 0);
         DoseModel doseModel = databaseHelper.selectDoseFromID(doseID);
         MedicationModel medModel = databaseHelper.selectMedicationFromID(medID);
-        databaseHelper.takeMedication(doseModel, medModel);
+        databaseHelper.takeMedication(doseModel, medModel, true);
         String msg = "You have taken " + doseModel.getAmount() + " of " + medModel.getName();
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
         

@@ -70,7 +70,7 @@ public class DoseAdapter extends RecyclerView.Adapter<DoseAdapter.MyViewHolder> 
                         medTakenTooEarly(medModel, doseModel);
                     }
                     else {
-                        registerMedAsTaken(doseModel, medModel);
+                        registerMedAsTaken(doseModel, medModel, true);
                     }
                 }
             }
@@ -91,14 +91,14 @@ public class DoseAdapter extends RecyclerView.Adapter<DoseAdapter.MyViewHolder> 
                 .setPositiveButton("yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         Toast.makeText(context, "Yes", Toast.LENGTH_SHORT).show();
-                        registerMedAsTaken(doseModel, medModel);
+                        registerMedAsTaken(doseModel, medModel, true);
                     }
                 })
 
                 .setNegativeButton("no", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         Toast.makeText(context, "No", Toast.LENGTH_SHORT).show();
-                        registerMedAsTaken(doseModel, medModel);
+                        registerMedAsTaken(doseModel, medModel, false);
                     }
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert)
@@ -119,7 +119,7 @@ public class DoseAdapter extends RecyclerView.Adapter<DoseAdapter.MyViewHolder> 
                 .setPositiveButton("yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         Toast.makeText(context, "Yes", Toast.LENGTH_SHORT).show();
-                        registerMedAsTaken(doseModel, medModel);
+                        registerMedAsTaken(doseModel, medModel, false);
                     }
                 })
 
@@ -137,8 +137,8 @@ public class DoseAdapter extends RecyclerView.Adapter<DoseAdapter.MyViewHolder> 
      * @param doseModel the dose of the medication to be taken
      * @param medModel the medication that is to be taken
      */
-    private void registerMedAsTaken(DoseModel doseModel, MedicationModel medModel) {
-        databaseHelper.takeMedication(doseModel, medModel);
+    private void registerMedAsTaken(DoseModel doseModel, MedicationModel medModel, boolean onTime) {
+        databaseHelper.takeMedication(doseModel, medModel, onTime);
         String msg = "You have taken " + doseModel.getAmount() + " of " + medModel.getName();
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
         fragment.displayApplRecycler();
