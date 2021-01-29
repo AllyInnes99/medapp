@@ -50,8 +50,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_LOG_TIME = "TIME";
     public static final String COL_ON_TIME = "ON_TIME";
 
-
-
     Calendar calendar = Calendar.getInstance();
     private Context context;
 
@@ -79,11 +77,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String createAppTableStatement =
                 onCreateHelper(DOSE_TABLE) + " ("
                 + COL_DOSE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + COL_MEDICATION_ID + " INT, "
-                + COL_TIME_HOUR + " INT, "
-                + COL_TIME_MINUTE + " INT, "
+                + COL_MEDICATION_ID + " INTEGER, "
+                + COL_TIME_HOUR + " INTEGER, "
+                + COL_TIME_MINUTE + " INTEGER, "
                 + COL_DAY + " TEXT, "
-                + COL_AMOUNT + " INT, "
+                + COL_AMOUNT + " INTEGER, "
                 + COL_TAKEN + " BOOL, "
                 + COL_CALENDAR_ID + " TEXT, "
                 + "FOREIGN KEY (" + COL_MEDICATION_ID + ") REFERENCES " + MEDICATION_TABLE + " ( " + COL_MEDICATION_ID + ") ON DELETE CASCADE)"
@@ -93,8 +91,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 onCreateHelper(LOG_TABLE) + " ("
                 + COL_LOG_ID + " INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT,"
                 + COL_MEDICATION_ID + " INTEGER,"
+                + COL_AMOUNT + " INTEGER, "
                 + COL_LOG_MSG + " TEXT, "
                 + COL_LOG_TIME + " INTEGER, "
+                + COL_TAKEN + " BOOL, "
                 + COL_ON_TIME + " BOOL, "
                 + "FOREIGN KEY (" + COL_MEDICATION_ID + ") REFERENCES " + MEDICATION_TABLE + " ( " + COL_MEDICATION_ID + ") ON DELETE CASCADE)";
 
@@ -181,9 +181,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         cv.put(COL_LOG_ID, log.getLogId());
         cv.put(COL_MEDICATION_ID, log.getMedicationId());
+        cv.put(COL_AMOUNT, log.getAmount());
         cv.put(COL_LOG_MSG, log.getMsg());
         cv.put(COL_LOG_TIME, log.getTime());
-        cv.put(COL_DAY, log.isOnTime());
+        cv.put(COL_TAKEN, log.isTaken());
+        cv.put(COL_ON_TIME, log.isOnTime());
         long insert = db.insert(LOG_TABLE, null, cv);
         return isAdded(insert);
     }
@@ -382,10 +384,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 int logId = cursor.getInt(i++);
                 int medId = cursor.getInt(i++);
                 String msg = cursor.getString(i++);
+                int amount = cursor.getInt(i++);
                 long time = cursor.getLong(i++);
+                boolean taken = SQLiteIntToBool(cursor.getInt(i++));
                 boolean onTime = SQLiteIntToBool(cursor.getInt(i++));
 
-                MedicationLog medLog = new MedicationLog(logId, medId, msg, time, onTime);
+
+                MedicationLog medLog = new MedicationLog(logId, medId, msg, amount, time, taken, onTime);
                 returnList.add(medLog);
 
             } while(cursor.moveToNext());
@@ -415,13 +420,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.delete(DOSE_TABLE, COL_DOSE_ID + " = " + model.getDoseId(), null);
     }
 
+    public void takeMedication(DoseModel doseModel, MedicationModel medModel, boolean onTime) {
+        takeMedication(doseModel, medModel);
+        // add log report signifying if the medication was taken on time or not
+
+        String msg;
+        if(onTime) {
+            msg = medModel.getName() + " taken on time.";
+        }
+        else {
+
+            String actualTime = calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE);
+            msg = medModel.getName() + " meant to be taken at " + doseModel.getTime()
+                + ". Actually taken at " + actualTime;
+        }
+        MedicationLog log = new MedicationLog(medModel.getMedicationId(), msg, doseModel.getAmount(),
+                                            calendar.getTimeInMillis(), true, onTime);
+        addLog(log);
+
+    }
+
     /**
      * Method that is called for when the medication is to be taken, updating the total quantity of
      * the medication according to the amount to be taken, and setting the application to be taken
      * @param doseModel - the application model mirroring the row to have isTaken set to true
      * @param medModel - the medication model mirroring the row to have quantity updated
      */
-    public void takeMedication(DoseModel doseModel, MedicationModel medModel, boolean onTime) {
+    public void takeMedication(DoseModel doseModel, MedicationModel medModel) {
         ContentValues cvMed = new ContentValues(1);
         ContentValues cvAppl = new ContentValues(1);
 
@@ -434,10 +459,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // register dose as taken
         cvAppl.put(COL_TAKEN, true);
         updateDose(doseModel, cvAppl);
-
-        // add log report signifying if the medication was taken on time or not
-
-
     }
 
     /**
@@ -493,6 +514,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * they can be taken each day
      */
     public void refreshDailyDoses() {
+        Toast.makeText(context, "here", Toast.LENGTH_SHORT).show();
         ContentValues cv = new ContentValues();
         cv.put(COL_TAKEN, false);
         SQLiteDatabase db = this.getWritableDatabase();

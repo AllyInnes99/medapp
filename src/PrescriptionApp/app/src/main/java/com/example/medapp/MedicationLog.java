@@ -11,23 +11,27 @@ public class MedicationLog {
     private int medicationId;
     private String msg;
     private int amount;
-
     private long time;
+    private boolean taken;
     private boolean onTime;
 
-    /**
-     * Constructor used when reading log from database
-     * @param logId the unique int primary id of the log entry
-     * @param medicationId the int foreign key that links the log to a medication
-     * @param msg the message that the log is displayed
-     * @param time the time of which the medication was taken
-     * @param onTime if the med was taken on time or not
-     */
-    public MedicationLog(int logId, int medicationId, String msg, long time, boolean onTime) {
+    public MedicationLog(int logId, int medicationId, String msg, int amount, long time, boolean taken, boolean onTime) {
         this.logId = logId;
         this.medicationId = medicationId;
         this.msg = msg;
+        this.amount = amount;
         this.time = time;
+        this.taken = taken;
+        this.onTime = onTime;
+    }
+
+    public MedicationLog(int medicationId, String msg, int amount, long time, boolean taken, boolean onTime) {
+        this.logId = 0;
+        this.medicationId = medicationId;
+        this.msg = msg;
+        this.amount = amount;
+        this.time = time;
+        this.taken = taken;
         this.onTime = onTime;
     }
 
@@ -85,5 +89,19 @@ public class MedicationLog {
         this.onTime = onTime;
     }
 
+    public int getAmount() {
+        return amount;
+    }
 
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+
+    public boolean isTaken() {
+        return taken;
+    }
+
+    public void setTaken(boolean taken) {
+        this.taken = taken;
+    }
 }

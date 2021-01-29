@@ -66,9 +66,12 @@ public class DoseAdapter extends RecyclerView.Adapter<DoseAdapter.MyViewHolder> 
                     if(actual.getTimeInMillis() - expected.getTimeInMillis() > hourInMillis) {
                         medTakenTooLate(medModel, doseModel);
                     }
+                    /*
                     else if(actual.getTimeInMillis() - expected.getTimeInMillis() < hourInMillis){
                         medTakenTooEarly(medModel, doseModel);
                     }
+                    */
+
                     else {
                         registerMedAsTaken(doseModel, medModel, true);
                     }

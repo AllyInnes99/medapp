@@ -100,7 +100,7 @@ public class DailyEventReceiver extends BroadcastReceiver {
             for(DoseModel d: doseModels) {
                 String day = d.getDay();
                 if((App.days.indexOf(day) == cDay || day.equals("Daily"))&& !d.isTaken()){
-                    databaseHelper.takeMedication(d, m);
+                    databaseHelper.takeMedication(d, m, true);
                 }
             }
         }

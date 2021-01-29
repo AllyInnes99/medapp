@@ -15,9 +15,15 @@
         android:name="com.example.medapp.MedFragment"
         android:label="fragment_med"
         tools:layout="@layout/fragment_med" />
+
+    <fragment
+        android:id="@+id/statFragment"
+        android:name="com.example.medapp.StatFragment"
+        android:label="fragment_stat"
+        tools:layout="@layout/fragment_stat" />
+
     <fragment
         android:id="@+id/settingFragment"
         android:name="com.example.medapp.SettingsFragment"
-        android:label="fragment_setting"
-        tools:layout="@layout/fragment_stat" />
+        android:label="fragment_setting" />
 </navigation>

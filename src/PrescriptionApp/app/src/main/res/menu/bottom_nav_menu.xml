@@ -13,6 +13,14 @@
         android:icon="@drawable/ic_healing"
         android:title="Medication"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/statFragment"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_history_24"
+        android:title="Log"
+        app:showAsAction="ifRoom" />
+
     <item
         android:id="@+id/settingFragment"
         android:enabled="true"

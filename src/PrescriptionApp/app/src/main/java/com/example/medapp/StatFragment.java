@@ -32,7 +32,6 @@ import java.util.List;
  */
 public class StatFragment extends Fragment {
 
-    Button btnMed, btnRefill, btnSignOut, btnTest;
     NotificationManagerCompat notificationManager;
 
     public StatFragment() {
@@ -49,81 +48,10 @@ public class StatFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_stat, container, false);
-        btnTest = view.findViewById(R.id.btn_test);
-        btnMed = view.findViewById(R.id.btnMed);
-        btnRefill = view.findViewById(R.id.btnRefill);
-        btnSignOut = view.findViewById(R.id.sign_out_btn);
+
         notificationManager = NotificationManagerCompat.from(requireActivity());
 
-        btnTest.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
 
-                new MaterialAlertDialogBuilder(requireContext())
-                        .setTitle("Delete entry")
-                        .setMessage("Are you sure you want to delete this entry?")
-
-                        // Specifying a listener allows you to take an action before dismissing the dialog.
-                        // The dialog is automatically dismissed when a dialog button is clicked.
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(requireContext(), "Yes", Toast.LENGTH_SHORT).show();
-                            }
-                        })
-
-                        // A null listener allows the button to dismiss the dialog and take no further action.
-                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(requireContext(), "No", Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .show();
-
-            }
-        });
-
-
-
-        btnMed.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getActivity(), "Deleting from Google Calendar", Toast.LENGTH_SHORT).show();
-
-                DatabaseHelper databaseHelper = new DatabaseHelper(requireContext());
-                GoogleCalendarHelper gch = new GoogleCalendarHelper(requireContext());
-                for(MedicationModel m: databaseHelper.selectAllMedication()){
-                    //gch.deleteMedEvents(m);
-                }
-
-
-            }
-        });
-
-        btnRefill.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getActivity(), "Adding to Google Calendar", Toast.LENGTH_SHORT).show();
-                DatabaseHelper databaseHelper = new DatabaseHelper(getActivity());
-                GoogleCalendarHelper gch = new GoogleCalendarHelper(getActivity());
-                List<MedicationModel> models = databaseHelper.selectAllMedication();
-
-                for(MedicationModel model: models){
-                    gch.addRefillEvents(model);
-                }
-            }
-        });
-
-        btnSignOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FirebaseAuth.getInstance().signOut();
-                Toast.makeText(getActivity(), "Signed out.", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(getActivity(), SignInActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-            }
-        });
 
         return view;
     }
