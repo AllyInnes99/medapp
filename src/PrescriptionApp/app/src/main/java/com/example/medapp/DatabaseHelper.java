@@ -368,7 +368,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SELECT QUERIES FOR LOG TABLE
     */
 
-    private List<MedicationLog> selectAllLogs() {
+    public List<MedicationLog> selectAllLogs() {
         String rawQuery = "SELECT * FROM " + LOG_TABLE;
         return executeLogQuery(rawQuery);
     }

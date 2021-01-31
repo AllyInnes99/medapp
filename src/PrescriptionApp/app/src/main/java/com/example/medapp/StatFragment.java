@@ -12,7 +12,10 @@ import android.os.Bundle;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +35,9 @@ import java.util.List;
  */
 public class StatFragment extends Fragment {
 
-    NotificationManagerCompat notificationManager;
+    RecyclerView recyclerView;
+    DatabaseHelper databaseHelper;
+    LogAdapter logAdapter;
 
     public StatFragment() {
         // Required empty public constructor
@@ -48,14 +53,25 @@ public class StatFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_stat, container, false);
-
-        notificationManager = NotificationManagerCompat.from(requireActivity());
-
-
-
+        recyclerView = view.findViewById(R.id.statFragment);
         return view;
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        databaseHelper = new DatabaseHelper(getActivity());
+        displayRecycler();
+    }
+
+    private void displayRecycler() {
+        List<MedicationLog> logs = databaseHelper.selectAllLogs();
+        logAdapter = new LogAdapter(getActivity(), logs);
+        recyclerView.setAdapter(logAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+    }
+
+    /*
     private void delDatabase(){
         DatabaseHelper databaseHelper = new DatabaseHelper(getActivity());
         List<DoseModel> ds = databaseHelper.selectAllDoses();
@@ -68,7 +84,6 @@ public class StatFragment extends Fragment {
         }
         Toast.makeText(getActivity(), "Deleted all med records.", Toast.LENGTH_SHORT).show();
     }
-
 
     public void sendOnChannel1(View v){
         String title = "Take medication!";
@@ -135,5 +150,6 @@ public class StatFragment extends Fragment {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), (int)System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
     }
+    */
 
 }
