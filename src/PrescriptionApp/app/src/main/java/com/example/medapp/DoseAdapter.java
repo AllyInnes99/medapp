@@ -2,6 +2,7 @@ package com.example.medapp;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,10 +11,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import org.joda.time.Period;
 import java.util.Calendar;
 import java.util.List;
 
@@ -48,6 +51,7 @@ public class DoseAdapter extends RecyclerView.Adapter<DoseAdapter.MyViewHolder> 
         holder.appl_med_txt.setText("Name: " + medModel.getName());
 
         holder.button.setOnClickListener(new View.OnClickListener(){
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View v) {
                 if(doseModel.getAmount() > medModel.getQuantity()){
@@ -62,19 +66,19 @@ public class DoseAdapter extends RecyclerView.Adapter<DoseAdapter.MyViewHolder> 
                     expected.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time[0]));
                     expected.set(Calendar.MINUTE, Integer.parseInt(time[1]));
 
-                    long hourInMillis = 3600000;
-                    if(actual.getTimeInMillis() - expected.getTimeInMillis() > hourInMillis) {
+                    Period period = new Period(actual.getTimeInMillis(), expected.getTimeInMillis());
+                    int diff = period.getMinutes();
+
+                    if(diff > 60) {
                         medTakenTooLate(medModel, doseModel);
                     }
-                    /*
-                    else if(actual.getTimeInMillis() - expected.getTimeInMillis() < hourInMillis){
+                    else if(diff < -60) {
                         medTakenTooEarly(medModel, doseModel);
                     }
-                    */
-
                     else {
                         registerMedAsTaken(doseModel, medModel, true);
                     }
+
                 }
             }
         });
