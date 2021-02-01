@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Calendar;
@@ -36,7 +37,9 @@ import java.util.List;
 public class StatFragment extends Fragment {
 
     RecyclerView recyclerView;
+    FloatingActionButton fab;
     DatabaseHelper databaseHelper;
+    List<MedicationLog> logs;
     LogAdapter logAdapter;
 
     public StatFragment() {
@@ -53,7 +56,34 @@ public class StatFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_stat, container, false);
-        recyclerView = view.findViewById(R.id.statFragment);
+        recyclerView = view.findViewById(R.id.log_recycler);
+        fab = view.findViewById(R.id.floating_add_button_stat);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new MaterialAlertDialogBuilder(requireContext())
+                        .setTitle("Just checking...")
+                        .setMessage("Are you sure you want to delete your log history? This cannot be undone.")
+
+                        .setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                for(MedicationLog log: logs) {
+                                    databaseHelper.deleteLog(log);
+                                }
+                                Toast.makeText(requireContext(), "Deleted your logs history", Toast.LENGTH_SHORT).show();
+                                displayRecycler();
+                            }
+                        })
+
+                        .setNegativeButton("no", null)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+
+            }
+        });
+
+
         return view;
     }
 
@@ -64,11 +94,17 @@ public class StatFragment extends Fragment {
         displayRecycler();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        displayRecycler();
+    }
+
     private void displayRecycler() {
-        List<MedicationLog> logs = databaseHelper.selectAllLogs();
-        logAdapter = new LogAdapter(getActivity(), logs);
+        logs = databaseHelper.selectAllLogs();
+        logAdapter = new LogAdapter(requireContext(), logs);
         recyclerView.setAdapter(logAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
     }
 
     /*

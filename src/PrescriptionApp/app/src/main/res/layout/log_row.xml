@@ -27,7 +27,6 @@
                 android:layout_marginLeft="4dp"
                 android:text="Medication: medname"
                 android:textColor="@color/black"
-                android:textSize="20sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -42,7 +41,6 @@
                 android:layout_marginTop="16dp"
                 android:text="Amount to be taken: 2"
                 android:textColor="@color/black"
-                android:textSize="20sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/log_med">
 
@@ -58,7 +56,6 @@
                 android:layout_marginRight="16dp"
                 android:text="Taken: yes"
                 android:textColor="@color/black"
-                android:textSize="20sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -71,7 +68,6 @@
                 android:layout_marginRight="16dp"
                 android:text="On Time: yes"
                 android:textColor="@color/black"
-                android:textSize="20sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/log_taken" />
 

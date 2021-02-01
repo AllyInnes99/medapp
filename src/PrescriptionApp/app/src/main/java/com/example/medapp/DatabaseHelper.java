@@ -402,7 +402,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Method that finds the target medication model in database, and if found it is deleted.
-     * Due to the foreign key constraint, the doses of the medication are also deleted
+     * Due to the foreign key constraint, the doses of the medication and also logs are deleted too
      * @param medModel - object that represents the medication that is to be removed.
      */
     public void deleteMedication(MedicationModel medModel) {
@@ -410,15 +410,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.delete(MEDICATION_TABLE, COL_MEDICATION_ID + " = " + medModel.getMedicationId(), null);
     }
     /**
-     * Method that finds the target application model in database, and if found it is deleted.
-     * @param model - object that represents the application that is to be removed.
-     * @return true if model is found and deleted successfully, false if not
+     * Method that finds the target dose model in database, and if found it is deleted.
+     * @param model - object that represents the dose that is to be removed.
      */
     public void deleteDose(DoseModel model){
-        Toast.makeText(context, "Del", Toast.LENGTH_SHORT).show();
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(DOSE_TABLE, COL_DOSE_ID + " = " + model.getDoseId(), null);
     }
+
+    /**
+     * Method that finds the target log model in database, and if found it is deleted.
+     * @param log - object that represents the log that is to be removed.
+     */
+    public void deleteLog(MedicationLog log){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(LOG_TABLE, COL_LOG_ID + " = " + log.getLogId(), null);
+    }
+
+
+
+
 
     public void takeMedication(DoseModel doseModel, MedicationModel medModel, boolean onTime) {
         takeMedication(doseModel, medModel);

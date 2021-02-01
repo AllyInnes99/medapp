@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,7 +21,7 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.MyViewHolder> {
     private List<MedicationLog> logs;
     private DatabaseHelper databaseHelper;
 
-    public LogAdapter(Context context, List<MedicationLog> logs) {
+    LogAdapter(Context context, List<MedicationLog> logs) {
         this.context = context;
         this.logs = logs;
         this.databaseHelper = new DatabaseHelper(context);
@@ -31,7 +32,7 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.MyViewHolder> {
     public LogAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.log_row, parent, false);
-        return  new MyViewHolder(view);
+        return new MyViewHolder(view);
     }
 
     @Override
@@ -46,7 +47,7 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.MyViewHolder> {
 
     @Override
     public int getItemCount() {
-        return 0;
+        return logs.size();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -59,6 +60,7 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.MyViewHolder> {
             log_amount = itemView.findViewById(R.id.log_amount);
             log_taken = itemView.findViewById(R.id.log_taken);
             log_on_time = itemView.findViewById(R.id.log_on_time);
+            Toast.makeText(context, "hi", Toast.LENGTH_SHORT).show();
         }
     }
 
