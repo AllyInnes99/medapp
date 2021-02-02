@@ -26,7 +26,6 @@ import java.util.List;
  */
 public class GoogleCalendarHelper {
 
-    private Context context;
     private DatabaseHelper databaseHelper;
     private com.google.api.services.calendar.Calendar service;
     private static final NetHttpTransport NET_HTTP_TRANSPORT =
@@ -37,7 +36,6 @@ public class GoogleCalendarHelper {
 
 
     public GoogleCalendarHelper(Context context) {
-        this.context = context;
         this.databaseHelper = new DatabaseHelper(context);
         this.refillReminderDays = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).
                                                     getString("reminderDay", ""));
@@ -64,18 +62,13 @@ public class GoogleCalendarHelper {
             public void run() {
                 try {
 
-
                     String medRefill = medModel.getCalendarRefill();
                     Log.d("MedApp", "deleting refill event");
                     service.events().delete(CALENDAR_ID, medRefill).execute();
 
-
-
                     String medEmpty= medModel.getCalendarEmpty();
                     Log.d("MedApp", "deleting empty event");
                     service.events().delete(CALENDAR_ID, medEmpty).execute();
-
-
 
                     for(DoseModel doseModel: doses) {
                         Log.d("MedApp", "deleting dose event");

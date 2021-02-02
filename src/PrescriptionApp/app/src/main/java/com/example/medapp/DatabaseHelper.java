@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import java.sql.Ref;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -185,8 +186,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COL_REFILL_REQUESTED, medicationModel.isRefillRequested());
         cv.put(COL_CALENDAR_REFILL, medicationModel.getCalendarRefill());
         cv.put(COL_CALENDAR_EMPTY, medicationModel.getCalendarEmpty());
-        long insert = db.insert(MEDICATION_TABLE, null, cv);
-        return isAdded(insert);
+        return isAdded(db.insert(MEDICATION_TABLE, null, cv));
     }
 
     /**
@@ -208,11 +208,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COL_AMOUNT, doseModel.getAmount());
         cv.put(COL_TAKEN, doseModel.isTaken());
         cv.put(COL_CALENDAR_ID, doseModel.getCalendarID());
-        long insert = db.insert(DOSE_TABLE, null, cv);
-        return isAdded(insert);
+        return isAdded(db.insert(DOSE_TABLE, null, cv));
     }
 
 
+    /**
+     * Method that adds a log entry to the database
+     * @param log the log entry to be added
+     * @return true if added successfully, false otherwise
+     */
     public boolean addLog(MedicationLog log) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -223,9 +227,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COL_LOG_TIME, log.getTime());
         cv.put(COL_TAKEN, log.isTaken());
         cv.put(COL_ON_TIME, log.isOnTime());
-        long insert = db.insert(LOG_TABLE, null, cv);
-        Toast.makeText(context, "long:" + insert, Toast.LENGTH_SHORT).show();
-        return isAdded(insert);
+        return isAdded(db.insert(LOG_TABLE, null, cv));
+    }
+
+    /**
+     * Method that adds a refill log event to the database
+     * @param data the refill log data to be added
+     * @return true if added successfully, false otherwise
+     */
+    public boolean addRefill(RefillData data) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(COL_MEDICATION_ID, data.getMedicationId());
+        cv.put(REFILL_DATE, data.getDate());
+        cv.put(REFILL_AMOUNT, data.getRefillAmount());
+        cv.put(REFILL_ORIGINAL, data.getOriginalQty());
+        return isAdded(db.insert(REFILL_TABLE, null, cv));
     }
 
     /**
@@ -450,6 +467,45 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
                 MedicationLog medLog = new MedicationLog(logId, medId, msg, amount, time, taken, onTime);
                 returnList.add(medLog);
+
+            } while(cursor.moveToNext());
+        }
+        cursor.close();
+        return returnList;
+    }
+
+    /*
+        SELECT QUERIES FOR REFILL TABLE
+    */
+
+    public List<RefillData> selectAllRefill() {
+        String rawQuery = "SELECT * FROM " + LOG_TABLE;
+        return executeRefillQuery(rawQuery);
+    }
+
+    public List<RefillData> selectRefillFromMed(MedicationModel medModel) {
+        int id = medModel.getMedicationId();
+        String rawQuery = "SELECT * FROM " + REFILL_TABLE
+                + " WHERE " + COL_MEDICATION_ID + " = " + id;
+        return executeRefillQuery(rawQuery);
+    }
+
+    private List<RefillData> executeRefillQuery(String rawQuery) {
+        List<RefillData> returnList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(rawQuery, null);
+
+        if(cursor.moveToFirst()) {
+            do {
+                int i = 0;
+                int refillId = cursor.getInt(i++);
+                int medId = cursor.getInt(i++);
+                long date = cursor.getInt(i++);
+                int refill = cursor.getInt(i++);
+                int original = cursor.getInt(i++);
+
+                RefillData data = new RefillData(refillId, medId, date, refill, original);
+                returnList.add(data);
 
             } while(cursor.moveToNext());
         }

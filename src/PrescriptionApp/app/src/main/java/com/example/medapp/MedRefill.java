@@ -1,6 +1,8 @@
 package com.example.medapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,8 +11,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.textfield.TextInputEditText;
+
+import org.joda.time.field.ScaledDurationField;
+
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
 
 public class MedRefill extends AppCompatActivity {
 
@@ -21,8 +31,10 @@ public class MedRefill extends AppCompatActivity {
     Context context;
     DatabaseHelper databaseHelper;
     MedicationModel medModel;
+    RecyclerView recyclerView;
+    List<RefillData> data;
+    RefillAdapter refillAdapter;
     int prevQty, inputVal;
-    GoogleCalendarHelper gch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +42,7 @@ public class MedRefill extends AppCompatActivity {
         setContentView(R.layout.activity_med_refill);
         context = MedRefill.this;
         databaseHelper = new DatabaseHelper(context);
-        gch = new GoogleCalendarHelper(context);
+
 
         btn_add = findViewById(R.id.btn_add);
         btn_remove = findViewById(R.id.btn_remove);
@@ -39,6 +51,7 @@ public class MedRefill extends AppCompatActivity {
         toggleGroup = findViewById(R.id.toggleGroup);
         et_current = findViewById(R.id.et_current);
         et_new = findViewById(R.id.et_new);
+        recyclerView = findViewById(R.id.recycler_view);
 
         int medID = getIntent().getIntExtra("medID", 0);
         medModel = databaseHelper.selectMedicationFromID(medID);
@@ -59,7 +72,6 @@ public class MedRefill extends AppCompatActivity {
                         break;
                     default:
                         Toast.makeText(context, "Please select a toggle option", Toast.LENGTH_SHORT).show();
-
                 }
             }
         });
@@ -74,7 +86,16 @@ public class MedRefill extends AppCompatActivity {
                 closeActivity();
             }
         });
+
+        displayRecycler();
     }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        displayRecycler();
+    }
+
 
     private void addToQuantity() {
         try {
@@ -88,8 +109,14 @@ public class MedRefill extends AppCompatActivity {
             medModel.setRefillRequested(false);
             databaseHelper.updateMedication(medModel);
             databaseHelper.updateDaysUntilEmpty(medModel);
-            updateGoogleCal();
+
+            GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(MedRefill.this);
+            if (acct != null) {
+                updateGoogleCal();
+            }
+
             Toast.makeText(context, "Updated quantity of medication", Toast.LENGTH_SHORT).show();
+            addRefillEvent(newQuantity, prevQty);
             closeActivity();
         }
         catch (NullPointerException e) {
@@ -109,8 +136,12 @@ public class MedRefill extends AppCompatActivity {
             medModel.setQuantity(newQuantity);
             databaseHelper.updateMedication(medModel);
             databaseHelper.updateDaysUntilEmpty(medModel);
-            updateGoogleCal();
+            GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(MedRefill.this);
+            if (acct != null) {
+                updateGoogleCal();
+            }
             Toast.makeText(context, "Updated quantity of medication", Toast.LENGTH_SHORT).show();
+            addRefillEvent(newQuantity, prevQty);
             closeActivity();
         }
         catch (NullPointerException e) {
@@ -121,6 +152,7 @@ public class MedRefill extends AppCompatActivity {
 
     private void updateGoogleCal() {
         medModel = databaseHelper.selectMedicationFromID(medModel.getMedicationId());
+        GoogleCalendarHelper gch = new GoogleCalendarHelper(context);
         gch.updateMedEvents(medModel);
     }
 
@@ -129,6 +161,22 @@ public class MedRefill extends AppCompatActivity {
         Intent i = new Intent(context, MainActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
+    }
+
+    private void addRefillEvent(int refill, int original) {
+        Calendar c = Calendar.getInstance();
+        RefillData data = new RefillData(medModel.getMedicationId(),
+                                        c.getTimeInMillis(), refill, original);
+        boolean t = databaseHelper.addRefill(data);
+        Toast.makeText(context, Boolean.toString(t), Toast.LENGTH_SHORT).show();
+    }
+
+    public void displayRecycler() {
+        data = databaseHelper.selectRefillFromMed(medModel);
+        Collections.sort(data);
+        refillAdapter = new RefillAdapter(MedRefill.this, data);
+        recyclerView.setAdapter(refillAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(MedRefill.this));
     }
 
 
