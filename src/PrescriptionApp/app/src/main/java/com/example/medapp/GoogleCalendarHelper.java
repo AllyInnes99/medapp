@@ -139,7 +139,6 @@ public class GoogleCalendarHelper {
             public void run() {
                 try {
                     service.events().delete(CALENDAR_ID, medModel.getCalendarRefill()).execute();
-                    databaseHelper.updateRefillID(medModel, "a");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

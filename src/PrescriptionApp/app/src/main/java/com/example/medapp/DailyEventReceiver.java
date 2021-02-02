@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.icu.text.UnicodeSetSpanner;
 import android.widget.Toast;
 
 import java.util.Calendar;
@@ -24,9 +25,11 @@ public class DailyEventReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         databaseHelper = new DatabaseHelper(context);
         mContext = context;
-        setNotificationsForToday();
         autoTakeMedication();
+        logMedicationNotTaken();
         databaseHelper.refreshDailyDoses();
+        setNotificationsForToday();
+        decrementDaysUntilEmpty();
     }
 
     /**
@@ -116,6 +119,26 @@ public class DailyEventReceiver extends BroadcastReceiver {
             med.setDaysUntilEmpty(dec);
             databaseHelper.updateMedication(med);
         }
+    }
+
+    /**
+     * Method that adds medication that has not been taken from the previous day to the log
+     */
+    private void logMedicationNotTaken() {
+
+        List<DoseModel> notTaken = databaseHelper.selectYesterdaysDoseAndNotTaken();
+
+        if(!notTaken.isEmpty()) {
+            String msg = "Medication not taken";
+            Calendar c = Calendar.getInstance();
+            for(DoseModel dose: notTaken) {
+                MedicationLog log = new MedicationLog(dose.getMedicationId(), msg, dose.getAmount(),
+                                                     c.getTimeInMillis(), false, false);
+                boolean t = databaseHelper.addLog(log);
+                Toast.makeText(mContext, Boolean.toString(t), Toast.LENGTH_SHORT).show();
+            }
+        }
+
     }
 
 }

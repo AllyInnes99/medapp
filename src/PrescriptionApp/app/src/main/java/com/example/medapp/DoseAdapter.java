@@ -91,25 +91,25 @@ public class DoseAdapter extends RecyclerView.Adapter<DoseAdapter.MyViewHolder> 
      */
     private void medTakenTooLate(final MedicationModel medModel, final DoseModel doseModel) {
         new MaterialAlertDialogBuilder(context)
-                .setTitle("Just checking...")
-                .setMessage("This dose of " + medModel.getName() + " was set to be taken at "
-                        + doseModel.getTime() + ". Did you take it on time?")
+            .setTitle("Just checking...")
+            .setMessage("This dose of " + medModel.getName() + " was set to be taken at "
+                    + doseModel.getTime() + ". Did you take it on time?")
 
-                .setPositiveButton("yes", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(context, "Yes", Toast.LENGTH_SHORT).show();
-                        registerMedAsTaken(doseModel, medModel, true);
-                    }
-                })
+            .setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    Toast.makeText(context, "Yes", Toast.LENGTH_SHORT).show();
+                    registerMedAsTaken(doseModel, medModel, true);
+                }
+            })
 
-                .setNegativeButton("no", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(context, "No", Toast.LENGTH_SHORT).show();
-                        registerMedAsTaken(doseModel, medModel, false);
-                    }
-                })
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
+            .setNegativeButton("no", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    Toast.makeText(context, "No", Toast.LENGTH_SHORT).show();
+                    registerMedAsTaken(doseModel, medModel, false);
+                }
+            })
+            .setIcon(android.R.drawable.ic_dialog_alert)
+            .show();
     }
 
     /**

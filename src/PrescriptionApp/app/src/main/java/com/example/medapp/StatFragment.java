@@ -100,9 +100,9 @@ public class StatFragment extends Fragment {
         displayRecycler();
     }
 
-    private void displayRecycler() {
+    public void displayRecycler() {
         logs = databaseHelper.selectAllLogs();
-        logAdapter = new LogAdapter(requireContext(), logs);
+        logAdapter = new LogAdapter(requireContext(), logs, this);
         recyclerView.setAdapter(logAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
     }

@@ -172,7 +172,7 @@ public class AddDosesActivity extends AppCompatActivity {
             Toast.makeText(AddDosesActivity.this, "Adding reminder events to Google Calendar", Toast.LENGTH_SHORT).show();
             gac.addDoseReminder(medModel);
             gac.addRefillEvents(medModel);
-            gac.updateMedEvents(medModel);
+            //gac.updateMedEvents(medModel);
         }
         else {
             Toast.makeText(AddDosesActivity.this, "Could not add to Google Calendar", Toast.LENGTH_SHORT).show();

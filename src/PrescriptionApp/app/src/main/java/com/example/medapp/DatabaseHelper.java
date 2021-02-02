@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.widget.Toast;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -179,6 +181,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
+        Toast.makeText(context, Integer.toString(log.getAmount()), Toast.LENGTH_SHORT).show();
         cv.put(COL_LOG_ID, log.getLogId());
         cv.put(COL_MEDICATION_ID, log.getMedicationId());
         cv.put(COL_AMOUNT, log.getAmount());
@@ -332,6 +335,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
+     * Method that obtains the doses of medication that were to be taken yesterday
+     * @return list of dose objects that are to be taken today
+     */
+    public List<DoseModel> selectYesterdaysDoseAndNotTaken() {
+
+
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DATE, -1);
+
+        // Get the day as a string
+        String day = App.days.get(calendar.get(c.DAY_OF_WEEK));
+
+        // In query, we check taken == 0 as this is how false is represented in SQLite
+        String rawQuery = "SELECT * FROM " + DOSE_TABLE +
+                " WHERE (" + COL_DAY + " = '" + day +
+                "' OR " + COL_DAY + " = 'Daily')"  +
+                " AND (" + COL_TAKEN + " = 0 )";
+        return executeDoseQuery(rawQuery);
+    }
+
+    /**
      * Helper method to obtain a list of dose models via provided query
      * @param rawQuery - SQL query to be made on db
      * @return list of dose models as a result of the query
@@ -383,12 +407,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 int i = 0;
                 int logId = cursor.getInt(i++);
                 int medId = cursor.getInt(i++);
-                String msg = cursor.getString(i++);
                 int amount = cursor.getInt(i++);
+                String msg = cursor.getString(i++);
                 long time = cursor.getLong(i++);
                 boolean taken = SQLiteIntToBool(cursor.getInt(i++));
                 boolean onTime = SQLiteIntToBool(cursor.getInt(i++));
-
 
                 MedicationLog medLog = new MedicationLog(logId, medId, msg, amount, time, taken, onTime);
                 returnList.add(medLog);
@@ -445,6 +468,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             msg = medModel.getName() + " meant to be taken at " + doseModel.getTime()
                 + ". Actually taken at " + actualTime;
         }
+        Toast.makeText(context, Integer.toString(doseModel.getAmount()), Toast.LENGTH_SHORT).show();
         MedicationLog log = new MedicationLog(medModel.getMedicationId(), msg, doseModel.getAmount(),
                                             calendar.getTimeInMillis(), true, onTime);
         addLog(log);
@@ -525,7 +549,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * they can be taken each day
      */
     public void refreshDailyDoses() {
-        Toast.makeText(context, "here", Toast.LENGTH_SHORT).show();
         ContentValues cv = new ContentValues();
         cv.put(COL_TAKEN, false);
         SQLiteDatabase db = this.getWritableDatabase();
@@ -572,6 +595,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.update(DOSE_TABLE, cv, COL_DOSE_ID + "= "
                     + doseModel.getDoseId(), null);
+        db.close();
+    }
+
+    public void updateLog(MedicationLog log) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(COL_TAKEN, log.isTaken());
+        db.update(LOG_TABLE, cv, COL_LOG_ID + " = " + log.getLogId(), null);
         db.close();
     }
 
