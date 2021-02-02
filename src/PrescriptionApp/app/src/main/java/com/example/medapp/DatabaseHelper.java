@@ -52,6 +52,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_LOG_TIME = "TIME";
     public static final String COL_ON_TIME = "ON_TIME";
 
+    // Const variables for the refillLog and its columns
+    public static final String REFILL_TABLE = "REFILL_TABLE";
+    public static final String REFILL_ID = "REFILL_ID";
+    public static final String REFILL_DATE = "DATE";
+    public static final String REFILL_AMOUNT = "AMOUNT";
+    public static final String REFILL_ORIGINAL = "ORIGINAL";
+
+    private static final String FOREIGN_KEY =
+            "FOREIGN KEY (" + COL_MEDICATION_ID + ") REFERENCES " + MEDICATION_TABLE
+            + " ( " + COL_MEDICATION_ID + ") ON DELETE CASCADE)";
+
     Calendar calendar = Calendar.getInstance();
     private Context context;
 
@@ -62,48 +73,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-
-        String createMedTableStatement
-                = onCreateHelper(MEDICATION_TABLE) + " ("
-                + COL_MEDICATION_ID + " INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT, "
-                + COL_MEDICATION_NAME + " TEXT, " + COL_QUANTITY + " INT, "
-                + COL_DOSAGE + " REAL, "
-                + COL_MEASUREMENT + " TEXT, "
-                + COL_TYPE + " TEXT, " + COL_PROFILE + " TEXT, "
-                + COL_DAYS_UNTIL_EMPTY + " INT,"
-                + COL_AUTO_TAKE + " BOOL, "
-                + COL_REFILL_REQUESTED + " BOOL,"
-                + COL_CALENDAR_REFILL + " TEXT, "
-                + COL_CALENDAR_EMPTY + " TEXT)";
-
-        String createAppTableStatement =
-                onCreateHelper(DOSE_TABLE) + " ("
-                + COL_DOSE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + COL_MEDICATION_ID + " INTEGER, "
-                + COL_TIME_HOUR + " INTEGER, "
-                + COL_TIME_MINUTE + " INTEGER, "
-                + COL_DAY + " TEXT, "
-                + COL_AMOUNT + " INTEGER, "
-                + COL_TAKEN + " BOOL, "
-                + COL_CALENDAR_ID + " TEXT, "
-                + "FOREIGN KEY (" + COL_MEDICATION_ID + ") REFERENCES " + MEDICATION_TABLE + " ( " + COL_MEDICATION_ID + ") ON DELETE CASCADE)"
-                ;
-
-        String createLogTableStatement =
-                onCreateHelper(LOG_TABLE) + " ("
-                + COL_LOG_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + COL_MEDICATION_ID + " INTEGER,"
-                + COL_AMOUNT + " INTEGER, "
-                + COL_LOG_MSG + " TEXT, "
-                + COL_LOG_TIME + " INTEGER, "
-                + COL_TAKEN + " BOOL, "
-                + COL_ON_TIME + " BOOL, "
-                + "FOREIGN KEY (" + COL_MEDICATION_ID + ") REFERENCES " + MEDICATION_TABLE + " ( " + COL_MEDICATION_ID + ") ON DELETE CASCADE)";
-
-        db.execSQL(createMedTableStatement);
-        db.execSQL(createAppTableStatement);
-        db.execSQL(createLogTableStatement);
-
+        createMedicationTable(db);
+        createDoseTable(db);
+        createLogTable(db);
+        createRefillTable(db);
     }
 
     @Override
@@ -119,14 +92,77 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("PRAGMA foreign_keys=ON");
     }
 
+    /**
+     * Method that creates the medication table in the database
+     * @param db the instance of the SQLite database we are adding this table to
+     */
+    private void createMedicationTable(SQLiteDatabase db) {
+        String createQuery
+                = "CREATE TABLE " + MEDICATION_TABLE + " ("
+                + COL_MEDICATION_ID + " INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT, "
+                + COL_MEDICATION_NAME + " TEXT, " + COL_QUANTITY + " INT, "
+                + COL_DOSAGE + " REAL, "
+                + COL_MEASUREMENT + " TEXT, "
+                + COL_TYPE + " TEXT, " + COL_PROFILE + " TEXT, "
+                + COL_DAYS_UNTIL_EMPTY + " INT,"
+                + COL_AUTO_TAKE + " BOOL, "
+                + COL_REFILL_REQUESTED + " BOOL,"
+                + COL_CALENDAR_REFILL + " TEXT, "
+                + COL_CALENDAR_EMPTY + " TEXT)";
+        db.execSQL(createQuery);
+    }
 
     /**
-     * Helper function that prepends "CREATE TABLE" to a table name to be used when creating tables
-     * @param tableName - the table to be created
-     * @return String with the create table prepending the table name
+     * Method that creates the dose table in the database
+     * @param db the instance of the SQLite database we are adding this table to
      */
-    private String onCreateHelper(String tableName) {
-        return "CREATE TABLE " + tableName;
+    private void createDoseTable(SQLiteDatabase db) {
+        String createQuery
+                = "CREATE TABLE "  + DOSE_TABLE + " ("
+                + COL_DOSE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + COL_MEDICATION_ID + " INTEGER, "
+                + COL_TIME_HOUR + " INTEGER, "
+                + COL_TIME_MINUTE + " INTEGER, "
+                + COL_DAY + " TEXT, "
+                + COL_AMOUNT + " INTEGER, "
+                + COL_TAKEN + " BOOL, "
+                + COL_CALENDAR_ID + " TEXT, "
+                + FOREIGN_KEY;
+        db.execSQL(createQuery);
+    }
+
+    /**
+     * Method that creates the log table in the database
+     * @param db the instance of the SQLite database we are adding this table to
+     */
+    private void createLogTable(SQLiteDatabase db) {
+        String createQuery
+                = "CREATE TABLE " + LOG_TABLE + " ("
+                + COL_LOG_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + COL_MEDICATION_ID + " INTEGER,"
+                + COL_AMOUNT + " INTEGER, "
+                + COL_LOG_MSG + " TEXT, "
+                + COL_LOG_TIME + " INTEGER, "
+                + COL_TAKEN + " BOOL, "
+                + COL_ON_TIME + " BOOL, "
+                + FOREIGN_KEY;
+        db.execSQL(createQuery);
+    }
+
+    /**
+     * Method that creates the refill table in the database
+     * @param db the instance of the SQLite database we are adding this table to
+     */
+    private void createRefillTable(SQLiteDatabase db) {
+        String createQuery
+                = "CREATE TABLE " + REFILL_TABLE + " ("
+                + REFILL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + COL_MEDICATION_ID + " INTEGER, "
+                + REFILL_DATE + " INTEGER, "
+                + REFILL_AMOUNT + " INTEGER, "
+                + REFILL_ORIGINAL + " INTEGER,"
+                + FOREIGN_KEY;
+        db.execSQL(createQuery);
     }
 
     /**
