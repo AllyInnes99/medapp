@@ -67,17 +67,21 @@ public class DoseAdapter extends RecyclerView.Adapter<DoseAdapter.MyViewHolder> 
                     expected.set(Calendar.MINUTE, Integer.parseInt(time[1]));
 
                     Period period = new Period(actual.getTimeInMillis(), expected.getTimeInMillis());
-                    int diff = period.getMinutes();
+                    int diff = period.getHours();
 
-                    if(diff > 60) {
+                    Toast.makeText(context, Integer.toString(diff), Toast.LENGTH_SHORT).show();
+
+
+                    if(diff < -1) {
                         medTakenTooLate(medModel, doseModel);
                     }
-                    else if(diff < -60) {
+                    else if(diff > 1) {
                         medTakenTooEarly(medModel, doseModel);
                     }
                     else {
                         registerMedAsTaken(doseModel, medModel, true);
                     }
+
 
                 }
             }
