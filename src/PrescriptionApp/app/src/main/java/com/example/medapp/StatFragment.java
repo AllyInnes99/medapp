@@ -62,7 +62,8 @@ public class StatFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new MaterialAlertDialogBuilder(requireContext())
+                if(!logs.isEmpty()){
+                    new MaterialAlertDialogBuilder(requireContext())
                         .setTitle("Just checking...")
                         .setMessage("Are you sure you want to delete your log history? This cannot be undone.")
 
@@ -79,6 +80,10 @@ public class StatFragment extends Fragment {
                         .setNegativeButton("no", null)
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .show();
+                }
+                else{
+                    Toast.makeText(requireContext(), "There are no log events to delete.", Toast.LENGTH_SHORT).show();
+                }
 
             }
         });

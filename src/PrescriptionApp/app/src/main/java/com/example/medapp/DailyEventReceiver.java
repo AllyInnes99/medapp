@@ -23,6 +23,7 @@ public class DailyEventReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        Toast.makeText(context, "MedApp: Updating medication", Toast.LENGTH_SHORT).show();
         databaseHelper = new DatabaseHelper(context);
         mContext = context;
         autoTakeMedication();
@@ -134,8 +135,7 @@ public class DailyEventReceiver extends BroadcastReceiver {
             for(DoseModel dose: notTaken) {
                 MedicationLog log = new MedicationLog(dose.getMedicationId(), msg, dose.getAmount(),
                                                      c.getTimeInMillis(), false, false);
-                boolean t = databaseHelper.addLog(log);
-                Toast.makeText(mContext, Boolean.toString(t), Toast.LENGTH_SHORT).show();
+                databaseHelper.addLog(log);
             }
         }
 

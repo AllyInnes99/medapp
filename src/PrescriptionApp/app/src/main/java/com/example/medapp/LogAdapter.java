@@ -46,8 +46,6 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.MyViewHolder> {
     public void onBindViewHolder(@NonNull LogAdapter.MyViewHolder holder, int position) {
         final MedicationLog log = logs.get(position);
         final MedicationModel medModel = databaseHelper.selectMedicationFromID(log.getMedicationId());
-        Toast.makeText(context, Integer.toString(log.getAmount()), Toast.LENGTH_SHORT).show();
-
         holder.log_med.setText(String.format("Med: %s", medModel.getName()));
         holder.log_amount.setText(String.format("Amount to be taken: %s", log.getAmount()));
         holder.log_on_time.setText(String.format("On time: %s", getOnTimeString(log)));
@@ -72,8 +70,16 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.MyViewHolder> {
                                 Toast.makeText(context, "No", Toast.LENGTH_SHORT).show();
                             }
                         })
-                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setIcon(android.R.drawable.ic_input_add)
                         .show();
+                }
+                else {
+                    new MaterialAlertDialogBuilder(context)
+                            .setTitle("Log Entry")
+                            .setMessage(log.getMsg())
+                            .setPositiveButton("ok", null)
+                            .setIcon(android.R.drawable.ic_dialog_info)
+                            .show();
                 }
             }
         });
@@ -105,6 +111,7 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.MyViewHolder> {
         databaseHelper.updateMedication(medModel);
 
         log.setTaken(true);
+        log.setMsg("Medication has been updated to indicate that it has been taken on time");
         databaseHelper.updateLog(log);
 
         fragment.displayRecycler();

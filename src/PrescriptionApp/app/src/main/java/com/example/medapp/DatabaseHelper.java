@@ -91,7 +91,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         String createLogTableStatement =
                 onCreateHelper(LOG_TABLE) + " ("
-                + COL_LOG_ID + " INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT,"
+                + COL_LOG_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + COL_MEDICATION_ID + " INTEGER,"
                 + COL_AMOUNT + " INTEGER, "
                 + COL_LOG_MSG + " TEXT, "
@@ -181,8 +181,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
-        Toast.makeText(context, Integer.toString(log.getAmount()), Toast.LENGTH_SHORT).show();
-        cv.put(COL_LOG_ID, log.getLogId());
         cv.put(COL_MEDICATION_ID, log.getMedicationId());
         cv.put(COL_AMOUNT, log.getAmount());
         cv.put(COL_LOG_MSG, log.getMsg());
@@ -190,6 +188,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COL_TAKEN, log.isTaken());
         cv.put(COL_ON_TIME, log.isOnTime());
         long insert = db.insert(LOG_TABLE, null, cv);
+        Toast.makeText(context, "long:" + insert, Toast.LENGTH_SHORT).show();
         return isAdded(insert);
     }
 
@@ -451,9 +450,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-
-
-
     public void takeMedication(DoseModel doseModel, MedicationModel medModel, boolean onTime) {
         takeMedication(doseModel, medModel);
         // add log report signifying if the medication was taken on time or not
@@ -468,10 +464,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             msg = medModel.getName() + " meant to be taken at " + doseModel.getTime()
                 + ". Actually taken at " + actualTime;
         }
-        Toast.makeText(context, Integer.toString(doseModel.getAmount()), Toast.LENGTH_SHORT).show();
         MedicationLog log = new MedicationLog(medModel.getMedicationId(), msg, doseModel.getAmount(),
                                             calendar.getTimeInMillis(), true, onTime);
-        addLog(log);
+        boolean t = addLog(log);
+        Toast.makeText(context, Boolean.toString(t), Toast.LENGTH_SHORT).show();
 
     }
 
@@ -602,6 +598,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(COL_TAKEN, log.isTaken());
+        cv.put(COL_LOG_MSG, log.getMsg());
         db.update(LOG_TABLE, cv, COL_LOG_ID + " = " + log.getLogId(), null);
         db.close();
     }

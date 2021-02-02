@@ -59,19 +59,7 @@ public class DoseAdapter extends RecyclerView.Adapter<DoseAdapter.MyViewHolder> 
                     Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
                 }
                 else{
-
-                    Calendar actual = Calendar.getInstance();
-                    Calendar expected = Calendar.getInstance();
-                    String[] time = doseModel.getTime().split(":");
-                    expected.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time[0]));
-                    expected.set(Calendar.MINUTE, Integer.parseInt(time[1]));
-
-                    Period period = new Period(actual.getTimeInMillis(), expected.getTimeInMillis());
-                    int diff = period.getHours();
-
-                    Toast.makeText(context, Integer.toString(diff), Toast.LENGTH_SHORT).show();
-
-
+                    int diff = timeInterval(doseModel);
                     if(diff < -1) {
                         medTakenTooLate(medModel, doseModel);
                     }
@@ -81,11 +69,25 @@ public class DoseAdapter extends RecyclerView.Adapter<DoseAdapter.MyViewHolder> 
                     else {
                         registerMedAsTaken(doseModel, medModel, true);
                     }
-
-
                 }
             }
         });
+    }
+
+    /**
+     * Method that calculates difference in hours between the actual time the medication has been taken
+     * compared to the expected time
+     * @param doseModel the dose of which the user is attempting to take
+     * @return int that represents the difference in hours between expected and actual
+     */
+    private int timeInterval(DoseModel doseModel) {
+        Calendar actual = Calendar.getInstance();
+        Calendar expected = Calendar.getInstance();
+        String[] time = doseModel.getTime().split(":");
+        expected.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time[0]));
+        expected.set(Calendar.MINUTE, Integer.parseInt(time[1]));
+        Period period = new Period(actual.getTimeInMillis(), expected.getTimeInMillis());
+        return period.getHours();
     }
 
     /**
