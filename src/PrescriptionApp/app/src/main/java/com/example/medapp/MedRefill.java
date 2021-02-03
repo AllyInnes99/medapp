@@ -16,10 +16,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.textfield.TextInputEditText;
 
-import org.joda.time.field.ScaledDurationField;
-
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 
 public class MedRefill extends AppCompatActivity {
@@ -58,6 +55,8 @@ public class MedRefill extends AppCompatActivity {
         prevQty = medModel.getQuantity();
 
         et_current.setText(Integer.toString(prevQty));
+
+
 
         btn_update.setOnClickListener(new View.OnClickListener() {
             @Override

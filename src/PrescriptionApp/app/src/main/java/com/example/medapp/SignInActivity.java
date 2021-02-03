@@ -42,7 +42,8 @@ public class SignInActivity extends AppCompatActivity {
          Google Calendar - full list of scopes can be found here:
                 https://developers.google.com/identity/protocols/oauth2/scopes
          */
-        Scope scope = new Scope("https://www.googleapis.com/auth/calendar.events");
+        Scope scope = new Scope("https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/contacts.readonly");
+
 
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
