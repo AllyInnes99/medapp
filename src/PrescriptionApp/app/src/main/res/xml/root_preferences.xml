@@ -30,6 +30,7 @@
         <SwitchPreferenceCompat
             app:key="calendar"
             app:title="Enable Google Calendar"
+            app:defaultValue="true"
             app:summaryOff="Medication events won't be added to your Google Calendar"
             app:summaryOn="Medication events will be added to your Google Calendar">
         </SwitchPreferenceCompat>

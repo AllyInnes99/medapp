@@ -11,6 +11,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
+import androidx.preference.SwitchPreferenceCompat;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -27,16 +28,17 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey);
         final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(requireContext());
-        final Preference googleLogin = findPreference("login");
-        final Preference googleSignout = findPreference("logout");
+        Preference googleLogin = findPreference("login");
+        Preference googleSignout = findPreference("logout");
         ListPreference lp = findPreference("reminderDay");
-        Preference calendar = findPreference("calendar");
+        SwitchPreferenceCompat calendar = findPreference("calendar");
 
-        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(requireContext());
+        final GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(requireContext());
 
         if(acct != null) {
             googleLogin.setEnabled(false);
             googleSignout.setSummary(String.format("Currently signed in as %s", acct.getDisplayName()));
+            calendar.setChecked(true);
         }
         else {
             googleSignout.setEnabled(false);
@@ -48,14 +50,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             lp.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    int prev = Integer.parseInt(sp.getString("reminderDay", ""));
-                    GoogleCalendarHelper gch = new GoogleCalendarHelper(requireContext());
-                    int v = Integer.parseInt(newValue.toString());
-                    if(v != prev) {
-                        gch.updateRefillReminderEvents(v);
-                    }
-                    else{
-                        Toast.makeText(requireContext(), "a", Toast.LENGTH_SHORT).show();
+                    if(acct != null) {
+                        int prev = Integer.parseInt(sp.getString("reminderDay", ""));
+                        GoogleCalendarHelper gch = new GoogleCalendarHelper(requireContext());
+                        int v = Integer.parseInt(newValue.toString());
+                        if(v != prev) {
+                            gch.updateRefillReminderEvents(v);
+                        }
                     }
                     return true;
                 }

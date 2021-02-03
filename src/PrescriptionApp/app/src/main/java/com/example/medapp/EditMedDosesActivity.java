@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -51,7 +53,6 @@ public class EditMedDosesActivity extends AppCompatActivity {
         medModel = databaseHelper.selectMedicationFromID(id);
         doseModels = databaseHelper.selectDoseFromMedication(medModel);
         originalDoses = new ArrayList<>(doseModels);
-        gch = new GoogleCalendarHelper(context);
         getData();
 
         recyclerView = findViewById(R.id.recyclerView);
@@ -92,9 +93,13 @@ public class EditMedDosesActivity extends AppCompatActivity {
      */
     private void addToDatabase(){
 
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(context);
+
         // remove all previous doseModels from db and Google Calendar
         for(DoseModel dm: doseModels) {
-            gch.deleteDoseEvent(dm);
+            if(acct != null) {
+                gch.deleteDoseEvent(dm);
+            }
             databaseHelper.deleteDose(dm);
         }
 
@@ -118,7 +123,8 @@ public class EditMedDosesActivity extends AppCompatActivity {
         medModel = databaseHelper.selectMedicationFromID(medModel.getMedicationId());
 
         // add the new Doses to Google Calendar
-        if(medModel.getCalendarRefill() != null) {
+        if(acct != null) {
+            gch = new GoogleCalendarHelper(context);
             gch.updateRefillEvent(medModel) ;
             gch.updateEmptyEvent(medModel);
             gch.addDoseReminder(medModel);
