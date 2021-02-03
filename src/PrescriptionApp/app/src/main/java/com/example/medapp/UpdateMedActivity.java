@@ -12,6 +12,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -137,10 +138,12 @@ public class UpdateMedActivity extends AppCompatActivity {
         btn_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
-                GoogleCalendarHelper gac = new GoogleCalendarHelper(UpdateMedActivity.this);
                 try {
                     List<DoseModel> doses = databaseHelper.selectDoseFromMedication(medModel);
-                    gac.deleteMedEvents(medModel, doses);
+                    if(GoogleSignIn.getLastSignedInAccount(UpdateMedActivity.this) != null) {
+                        GoogleCalendarHelper gac = new GoogleCalendarHelper(UpdateMedActivity.this);
+                        gac.deleteMedEvents(medModel, doses);
+                    }
                     databaseHelper.deleteMedication(medModel);
                     Toast.makeText(UpdateMedActivity.this, "Successfully deleted medication", Toast.LENGTH_SHORT).show();
                     finish();
