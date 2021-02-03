@@ -37,8 +37,7 @@ public class RefillAdapter extends RecyclerView.Adapter<RefillAdapter.MyViewHold
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         final RefillData data = refillData.get(position);
-        Calendar c = Calendar.getInstance();
-        String date = createDateString(c);
+        String date = createDateString(data);
         holder.refill_date.setText(date);
 
         String txt;
@@ -71,11 +70,8 @@ public class RefillAdapter extends RecyclerView.Adapter<RefillAdapter.MyViewHold
         }
     }
 
-    private String createDateString(Calendar c){
-        String year = Integer.toString(c.get(Calendar.YEAR));
-        String day = padDate(c.get(Calendar.DATE));
-        String month = padDate(c.get(Calendar.MONTH) + 1);
-        return String.format("%s-%s-%s", day, month, year);
+    private String createDateString(RefillData data){
+        return String.format("%s-%s-%s", padDate(data.getDay()), padDate(data.getMonth()), data.getYear());
     }
 
     private String padDate(int val){

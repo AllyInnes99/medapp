@@ -116,7 +116,7 @@ public class MedRefill extends AppCompatActivity {
             }
 
             Toast.makeText(context, "Updated quantity of medication", Toast.LENGTH_SHORT).show();
-            addRefillEvent(newQuantity, prevQty);
+            addRefillLog(newQuantity, prevQty);
             closeActivity();
         }
         catch (NullPointerException e) {
@@ -141,7 +141,7 @@ public class MedRefill extends AppCompatActivity {
                 updateGoogleCal();
             }
             Toast.makeText(context, "Updated quantity of medication", Toast.LENGTH_SHORT).show();
-            addRefillEvent(newQuantity, prevQty);
+            addRefillLog(newQuantity, prevQty);
             closeActivity();
         }
         catch (NullPointerException e) {
@@ -163,17 +163,19 @@ public class MedRefill extends AppCompatActivity {
         startActivity(i);
     }
 
-    private void addRefillEvent(int refill, int original) {
+    private void addRefillLog(int refill, int original) {
         Calendar c = Calendar.getInstance();
-        RefillData data = new RefillData(medModel.getMedicationId(),
-                                        c.getTimeInMillis(), refill, original);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+        int month = c.get(Calendar.MONTH) + 1;
+        int year = c.get(Calendar.YEAR);
+        RefillData data = new RefillData(medModel.getMedicationId(), day, month, year, refill, original);
         boolean t = databaseHelper.addRefill(data);
         Toast.makeText(context, Boolean.toString(t), Toast.LENGTH_SHORT).show();
     }
 
     public void displayRecycler() {
         data = databaseHelper.selectRefillFromMed(medModel);
-        Collections.sort(data);
+        //Collections.sort(data);
         refillAdapter = new RefillAdapter(MedRefill.this, data);
         recyclerView.setAdapter(refillAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(MedRefill.this));

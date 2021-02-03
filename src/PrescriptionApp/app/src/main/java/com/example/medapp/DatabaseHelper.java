@@ -56,7 +56,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Const variables for the refillLog and its columns
     public static final String REFILL_TABLE = "REFILL_TABLE";
     public static final String REFILL_ID = "REFILL_ID";
-    public static final String REFILL_DATE = "DATE";
+    public static final String REFILL_DAY = "DAY";
+    public static final String REFILL_MONTH = "MONTH";
+    public static final String REFILL_YEAR = "YEAR";
     public static final String REFILL_AMOUNT = "AMOUNT";
     public static final String REFILL_ORIGINAL = "ORIGINAL";
 
@@ -159,7 +161,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 = "CREATE TABLE " + REFILL_TABLE + " ("
                 + REFILL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + COL_MEDICATION_ID + " INTEGER, "
-                + REFILL_DATE + " INTEGER, "
+                + REFILL_DAY + " INTEGER, "
+                + REFILL_MONTH + " INTEGER, "
+                + REFILL_YEAR + " INTEGER, "
                 + REFILL_AMOUNT + " INTEGER, "
                 + REFILL_ORIGINAL + " INTEGER,"
                 + FOREIGN_KEY;
@@ -239,7 +243,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(COL_MEDICATION_ID, data.getMedicationId());
-        cv.put(REFILL_DATE, data.getDate());
+        cv.put(REFILL_DAY, data.getDay());
+        cv.put(REFILL_MONTH, data.getMonth());
+        cv.put(REFILL_YEAR, data.getYear());
         cv.put(REFILL_AMOUNT, data.getRefillAmount());
         cv.put(REFILL_ORIGINAL, data.getOriginalQty());
         return isAdded(db.insert(REFILL_TABLE, null, cv));
@@ -486,7 +492,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public List<RefillData> selectRefillFromMed(MedicationModel medModel) {
         int id = medModel.getMedicationId();
         String rawQuery = "SELECT * FROM " + REFILL_TABLE
-                + " WHERE " + COL_MEDICATION_ID + " = " + id;
+                + " WHERE " + COL_MEDICATION_ID + " = " + id
+                + " ORDER BY " + REFILL_ID + " DESC";
+
         return executeRefillQuery(rawQuery);
     }
 
@@ -500,11 +508,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 int i = 0;
                 int refillId = cursor.getInt(i++);
                 int medId = cursor.getInt(i++);
-                long date = cursor.getInt(i++);
+                int day = cursor.getInt(i++);
+                int month = cursor.getInt(i++);
+                int year = cursor.getInt(i++);
                 int refill = cursor.getInt(i++);
                 int original = cursor.getInt(i++);
 
-                RefillData data = new RefillData(refillId, medId, date, refill, original);
+                RefillData data = new RefillData(refillId, medId, day, month, year, refill, original);
                 returnList.add(data);
 
             } while(cursor.moveToNext());
