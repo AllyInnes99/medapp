@@ -103,14 +103,12 @@ public class DoseAdapter extends RecyclerView.Adapter<DoseAdapter.MyViewHolder> 
 
             .setPositiveButton("yes", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
-                    Toast.makeText(context, "Yes", Toast.LENGTH_SHORT).show();
                     registerMedAsTaken(doseModel, medModel, true);
                 }
             })
 
             .setNegativeButton("no", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
-                    Toast.makeText(context, "No", Toast.LENGTH_SHORT).show();
                     registerMedAsTaken(doseModel, medModel, false);
                 }
             })
@@ -131,7 +129,6 @@ public class DoseAdapter extends RecyclerView.Adapter<DoseAdapter.MyViewHolder> 
 
                 .setPositiveButton("yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(context, "Yes", Toast.LENGTH_SHORT).show();
                         registerMedAsTaken(doseModel, medModel, false);
                     }
                 })

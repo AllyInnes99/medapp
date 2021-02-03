@@ -568,8 +568,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         MedicationLog log = new MedicationLog(medModel.getMedicationId(), msg, doseModel.getAmount(),
                                             calendar.getTimeInMillis(), true, onTime);
-        boolean t = addLog(log);
-        Toast.makeText(context, Boolean.toString(t), Toast.LENGTH_SHORT).show();
+        addLog(log);
 
     }
 
