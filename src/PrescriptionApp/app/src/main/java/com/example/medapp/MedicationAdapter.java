@@ -41,7 +41,7 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.My
     public void onBindViewHolder(@NonNull MedicationAdapter.MyViewHolder holder, int position) {
         final MedicationModel model = medicationModels.get(position);
 
-        String days = sp.getString("reminderDay", "");
+        String days = sp.getString("reminderDay", "7");
 
         if(model.isRefillRequested()){
             holder.imageView.setImageResource(R.drawable.ic_baseline_hourglass_full_24);

@@ -52,11 +52,10 @@ public class MedRefill extends AppCompatActivity {
 
         int medID = getIntent().getIntExtra("medID", 0);
         medModel = databaseHelper.selectMedicationFromID(medID);
-        prevQty = medModel.getQuantity();
+        String prevQty = Integer.toString(medModel.getQuantity());
 
-        et_current.setText(Integer.toString(prevQty));
-
-
+        et_current.setText(prevQty);
+        toggleGroup.check(R.id.btn_add);
 
         btn_update.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -179,6 +178,5 @@ public class MedRefill extends AppCompatActivity {
         recyclerView.setAdapter(refillAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(MedRefill.this));
     }
-
 
 }
