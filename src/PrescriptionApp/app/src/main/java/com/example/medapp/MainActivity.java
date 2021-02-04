@@ -127,6 +127,7 @@ public class MainActivity extends AppCompatActivity{
      * medication that the user wishes to do so.
      */
     private void setDailyEventAlarm() {
+        Toast.makeText(MainActivity.this, "here", Toast.LENGTH_SHORT).show();
         AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
 
         // set calendar to begin at midnight the next day
@@ -138,14 +139,14 @@ public class MainActivity extends AppCompatActivity{
         c.add(Calendar.DATE, 1);
 
         // Use time as a unique ID for the pending intent
-        int id = (int) System.currentTimeMillis();
+        int id = 1;
 
         // Setup intent to pass to receiver
         Intent intent = new Intent(MainActivity.this, DailyEventReceiver.class);
         intent.setAction("android.intent.action.NOTIFY");
 
         // Register the custom broadcast receiver
-        MainActivity.this.registerReceiver(new DailyEventReceiver(), new IntentFilter());
+        //MainActivity.this.registerReceiver(new DailyEventReceiver(), new IntentFilter());
 
         // Set up pendingIntent for the broadcast to specify action in the future
         PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -172,14 +173,14 @@ public class MainActivity extends AppCompatActivity{
         c.set(Calendar.MILLISECOND, 0);
 
         // Use time as a unique ID for the pending intent
-        int id = (int) System.currentTimeMillis();
+        int id = 2;
 
         // Setup intent to pass to receiver
         Intent intent = new Intent(MainActivity.this, RefreshReceiver.class);
         intent.setAction("android.intent.action.NOTIFY");
 
         // Register the custom broadcast receiver
-        MainActivity.this.registerReceiver(new RefreshReceiver(), new IntentFilter());
+        //MainActivity.this.registerReceiver(new RefreshReceiver(), new IntentFilter());
 
         // Set up pendingIntent for the broadcast to specify action in the future
         PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);

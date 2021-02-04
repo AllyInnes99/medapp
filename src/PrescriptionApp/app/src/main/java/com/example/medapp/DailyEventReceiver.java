@@ -24,6 +24,8 @@ public class DailyEventReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Toast.makeText(context, "MedApp: Updating medication", Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, "Test", Toast.LENGTH_SHORT).show();
+
         databaseHelper = new DatabaseHelper(context);
         mContext = context;
         autoTakeMedication();
@@ -77,7 +79,7 @@ public class DailyEventReceiver extends BroadcastReceiver {
         intent.putExtra("doseID", doseModel.getDoseId());
 
         // Register receiver
-        mContext.getApplicationContext().registerReceiver(new AlertReceiver(), new IntentFilter());
+        //mContext.getApplicationContext().registerReceiver(new AlertReceiver(), new IntentFilter());
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, doseModel.getDoseId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
