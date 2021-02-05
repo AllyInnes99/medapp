@@ -5,7 +5,7 @@ import java.util.Calendar;
 /**
  * Class that represents an entry of the medication taking history log
  */
-public class MedicationLog {
+public class MedicationLog implements Comparable<MedicationLog> {
 
     private int logId;
     private int medicationId;
@@ -103,5 +103,12 @@ public class MedicationLog {
 
     public void setTaken(boolean taken) {
         this.taken = taken;
+    }
+
+    @Override
+    public int compareTo(MedicationLog o) {
+        Long thisTime = this.getTime();
+        Long otherTime = o.getTime();
+        return otherTime.compareTo(thisTime);
     }
 }

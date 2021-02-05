@@ -1,7 +1,10 @@
 package com.example.medapp;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -402,6 +405,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Calendar c = Calendar.getInstance();
         c.add(Calendar.DATE, -1);
 
+        // get yesterdays day
+        Toast.makeText(context, App.days.get(c.get(Calendar.DAY_OF_WEEK)), Toast.LENGTH_LONG).show();
+
         // Get the day as a string
         String day = App.days.get(calendar.get(c.DAY_OF_WEEK));
 
@@ -540,6 +546,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void deleteDose(DoseModel model){
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(DOSE_TABLE, COL_DOSE_ID + " = " + model.getDoseId(), null);
+
+        // cancel the pending intent for the dose
+        Intent intent = new Intent(context, AlertReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context,  model.getDoseId() + 2, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.cancel(pendingIntent);
     }
 
     /**

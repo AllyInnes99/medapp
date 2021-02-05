@@ -81,7 +81,7 @@ public class DailyEventReceiver extends BroadcastReceiver {
         // Register receiver
         //mContext.getApplicationContext().registerReceiver(new AlertReceiver(), new IntentFilter());
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, doseModel.getDoseId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, doseModel.getDoseId() + 2, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
     }
 
@@ -131,6 +131,8 @@ public class DailyEventReceiver extends BroadcastReceiver {
 
         List<DoseModel> notTaken = databaseHelper.selectYesterdaysDoseAndNotTaken();
 
+        Toast.makeText(mContext, Integer.toString(notTaken.size()), Toast.LENGTH_LONG).show();
+
         if(!notTaken.isEmpty()) {
             String msg = "Medication not taken";
             Calendar c = Calendar.getInstance();
@@ -140,7 +142,6 @@ public class DailyEventReceiver extends BroadcastReceiver {
                 databaseHelper.addLog(log);
             }
         }
-
     }
 
 }

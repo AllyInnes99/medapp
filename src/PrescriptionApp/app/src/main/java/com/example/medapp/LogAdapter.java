@@ -4,6 +4,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class LogAdapter extends RecyclerView.Adapter<LogAdapter.MyViewHolder> {
@@ -50,7 +55,8 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.MyViewHolder> {
         holder.log_amount.setText(String.format("Amount to be taken: %s", log.getAmount()));
         holder.log_on_time.setText(String.format("On time: %s", getOnTimeString(log)));
         holder.log_taken.setText(String.format("Taken: %s", getTakenString(log)));
-
+        DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        holder.log_date.setText(String.format("%s", format.format(log.getTime())));
 
         holder.mainLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,7 +99,7 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.MyViewHolder> {
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView log_med, log_amount, log_taken, log_on_time;
+        TextView log_med, log_amount, log_taken, log_on_time, log_date;
         LinearLayout mainLayout;
 
         public MyViewHolder(@NonNull View itemView) {
@@ -102,6 +108,7 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.MyViewHolder> {
             log_amount = itemView.findViewById(R.id.log_amount);
             log_taken = itemView.findViewById(R.id.log_taken);
             log_on_time = itemView.findViewById(R.id.log_on_time);
+            log_date = itemView.findViewById(R.id.log_date);
             mainLayout = itemView.findViewById(R.id.mainLayout);
         }
     }

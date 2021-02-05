@@ -152,10 +152,8 @@ public class AddDosesActivity extends AppCompatActivity {
             intent.putExtra("quantity", doseModel.getAmount());
             intent.putExtra("name", medModel.getName());
 
-            // Register receiver
-            AddDosesActivity.this.registerReceiver(new AlertReceiver(), new IntentFilter());
 
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(AddDosesActivity.this, doseModel.getDoseId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(AddDosesActivity.this, doseModel.getDoseId() + 2, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
             Toast.makeText(AddDosesActivity.this, "Registered alarm.", Toast.LENGTH_SHORT).show();
         }

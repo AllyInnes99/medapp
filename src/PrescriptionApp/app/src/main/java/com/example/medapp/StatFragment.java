@@ -29,6 +29,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -107,6 +108,7 @@ public class StatFragment extends Fragment {
 
     public void displayRecycler() {
         logs = databaseHelper.selectAllLogs();
+        Collections.sort(logs);
         logAdapter = new LogAdapter(requireContext(), logs, this);
         recyclerView.setAdapter(logAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));

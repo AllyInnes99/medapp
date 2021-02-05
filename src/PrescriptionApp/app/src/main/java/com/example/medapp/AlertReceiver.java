@@ -29,7 +29,7 @@ public class AlertReceiver extends BroadcastReceiver {
         takeIntent.putExtra("doseID", doseID);
         takeIntent.putExtra("medID", medID);
         PendingIntent takePendingIntent = PendingIntent.getBroadcast(context, 1, takeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        context.getApplicationContext().registerReceiver(new TakeReceiver(), new IntentFilter());
+        //context.getApplicationContext().registerReceiver(new TakeReceiver(), new IntentFilter());
 
         DatabaseHelper databaseHelper = new DatabaseHelper(context);
         MedicationModel medModel = databaseHelper.selectMedicationFromID(medID);
@@ -50,6 +50,7 @@ public class AlertReceiver extends BroadcastReceiver {
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
                 .addAction(R.drawable.ic_healing, context.getApplicationContext().getString(R.string.take), takePendingIntent)
+                .setAutoCancel(true)
                 .build();
         notificationManager.notify(1, notification);
     }
