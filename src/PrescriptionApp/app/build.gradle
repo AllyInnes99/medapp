@@ -18,14 +18,16 @@ dependencies {
     // https://firebase.google.com/docs/android/setup#available-libraries
 }
 
+configurations {
+    all {
+        exclude module: 'httpclient'
+    }
+}
+
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.2"
 
-    packagingOptions {
-        exclude 'META-INF/DEPENDENCIES'
-        exclude 'META-INF/INDEX.LIST'
-    }
 
     defaultConfig {
         applicationId "com.example.medapp"

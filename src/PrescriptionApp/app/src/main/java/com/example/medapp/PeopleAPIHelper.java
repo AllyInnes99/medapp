@@ -22,7 +22,7 @@ import java.util.List;
 
 public class PeopleAPIHelper {
 
-    private static final String TAG = "PeopleAPI";
+    private static final String TAG = "MedApp";
 
     private com.google.api.services.people.v1.PeopleService service;
     private static final NetHttpTransport NET_HTTP_TRANSPORT =
@@ -55,7 +55,6 @@ public class PeopleAPIHelper {
 
                     ListConnectionsResponse response = service.people().connections()
                             .list("people/me")
-                            .setPageSize(10)
                             .setPersonFields("names,emailAddresses")
                             .execute();
 
@@ -63,26 +62,32 @@ public class PeopleAPIHelper {
                     if(connections != null && connections.size() > 0) {
                         for(Person person: connections) {
 
+                            String t = person.toPrettyString();
+                            t  = person.getEtag();
+
+
+                            Log.w(TAG, t);
                             List<EmailAddress> emails = person.getEmailAddresses();
                             List<Name> names = person.getNames();
+
                             if(names != null && names.size() > 0) {
                                 String name = names.get(0).getDisplayName();
                                 //String email = emails.get(0).getDisplayName();
-                                Log.w("MedApp", "name: " + name);
+                                Log.w(TAG, "name: " + name);
 
                                 for(EmailAddress email: emails) {
                                     String e = email.getValue();
-                                    Log.w("MedApp", "email: " + e);
+                                    Log.w(TAG, "email: " + e);
                                 }
                             }
                             else {
-                                Log.w("MedApp", "No names available");
+                                Log.w(TAG, "No names available");
                             }
 
                         }
                     }
                     else {
-                        Log.w("MedApp", "No connections found");
+                        Log.w(TAG, "No connections found");
                     }
 
 
