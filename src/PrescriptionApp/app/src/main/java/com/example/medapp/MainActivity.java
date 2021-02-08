@@ -34,6 +34,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
 
@@ -57,13 +58,22 @@ public class MainActivity extends AppCompatActivity{
         setDailyEventAlarm();
         setRefreshAlarm();
 
+        Log.e("hello", "a");
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(MainActivity.this);
+        if(acct != null) {
+            Log.w("MedApp", "a");
+
+            PeopleAPIHelper peopleApi = new PeopleAPIHelper(MainActivity.this);
+            //Toast.makeText(MainActivity.this, Boolean.toString(peopleApi.getService() == null), Toast.LENGTH_LONG).show();
+            peopleApi.getContacts();
+        }
+
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        Toast.makeText(MainActivity.this, Integer.toString(resultCode), Toast.LENGTH_SHORT).show();
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == GOOGLE_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
@@ -127,7 +137,6 @@ public class MainActivity extends AppCompatActivity{
      * medication that the user wishes to do so.
      */
     private void setDailyEventAlarm() {
-        Toast.makeText(MainActivity.this, "here", Toast.LENGTH_SHORT).show();
         AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
 
         // set calendar to begin at midnight the next day
