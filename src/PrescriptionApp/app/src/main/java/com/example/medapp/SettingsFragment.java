@@ -8,6 +8,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
+import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
@@ -28,23 +29,29 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey);
         final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(requireContext());
+        PreferenceCategory googlePreferences = findPreference("google");
         Preference googleLogin = findPreference("login");
         Preference googleSignout = findPreference("logout");
+        Preference selectCarers = findPreference("carer");
+        Preference doseEvents = findPreference("dose_events");
+        Preference reminderEvents = findPreference("refill_reminders");
         ListPreference lp = findPreference("reminderDay");
         SwitchPreferenceCompat calendar = findPreference("calendar");
 
         final GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(requireContext());
 
         if(acct != null) {
-            googleLogin.setEnabled(false);
+            googlePreferences.removePreference(googleLogin);
             googleSignout.setSummary(String.format("Currently signed in as %s", acct.getDisplayName()));
             calendar.setChecked(true);
         }
         else {
-            googleSignout.setEnabled(false);
-            calendar.setEnabled(false);
+            googlePreferences.removePreference(googleSignout);
+            googlePreferences.removePreference(calendar);
+            googlePreferences.removePreference(selectCarers);
+            googlePreferences.removePreference(doseEvents);
+            googlePreferences.removePreference(reminderEvents);
         }
-
 
         if(lp != null) {
             lp.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -62,7 +69,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 }
             });
         }
-
 
         if(googleLogin != null) {
             googleLogin.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {

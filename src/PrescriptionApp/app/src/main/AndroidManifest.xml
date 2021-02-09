@@ -14,25 +14,25 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MedRefill"></activity>
-        <activity android:name=".EditMedDosesActivity" /> <!-- ACTIVITIES -->
+        <activity android:name=".CarerActivity"></activity>
+        <activity android:name=".MedRefill" />
+        <activity android:name=".EditMedDosesActivity" />
         <activity android:name=".Test" />
         <activity
             android:name=".SignInActivity"
-            android:noHistory="true">
-        </activity>
+            android:noHistory="true" />
         <activity android:name=".UpdateMedActivity" />
         <activity android:name=".CreateDoseActivity" />
         <activity android:name=".AddDosesActivity" />
         <activity android:name=".CreateMedicationActivity" />
-        <activity
-            android:name=".MainActivity">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <receiver
             android:name=".AlertReceiver"
             android:exported="true"

@@ -1,4 +1,5 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory app:title="Refill Reminders">
 
@@ -13,7 +14,7 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Google Calendar">
+    <PreferenceCategory app:title="Google" app:key="google">
 
         <Preference
             app:title="Sign-in to Google"
@@ -24,6 +25,12 @@
         <Preference
             app:title="Sign-out of Google"
             app:key="logout">
+        </Preference>
+
+        <Preference
+            app:title="Select carer"
+            app:summary="Select carers from your Google Contacts"
+            app:key="carer">
         </Preference>
 
 
@@ -50,6 +57,7 @@
         </SwitchPreferenceCompat>
 
     </PreferenceCategory>
+
 
 
 </PreferenceScreen>

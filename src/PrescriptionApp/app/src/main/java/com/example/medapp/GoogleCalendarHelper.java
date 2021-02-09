@@ -2,7 +2,6 @@ package com.example.medapp;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.preference.PreferenceManager;
 
@@ -415,7 +414,7 @@ public class GoogleCalendarHelper {
                 try{
                     events[0] = service.events().insert(CALENDAR_ID, events[0]).execute();
                     String eventID = events[0].getId();
-                    databaseHelper.updateRefillID(medModel, eventID);
+                    databaseHelper.updateCalRefillId(medModel, eventID);
                 } catch (final Exception e) {
                     Log.e("MedApp", "exception", e);
                 }

@@ -12,6 +12,8 @@ import android.widget.Toast;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.google.api.services.people.v1.model.ListDirectoryPeopleResponse;
+
 import java.sql.Ref;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -65,6 +67,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String REFILL_AMOUNT = "AMOUNT";
     public static final String REFILL_ORIGINAL = "ORIGINAL";
 
+    // Const variables for the contact table and its columns
+    public static final String CONTACTS_TABLE = "CONTACTS_TABLE";
+    public static final String CONTACT_ID = "CONTACT_ID";
+    public static final String CONTACT_NAME = "CONTACT_NAME";
+    public static final String CONTACT_EMAIL = "CONTACTS_EMAIL";
+    public static final String CONTACT_SELECTED = "CONTACT_SELECTED";
+
     private static final String FOREIGN_KEY =
             "FOREIGN KEY (" + COL_MEDICATION_ID + ") REFERENCES " + MEDICATION_TABLE
             + " ( " + COL_MEDICATION_ID + ") ON DELETE CASCADE)";
@@ -83,6 +92,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         createDoseTable(db);
         createLogTable(db);
         createRefillTable(db);
+        createContactsTable(db);
     }
 
     @Override
@@ -173,6 +183,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(createQuery);
     }
 
+    private void createContactsTable(SQLiteDatabase db) {
+        String createQuery
+                = "CREATE TABLE " + CONTACTS_TABLE + " ( "
+                + CONTACT_ID + " TEXT PRIMARY KEY,"
+                + CONTACT_NAME + " TEXT,"
+                + CONTACT_EMAIL + " TEXT, "
+                + CONTACT_SELECTED + " BOOL)";
+        db.execSQL(createQuery);
+    }
+
     /**
      * Method that adds a row to the medication table from medication object
      * @param medicationModel model to be added to the database
@@ -252,6 +272,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(REFILL_AMOUNT, data.getRefillAmount());
         cv.put(REFILL_ORIGINAL, data.getOriginalQty());
         return isAdded(db.insert(REFILL_TABLE, null, cv));
+    }
+
+    public boolean addContact(ContactDetails cd) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(CONTACT_ID, cd.getId());
+        cv.put(CONTACT_NAME, cd.getName());
+        cv.put(CONTACT_EMAIL, cd.getId());
+        cv.put(CONTACT_SELECTED, cd.isSelected());
+        return isAdded(db.insert(CONTACTS_TABLE, null, cv));
     }
 
     /**
@@ -529,6 +559,35 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return returnList;
     }
 
+    /*
+        CONTACT QUERIES
+    */
+    public List<ContactDetails> selectContacts() {
+        String rawQuery = "SELECT * FROM " + CONTACTS_TABLE;
+        return executeContactQuery(rawQuery);
+
+    }
+
+    private List<ContactDetails> executeContactQuery(String rawQuery) {
+        List<ContactDetails> returnList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(rawQuery, null);
+
+        if(cursor.moveToFirst()) {
+            do {
+                int i = 0;
+                String id = cursor.getString(i++);
+                String name = cursor.getString(i++);
+                String email = cursor.getString(i++);
+                boolean selected = SQLiteIntToBool(cursor.getInt(i++));
+                ContactDetails cd = new ContactDetails(id, name, email, selected);
+                returnList.add(cd);
+            } while(cursor.moveToNext());
+        }
+        cursor.close();
+        return returnList;
+    }
+
 
     /**
      * Method that finds the target medication model in database, and if found it is deleted.
@@ -566,8 +625,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void takeMedication(DoseModel doseModel, MedicationModel medModel, boolean onTime) {
         takeMedication(doseModel, medModel);
-        // add log report signifying if the medication was taken on time or not
-
         String msg;
         if(onTime) {
             msg = medModel.getName() + " taken on time.";
@@ -611,7 +668,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param medModel the medication to update the event ID for
      * @param id the new value of the ID for the event
      */
-    public void updateRefillID(MedicationModel medModel, String id) {
+    public void updateCalRefillId(MedicationModel medModel, String id) {
         ContentValues cv = new ContentValues(1);
         cv.put(COL_CALENDAR_REFILL, id);
         updateMedicationRow(medModel, cv);

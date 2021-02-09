@@ -58,12 +58,10 @@ public class MainActivity extends AppCompatActivity{
         setDailyEventAlarm();
         setRefreshAlarm();
 
-        Log.e("hello", "a");
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(MainActivity.this);
         if(acct != null) {
-            Log.w("MedApp", "a");
-
             PeopleAPIHelper peopleApi = new PeopleAPIHelper(MainActivity.this);
+            Log.w("MedApp", "here");
             //Toast.makeText(MainActivity.this, Boolean.toString(peopleApi.getService() == null), Toast.LENGTH_LONG).show();
             peopleApi.getContacts();
         }
