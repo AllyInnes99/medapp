@@ -641,6 +641,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
+    public void takeMedicationLate(DoseModel doseModel, MedicationModel medModel) {
+        takeMedication(doseModel, medModel);
+        String actualTime = calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE);
+        String[] expectedTime = doseModel.timeToHourAndMin();
+        expectedTime[0] = Integer.toString(Integer.parseInt(expectedTime[0]) + 1);
+        String msg = medModel.getName() + " taken late: between " + expectedTime[0] + ":" +
+                expectedTime[1] + " and " + actualTime;
+        MedicationLog log = new MedicationLog(medModel.getMedicationId(), msg, doseModel.getAmount(),
+                calendar.getTimeInMillis(), true, false);
+        addLog(log);
+    }
+
     /**
      * Method that is called for when the medication is to be taken, updating the total quantity of
      * the medication according to the amount to be taken, and setting the application to be taken

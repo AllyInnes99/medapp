@@ -109,7 +109,10 @@ public class DoseAdapter extends RecyclerView.Adapter<DoseAdapter.MyViewHolder> 
 
             .setNegativeButton("no", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
-                    registerMedAsTaken(doseModel, medModel, false);
+                    databaseHelper.takeMedicationLate(doseModel, medModel);
+                    String msg = "You have taken " + doseModel.getAmount() + " of " + medModel.getName();
+                    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+                    fragment.displayApplRecycler();
                 }
             })
             .setIcon(android.R.drawable.ic_dialog_alert)
