@@ -143,7 +143,7 @@ public class MedRefill extends AppCompatActivity {
             databaseHelper.updateMedication(medModel);
             databaseHelper.updateDaysUntilEmpty(medModel);
             GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(MedRefill.this);
-            if (acct != null) {
+            if (acct != null && medModel.getCalendarRefill() != null) {
                 updateGoogleCal();
             }
             Toast.makeText(context, "Updated quantity of medication", Toast.LENGTH_SHORT).show();
