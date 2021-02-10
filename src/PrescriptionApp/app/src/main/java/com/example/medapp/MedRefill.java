@@ -104,22 +104,25 @@ public class MedRefill extends AppCompatActivity {
             String v = et_new.getText().toString();
             if(v.equals("")) throw new NullPointerException("Empty input for new quantity.");
             inputVal = Integer.parseInt(v);
-            int newQuantity = prevQty + inputVal;
-            medModel.setQuantity(newQuantity);
+            int original = medModel.getQuantity();
+            int newQuantity = original + inputVal;
+            Toast.makeText(context, Integer.toString(newQuantity), Toast.LENGTH_LONG).show();
 
-            // Refill has been received, so disable the refill request
+            /*
+            medModel.setQuantity(newQuantity);
             medModel.setRefillRequested(false);
             databaseHelper.updateMedication(medModel);
             databaseHelper.updateDaysUntilEmpty(medModel);
 
             GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(MedRefill.this);
-            if (acct != null) {
+            if (acct != null && medModel.getCalendarRefill() != null) {
                 updateGoogleCal();
             }
 
             Toast.makeText(context, "Updated quantity of medication", Toast.LENGTH_SHORT).show();
-            addRefillLog(newQuantity, prevQty);
+            addRefillLog(newQuantity, original);
             closeActivity();
+            */
         }
         catch (NullPointerException e) {
             Toast.makeText(context, "Input value is empty.", Toast.LENGTH_SHORT).show();
@@ -131,7 +134,8 @@ public class MedRefill extends AppCompatActivity {
             String v = et_new.getText().toString();
             if(v.equals("")) throw new NullPointerException("Empty input for new quantity.");
             inputVal = Integer.parseInt(v);
-            int newQuantity = prevQty - inputVal;
+            int original = medModel.getQuantity();
+            int newQuantity = original - inputVal;
             if(newQuantity < 0){
                 newQuantity = 0;
             }
@@ -143,7 +147,7 @@ public class MedRefill extends AppCompatActivity {
                 updateGoogleCal();
             }
             Toast.makeText(context, "Updated quantity of medication", Toast.LENGTH_SHORT).show();
-            addRefillLog(newQuantity, prevQty);
+            addRefillLog(newQuantity, original);
             closeActivity();
         }
         catch (NullPointerException e) {

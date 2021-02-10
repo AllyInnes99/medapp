@@ -13,6 +13,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import java.util.Calendar;
 import java.util.List;
 
@@ -52,6 +54,20 @@ public class RefillAdapter extends RecyclerView.Adapter<RefillAdapter.MyViewHold
         }
         holder.refill_amount.setText(txt);
 
+        holder.mainLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String msg = "Original quantity: " + data.getOriginalQty()
+                            + "\nNew quantity: " + data.getRefillAmount();
+                new MaterialAlertDialogBuilder(context)
+                        .setTitle("Refill Entry")
+                        .setMessage(msg)
+                        .setPositiveButton("ok", null)
+                        .setIcon(android.R.drawable.ic_dialog_info)
+                        .show();
+            }
+        });
+
     }
 
     @Override
@@ -62,11 +78,13 @@ public class RefillAdapter extends RecyclerView.Adapter<RefillAdapter.MyViewHold
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView refill_date, refill_amount;
+        LinearLayout mainLayout;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             refill_date = itemView.findViewById(R.id.refill_date);
             refill_amount = itemView.findViewById(R.id.refill_amount);
+            mainLayout = itemView.findViewById(R.id.mainLayout);
         }
     }
 
