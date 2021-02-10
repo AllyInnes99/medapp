@@ -19,6 +19,10 @@ import com.google.android.material.textfield.TextInputEditText;
 import java.util.Calendar;
 import java.util.List;
 
+/**
+ * Activity where the user can update their medication supply and indicate that they have
+ * requested a refill
+ */
 public class MedRefill extends AppCompatActivity {
 
 

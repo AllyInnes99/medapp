@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * A simple {@link Fragment} subclass.t.
+ * Home page fragment, where the user can see the doses that they need to take in a given day
  */
 public class HomeFragment extends Fragment {
 

@@ -33,7 +33,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment for the medication logs
  */
 public class StatFragment extends Fragment {
 
