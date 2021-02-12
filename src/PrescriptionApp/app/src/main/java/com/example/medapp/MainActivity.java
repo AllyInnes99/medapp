@@ -46,6 +46,9 @@ public class MainActivity extends AppCompatActivity{
     public static final int GOOGLE_SIGN_IN = 100;
     private FirebaseAuth mAuth;
 
+    private static final int DAILY_EVENT_ID = 1;
+    private static final int WEEKLY_EVENT_ID = 2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +64,6 @@ public class MainActivity extends AppCompatActivity{
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(MainActivity.this);
         if(acct != null) {
             PeopleAPIHelper peopleApi = new PeopleAPIHelper(MainActivity.this);
-            Log.w("MedApp", "here");
             //Toast.makeText(MainActivity.this, Boolean.toString(peopleApi.getService() == null), Toast.LENGTH_LONG).show();
             peopleApi.getContacts();
         }
@@ -145,9 +147,6 @@ public class MainActivity extends AppCompatActivity{
         c.set(Calendar.MILLISECOND, 0);
         c.add(Calendar.DATE, 1);
 
-        // Use time as a unique ID for the pending intent
-        int id = 1;
-
         // Setup intent to pass to receiver
         Intent intent = new Intent(MainActivity.this, DailyEventReceiver.class);
         intent.setAction("android.intent.action.NOTIFY");
@@ -156,7 +155,7 @@ public class MainActivity extends AppCompatActivity{
         //MainActivity.this.registerReceiver(new DailyEventReceiver(), new IntentFilter());
 
         // Set up pendingIntent for the broadcast to specify action in the future
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, DAILY_EVENT_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         // Set repeating alarm that calls onReceive() of AutoTakeReceiver at supplied time
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
@@ -179,9 +178,6 @@ public class MainActivity extends AppCompatActivity{
         c.set(Calendar.SECOND, 0);
         c.set(Calendar.MILLISECOND, 0);
 
-        // Use time as a unique ID for the pending intent
-        int id = 2;
-
         // Setup intent to pass to receiver
         Intent intent = new Intent(MainActivity.this, RefreshReceiver.class);
         intent.setAction("android.intent.action.NOTIFY");
@@ -190,7 +186,7 @@ public class MainActivity extends AppCompatActivity{
         //MainActivity.this.registerReceiver(new RefreshReceiver(), new IntentFilter());
 
         // Set up pendingIntent for the broadcast to specify action in the future
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, WEEKLY_EVENT_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         // Set repeating alarm that calls onReceive() of RefreshReceiver at supplied time
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);

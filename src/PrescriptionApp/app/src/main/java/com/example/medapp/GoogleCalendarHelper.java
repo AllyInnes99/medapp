@@ -12,6 +12,7 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.calendar.model.Event;
+import com.google.api.services.calendar.model.EventAttendee;
 import com.google.api.services.calendar.model.EventDateTime;
 
 import java.io.IOException;
@@ -384,6 +385,11 @@ public class GoogleCalendarHelper {
                 .setDescription(medModel.getName() + " will run out of supply today.")
                 .setSummary("MedApp: " + medModel.getName() + " Empty");
 
+
+        EventAttendee attendee = new EventAttendee();
+        attendee.setDisplayName("test");
+        attendee.setEmail("aj.innes.99@gmail.com");
+        emptyEvent.setAttendees(Collections.singletonList(attendee));
 
         setTime(c, emptyEvent);
         addEmptyEvent(medModel, emptyEvent);

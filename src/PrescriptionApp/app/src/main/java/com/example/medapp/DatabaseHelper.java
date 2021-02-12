@@ -279,7 +279,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         cv.put(CONTACT_ID, cd.getId());
         cv.put(CONTACT_NAME, cd.getName());
-        cv.put(CONTACT_EMAIL, cd.getId());
+        cv.put(CONTACT_EMAIL, cd.getEmail());
         cv.put(CONTACT_SELECTED, cd.isSelected());
         return isAdded(db.insert(CONTACTS_TABLE, null, cv));
     }

@@ -3,6 +3,8 @@ package com.example.medapp;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
@@ -10,11 +12,14 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.people.v1.PeopleService;
 import com.google.api.services.people.v1.PeopleServiceScopes;
+import com.google.api.services.people.v1.model.ContactGroup;
 import com.google.api.services.people.v1.model.EmailAddress;
 import com.google.api.services.people.v1.model.ListConnectionsResponse;
+import com.google.api.services.people.v1.model.ListContactGroupsResponse;
 import com.google.api.services.people.v1.model.ListDirectoryPeopleResponse;
 import com.google.api.services.people.v1.model.Name;
 import com.google.api.services.people.v1.model.Person;
+import com.google.api.services.people.v1.model.Relation;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -54,25 +59,40 @@ public class PeopleAPIHelper {
             @Override
             public void run() {
                 try {
+
+                    /*
+                    ListContactGroupsResponse contactGroup = service.contactGroups().list().execute();
+                    List<ContactGroup> groups = contactGroup.getContactGroups();
+                    for(ContactGroup group: groups) {
+                        String name = group.getName();
+                        if(name.equals("Patient")){
+                            Log.w(TAG, group.toPrettyString());
+                        }
+                        //Log.w(TAG, name);
+                    }
+                    */
+
                     ListConnectionsResponse response = service.people().connections()
                         .list("people/me")
-                        .setPersonFields("names,emailAddresses")
+                        .setPersonFields("names,emailAddresses,relations")
                         .execute();
-                    List<Person> connections = response.getConnections();
-                    Log.w(TAG, Integer.toString(connections.size()));
-                    if(connections != null && connections.size() > 0) {
+
+                    if(response != null && response.size() > 0) {
+                        List<Person> connections = response.getConnections();
                         for(Person person: connections) {
                             List<EmailAddress> emails = person.getEmailAddresses();
                             List<Name> names = person.getNames();
-                            if(names != null && emails != null && names.size() > 0) {
-                                String name = names.get(0).getDisplayName();
-                                String email = emails.get(0).getValue();
-                                String id = person.getResourceName();
-                                Log.w(TAG, name);
-                                ContactDetails cd = new ContactDetails(id, name, email);
-                                boolean t = databaseHelper.addContact(cd);
-                                Log.w(TAG, Boolean.toString(t));
-
+                            List<Relation> relations = person.getRelations();
+                            if(names != null && emails != null && relations != null && names.size() > 0) {
+                                Relation relation = relations.get(0);
+                                if(isPatient(relation)) {
+                                    Log.w(TAG, "here");
+                                    String name = names.get(0).getDisplayName();
+                                    String email = emails.get(0).getValue();
+                                    String id = person.getResourceName();
+                                    ContactDetails cd = new ContactDetails(id, name, email);
+                                    boolean t = databaseHelper.addContact(cd);
+                                }
                             }
                             else {
                                 Log.w(TAG, "No names available");
@@ -88,5 +108,10 @@ public class PeopleAPIHelper {
             }
         }).start();
     }
+
+    private boolean isPatient(Relation relation) {
+        return relation.getPerson().toLowerCase().equals("patient");
+    }
+
 
 }
