@@ -829,6 +829,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Calendar c = Calendar.getInstance();
         List<DoseModel> doses = selectDoseFromMedication(model);
         Map<String, Integer> takenPerDay = new HashMap<>();
+
         takenPerDay.put("Monday", 0);
         takenPerDay.put("Tuesday", 0);
         takenPerDay.put("Wednesday", 0);

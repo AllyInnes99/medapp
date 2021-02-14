@@ -79,11 +79,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     return true;
                 }
             });
-        }
 
-
-
-        if(googleSignout != null) {
             googleSignout.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
@@ -91,7 +87,23 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     return true;
                 }
             });
+
+            selectCarers.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Intent i = new Intent(requireContext(), CarerActivity.class);
+                    startActivity(i);
+                    return true;
+                }
+            });
+
         }
+
+
+
+
+
+
 
     }
 

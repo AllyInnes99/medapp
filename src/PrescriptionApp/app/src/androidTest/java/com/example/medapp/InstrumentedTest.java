@@ -28,8 +28,6 @@ public class InstrumentedTest {
     public InstrumentedTest(){
         appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         databaseHelper = new DatabaseHelper(appContext);
-        medModel1 = new MedicationModel("test", 100, 0, "pill",
-                                        0.1, "g", "me", false);
 
         databaseHelper.addMedication(medModel1);
     }

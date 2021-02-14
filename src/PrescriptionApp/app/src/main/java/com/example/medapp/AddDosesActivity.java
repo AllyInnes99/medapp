@@ -5,19 +5,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlarmManager;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -31,15 +28,20 @@ public class AddDosesActivity extends AppCompatActivity {
     AddDoseAdapter doseAdapter;
     DatabaseHelper databaseHelper = new DatabaseHelper(AddDosesActivity.this);
     List<AddDoseModel> tempModels = new ArrayList<>();
-    private static final int SECOND_ACTIVITY_REQUEST_CODE = 42;
+    private static final int ADD_DOSE_REQUEST_CODE = 42;
+    private static final int ADD_PATIENT_REQUEST_CODE = 54;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == SECOND_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+        if (requestCode == ADD_DOSE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             AddDoseModel doseModel = (AddDoseModel) data.getSerializableExtra("model");
             tempModels.add(doseModel);
             displayRecycler();
+        }
+
+        else if( requestCode == ADD_PATIENT_REQUEST_CODE && resultCode == RESULT_OK &&  data != null) {
+            returnToMainActivity();
         }
     }
 
@@ -59,7 +61,7 @@ public class AddDosesActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(AddDosesActivity.this, CreateDoseActivity.class);
                 intent.putExtra("MedModel", medModel);
-                startActivityForResult(intent, SECOND_ACTIVITY_REQUEST_CODE);
+                startActivityForResult(intent, ADD_DOSE_REQUEST_CODE);
             }
         });
 
@@ -71,9 +73,10 @@ public class AddDosesActivity extends AppCompatActivity {
                     if(GoogleSignIn.getLastSignedInAccount(AddDosesActivity.this) != null){
                         addToGoogleCal();
                     }
-                    Intent intent = new Intent(AddDosesActivity.this, MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
+                    else {
+                        returnToMainActivity();
+                    }
+
                 }
                 else {
                     Toast.makeText(AddDosesActivity.this, "Please add at least one dose.", Toast.LENGTH_SHORT).show();
@@ -112,24 +115,6 @@ public class AddDosesActivity extends AppCompatActivity {
 
     }
 
-    /**
-     * Helper method that creates a new notification channel for a newly added medication
-     */
-    private void createNotificationChannel(){
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-
-            String id = medModel.getName();
-            String label = medModel.getName() + " reminder";
-            NotificationChannel channel = new NotificationChannel(
-                    id, label, NotificationManager.IMPORTANCE_HIGH);
-            channel.setDescription("Notifications to remind user to take "+ medModel.getName() + " at appointed time");
-
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-
-        }
-    }
-
     private void initialiseNotification(DoseModel doseModel){
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(System.currentTimeMillis());
@@ -161,20 +146,29 @@ public class AddDosesActivity extends AppCompatActivity {
     }
 
     private void addToGoogleCal() {
-        Toast.makeText(AddDosesActivity.this, "Adding reminder events to Google Calendar", Toast.LENGTH_SHORT).show();
-        GoogleCalendarHelper gac = new GoogleCalendarHelper(AddDosesActivity.this);
+        final GoogleCalendarHelper gac = new GoogleCalendarHelper(AddDosesActivity.this);
         medModel = databaseHelper.selectMedicationFromID(medModel.getMedicationId());
+        Toast.makeText(AddDosesActivity.this, "Adding reminder events to Google Calendar", Toast.LENGTH_SHORT).show();
+        new MaterialAlertDialogBuilder(AddDosesActivity.this)
+            .setTitle("Select Patients")
+            .setMessage("Would you like to assign a patient to this medication? The details of the medication will be shared with them on Google Calendar.")
+            .setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    gac.addDoseReminder(medModel);
+                    gac.addRefillEvents(medModel);
 
-        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(AddDosesActivity.this);
-        if (acct != null) {
-            Toast.makeText(AddDosesActivity.this, "Adding reminder events to Google Calendar", Toast.LENGTH_SHORT).show();
-            gac.addDoseReminder(medModel);
-            gac.addRefillEvents(medModel);
-            //gac.updateMedEvents(medModel);
-        }
-        else {
-            Toast.makeText(AddDosesActivity.this, "Could not add to Google Calendar", Toast.LENGTH_SHORT).show();
-        }
+                    //Intent i = new Intent(AddDosesActivity.this, CarerActivity.class);
+                    //startActivity(i);
+                }
+            })
+            .setNegativeButton("no", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    gac.addDoseReminder(medModel);
+                    gac.addRefillEvents(medModel);                }
+            })
+            .show();
 
     }
 
@@ -189,6 +183,13 @@ public class AddDosesActivity extends AppCompatActivity {
         doseAdapter = new AddDoseAdapter(AddDosesActivity.this, tempModels);
         recyclerView.setAdapter(doseAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(AddDosesActivity.this));
+    }
+
+    private void returnToMainActivity() {
+        Intent intent = new Intent(AddDosesActivity.this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        Toast.makeText(AddDosesActivity.this, "Successfully create medication " + medModel.getName(), Toast.LENGTH_SHORT).show();
+        startActivity(intent);
     }
 
 }

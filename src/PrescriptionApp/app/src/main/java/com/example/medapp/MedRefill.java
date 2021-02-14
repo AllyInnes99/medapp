@@ -108,7 +108,7 @@ public class MedRefill extends AppCompatActivity {
             int newQuantity = original + inputVal;
             Toast.makeText(context, Integer.toString(newQuantity), Toast.LENGTH_LONG).show();
 
-            /*
+
             medModel.setQuantity(newQuantity);
             medModel.setRefillRequested(false);
             databaseHelper.updateMedication(medModel);
@@ -122,7 +122,7 @@ public class MedRefill extends AppCompatActivity {
             Toast.makeText(context, "Updated quantity of medication", Toast.LENGTH_SHORT).show();
             addRefillLog(newQuantity, original);
             closeActivity();
-            */
+
         }
         catch (NullPointerException e) {
             Toast.makeText(context, "Input value is empty.", Toast.LENGTH_SHORT).show();

@@ -33,7 +33,7 @@ public class AddDoseAdapter extends RecyclerView.Adapter<AddDoseAdapter.MyViewHo
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.add_application_row, parent, false);
+        View view = inflater.inflate(R.layout.add_dose_row, parent, false);
         return new AddDoseAdapter.MyViewHolder(view);
     }
 

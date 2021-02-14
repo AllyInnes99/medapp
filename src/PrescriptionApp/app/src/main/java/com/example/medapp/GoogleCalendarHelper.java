@@ -32,6 +32,7 @@ public class GoogleCalendarHelper {
             new com.google.api.client.http.javanet.NetHttpTransport();
     private static final JacksonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private int refillReminderDays;
+    private EventAttendee contact;
     private static final String CALENDAR_ID = "primary";
 
 
@@ -100,6 +101,12 @@ public class GoogleCalendarHelper {
                 }
             }
         }).start();
+    }
+
+    public void setContact(ContactDetails contact) {
+        this.contact = new EventAttendee();
+        this.contact.setDisplayName(contact.getName());
+        this.contact.setEmail(contact.getEmail());
     }
 
     /**
@@ -348,28 +355,13 @@ public class GoogleCalendarHelper {
             String recurrenceEndDate = year + month + day;
 
             event.setRecurrence(Collections.singletonList(recurrence + recurrenceEndDate));
+            if(contact != null) {
+                event.setAttendees(Collections.singletonList(contact));
+            }
             addDoseEvent(dose, event);
             c = Calendar.getInstance();
         }
     }
-
-    /**
-     * Helper function that is used to set the time of when the event is to take place
-     * @param calendar - Calendar obj
-     * @param event - Event obj to set the reminder time of
-     * @param doseModel - the Dose obj that we are creating the Event for
-     */
-    private void setMedReminderTime(Calendar calendar, Event event, DoseModel doseModel) {
-        String date = createDateString(calendar);
-        String time = doseModel.getTime();
-        String dateTime = date + "T" + time + ":00-00:00";
-        EventDateTime eventDateTime = new EventDateTime()
-                .setDateTime(new DateTime(dateTime))
-                .setTimeZone("Europe/London");
-        event.setStart(eventDateTime);
-        event.setEnd(eventDateTime);
-    }
-
 
     /**
      * Method that created
@@ -385,11 +377,10 @@ public class GoogleCalendarHelper {
                 .setDescription(medModel.getName() + " will run out of supply today.")
                 .setSummary("MedApp: " + medModel.getName() + " Empty");
 
+        if(contact != null) {
+            emptyEvent.setAttendees(Collections.singletonList(contact));
+        }
 
-        EventAttendee attendee = new EventAttendee();
-        attendee.setDisplayName("test");
-        attendee.setEmail("aj.innes.99@gmail.com");
-        emptyEvent.setAttendees(Collections.singletonList(attendee));
 
         setTime(c, emptyEvent);
         addEmptyEvent(medModel, emptyEvent);
@@ -401,6 +392,9 @@ public class GoogleCalendarHelper {
                     .setDescription(medModel.getName() + " will run out of supply in 14 days. Please order a new prescription.")
                     .setSummary("MedApp: " + medModel.getName() + " Refill Reminder");
             setTime(c, refillEvent);
+            if(contact != null) {
+                refillEvent.setAttendees(Collections.singletonList(contact));
+            }
             addRefillReminderEvent(medModel, refillEvent);
         }
     }
@@ -474,6 +468,23 @@ public class GoogleCalendarHelper {
             }
         }).start();
 
+    }
+
+    /**
+     * Helper function that is used to set the time of when the event is to take place
+     * @param calendar - Calendar obj
+     * @param event - Event obj to set the reminder time of
+     * @param doseModel - the Dose obj that we are creating the Event for
+     */
+    private void setMedReminderTime(Calendar calendar, Event event, DoseModel doseModel) {
+        String date = createDateString(calendar);
+        String time = doseModel.getTime();
+        String dateTime = date + "T" + time + ":00-00:00";
+        EventDateTime eventDateTime = new EventDateTime()
+                .setDateTime(new DateTime(dateTime))
+                .setTimeZone("Europe/London");
+        event.setStart(eventDateTime);
+        event.setEnd(eventDateTime);
     }
 
     /**

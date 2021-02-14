@@ -91,7 +91,7 @@ public class PeopleAPIHelper {
                                     String email = emails.get(0).getValue();
                                     String id = person.getResourceName();
                                     ContactDetails cd = new ContactDetails(id, name, email);
-                                    boolean t = databaseHelper.addContact(cd);
+                                    databaseHelper.addContact(cd);
                                 }
                             }
                             else {
