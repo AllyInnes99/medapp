@@ -100,19 +100,14 @@ public class MedicationModel implements Serializable {
         List<DoseModel> doses = databaseHelper.selectDoseFromMedication(this);
         Map<String, Integer> takenPerDay = new HashMap<>();
 
-        takenPerDay.put("Monday", 0);
-        takenPerDay.put("Tuesday", 0);
-        takenPerDay.put("Wednesday", 0);
-        takenPerDay.put("Thursday", 0);
-        takenPerDay.put("Friday", 0);
-        takenPerDay.put("Saturday", 0);
-        takenPerDay.put("Sunday", 0);
+        for(String day: App.days) {
+            takenPerDay.put(day, 0);
+        }
 
         for(DoseModel doseModel: doses) {
             String d = doseModel.getDay();
             int count = doseModel.getAmount();
-
-            if(d.equals("Daily")){
+            if(doseModel.isDoseDaily()){
                 for(String key: takenPerDay.keySet()){
                     int original = takenPerDay.get(key);
                     takenPerDay.put(key, original + count);
@@ -125,19 +120,13 @@ public class MedicationModel implements Serializable {
         }
 
         Map<Integer, Integer> m = new HashMap<>();
-        m.put(Calendar.SUNDAY, mapFiller(takenPerDay, "Sunday"));
-        m.put(Calendar.MONDAY, mapFiller(takenPerDay, "Monday"));
-        m.put(Calendar.TUESDAY, mapFiller(takenPerDay, "Tuesday"));
-        m.put(Calendar.WEDNESDAY, mapFiller(takenPerDay, "Wednesday"));
-        m.put(Calendar.THURSDAY, mapFiller(takenPerDay, "Thursday"));
-        m.put(Calendar.FRIDAY, mapFiller(takenPerDay, "Friday"));
-        m.put(Calendar.SATURDAY, mapFiller(takenPerDay, "Saturday"));
-        takenPerDay.clear();
+        for(int i = 1; i < App.days.size(); i++) {
+            m.put(i, mapFiller(takenPerDay, App.days.get(i)));
+        }
 
         int current = this.getQuantity();
         int dayCount = 0;
 
-        // from today's date, continuously subtract from the current qty for each day and then
         while(current > 0) {
             current -= m.get(c.get(Calendar.DAY_OF_WEEK));
             c.add(Calendar.DATE, 1);
@@ -147,7 +136,7 @@ public class MedicationModel implements Serializable {
     }
 
     /**
-     * Helper function that is used to avoid NULL pointer errors
+     * Helper function that is used to avoid NULL pointer errors, by setting null values to 0
      * @param takenMap HashMap that is used
      * @param target the key we want to look up
      * @return 0 if get results in null, otherwise the value.

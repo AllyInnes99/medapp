@@ -71,6 +71,10 @@ public class DoseModel implements Comparable<DoseModel>, Serializable {
         return returnString;
     }
 
+    public boolean isDoseDaily() {
+        return this.day.equals("Daily");
+    }
+
     public int dayToInt() {
         return dayList.indexOf(this.day);
     }

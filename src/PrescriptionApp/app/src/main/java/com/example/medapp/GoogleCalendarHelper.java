@@ -218,7 +218,7 @@ public class GoogleCalendarHelper {
             final String recurrenceEndDate = year + month + day;
 
             final String recurrence;
-            if(doseModel.getDay().equals("Daily")) {
+            if(doseModel.isDoseDaily()) {
                 recurrence = "RRULE:FREQ=DAILY;UNTIL=";
             }
             else {
@@ -337,7 +337,7 @@ public class GoogleCalendarHelper {
                             + " of " + medModel.getName());
 
             String recurrence;
-            if(dose.getDay().equals("Daily")) {
+            if(dose.isDoseDaily()) {
                 setMedReminderTime(c, event, dose);
                 recurrence = "RRULE:FREQ=DAILY;UNTIL=";
             }
