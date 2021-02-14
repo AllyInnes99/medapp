@@ -1,6 +1,12 @@
 package com.example.medapp;
 
+import android.content.Context;
+
 import java.io.Serializable;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Class that represents a medication that a user is to take
@@ -83,6 +89,74 @@ public class MedicationModel implements Serializable {
      */
     public static boolean validateMedicationName(String medicationName) {
         return !medicationName.isEmpty();
+    }
+
+    /**
+     * Function that calcs. the no. of days until a medication runs out of supply
+     * @return the no. of days until the med is empty
+     */
+    public int daysUntilEmpty(DatabaseHelper databaseHelper) {
+        Calendar c = Calendar.getInstance();
+        List<DoseModel> doses = databaseHelper.selectDoseFromMedication(this);
+        Map<String, Integer> takenPerDay = new HashMap<>();
+
+        takenPerDay.put("Monday", 0);
+        takenPerDay.put("Tuesday", 0);
+        takenPerDay.put("Wednesday", 0);
+        takenPerDay.put("Thursday", 0);
+        takenPerDay.put("Friday", 0);
+        takenPerDay.put("Saturday", 0);
+        takenPerDay.put("Sunday", 0);
+
+        for(DoseModel doseModel: doses) {
+            String d = doseModel.getDay();
+            int count = doseModel.getAmount();
+
+            if(d.equals("Daily")){
+                for(String key: takenPerDay.keySet()){
+                    int original = takenPerDay.get(key);
+                    takenPerDay.put(key, original + count);
+                }
+            }
+            else {
+                int original = takenPerDay.get(d);
+                takenPerDay.put(d, original + count);
+            }
+        }
+
+        Map<Integer, Integer> m = new HashMap<>();
+        m.put(Calendar.SUNDAY, mapFiller(takenPerDay, "Sunday"));
+        m.put(Calendar.MONDAY, mapFiller(takenPerDay, "Monday"));
+        m.put(Calendar.TUESDAY, mapFiller(takenPerDay, "Tuesday"));
+        m.put(Calendar.WEDNESDAY, mapFiller(takenPerDay, "Wednesday"));
+        m.put(Calendar.THURSDAY, mapFiller(takenPerDay, "Thursday"));
+        m.put(Calendar.FRIDAY, mapFiller(takenPerDay, "Friday"));
+        m.put(Calendar.SATURDAY, mapFiller(takenPerDay, "Saturday"));
+        takenPerDay.clear();
+
+        int current = this.getQuantity();
+        int dayCount = 0;
+
+        // from today's date, continuously subtract from the current qty for each day and then
+        while(current > 0) {
+            current -= m.get(c.get(Calendar.DAY_OF_WEEK));
+            c.add(Calendar.DATE, 1);
+            dayCount++;
+        }
+        return dayCount;
+    }
+
+    /**
+     * Helper function that is used to avoid NULL pointer errors
+     * @param takenMap HashMap that is used
+     * @param target the key we want to look up
+     * @return 0 if get results in null, otherwise the value.
+     */
+    private int mapFiller(Map<String, Integer> takenMap, String target){
+        if(takenMap.get(target) == null){
+            return 0;
+        }
+        return takenMap.get(target);
     }
 
     /**
