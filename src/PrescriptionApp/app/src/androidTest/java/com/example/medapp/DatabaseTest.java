@@ -18,7 +18,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 /**
- * Instrumented test, which will execute on an Android device.
+ * Set of unit tests for testing the SQLite database of the application
  *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
@@ -48,13 +48,6 @@ public class DatabaseTest {
         db.close();
         context.deleteDatabase(db.getDatabaseName());
         db = new DatabaseHelper(context);
-    }
-
-
-    @Test
-    public void useAppContext() {
-        // Context of the app under test.
-        assertEquals("com.example.medapp", context.getPackageName());
     }
 
     /**
@@ -157,23 +150,27 @@ public class DatabaseTest {
         String day1 = App.days.get(c.get(Calendar.DAY_OF_WEEK));
         c.add(Calendar.DATE, -1);
         String day2 = App.days.get(c.get(Calendar.DAY_OF_WEEK));
+
         DoseModel today = new DoseModel(med.getMedicationId(), "12:30", day1, 1);
         DoseModel yesterday = new DoseModel(med.getMedicationId(), "11:30", day2, 1);
         DoseModel daily =  new DoseModel(med.getMedicationId(), "09:30", "Daily", 1);
+
         db.addDose(today);
         db.addDose(yesterday);
         db.addDose(daily);
+
         List<DoseModel> todayDoses = db.selectTodaysDoseAndNotTaken();
         assertEquals(todayDoses.size(), 2);
         assertEquals(day1, todayDoses.get(0).getDay());
+
         List<DoseModel> yesterdayDoses = db.selectYesterdaysDoseAndNotTaken();
         assertEquals(yesterdayDoses.size(), 2);
         assertEquals(day1, yesterdayDoses.get(0).getDay());
     }
 
     /**
-     * Test the daily refresh of daily doses
-     *
+     * Test the daily refresh set the isTaken field of every dose that is listed as daily in the
+     * database is set to false after execution and ensure that non-daily doses aren't updated
      */
     @Test
     public void testDailyRefresh() {
@@ -203,6 +200,10 @@ public class DatabaseTest {
         assertFalse(dose2.isTaken());
     }
 
+    /**
+     * Test that the weekly refresh of doses successfully sets the field for if the dose has been taken
+     * to false for every dose in the database
+     */
     @Test
     public void testWeeklyRefresh() {
         med = db.selectAllMedication().get(0);
