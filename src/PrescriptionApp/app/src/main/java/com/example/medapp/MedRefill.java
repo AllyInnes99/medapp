@@ -182,9 +182,9 @@ public class MedRefill extends AppCompatActivity {
     public void displayRecycler() {
         data = databaseHelper.selectRefillFromMed(medModel);
         //Collections.sort(data);
-        refillAdapter = new RefillAdapter(MedRefill.this, data);
+        refillAdapter = new RefillAdapter(context, data);
         recyclerView.setAdapter(refillAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(MedRefill.this));
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
     }
 
 }

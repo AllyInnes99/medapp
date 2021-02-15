@@ -155,18 +155,19 @@ public class AddDosesActivity extends AppCompatActivity {
             .setPositiveButton("yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    gac.addDoseReminder(medModel);
-                    gac.addRefillEvents(medModel);
-
-                    //Intent i = new Intent(AddDosesActivity.this, CarerActivity.class);
-                    //startActivity(i);
+                    medModel = databaseHelper.selectAllMedication().get(0);
+                    Intent i = new Intent(AddDosesActivity.this, CarerActivity.class);
+                    i.putExtra("medId", medModel.getMedicationId());
+                    startActivity(i);
                 }
             })
             .setNegativeButton("no", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     gac.addDoseReminder(medModel);
-                    gac.addRefillEvents(medModel);                }
+                    gac.addRefillEvents(medModel);
+                    returnToMainActivity();
+                }
             })
             .show();
 

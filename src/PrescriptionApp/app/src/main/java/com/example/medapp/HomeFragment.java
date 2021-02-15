@@ -41,7 +41,7 @@ public class HomeFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         databaseHelper = new DatabaseHelper(getActivity());
-        displayApplRecycler();
+        displayRecycler();
     }
 
     @Override
@@ -63,13 +63,13 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        displayApplRecycler();
+        displayRecycler();
     }
 
     /**
      * Method that is used to display the rec
      */
-    public void displayApplRecycler() {
+    public void displayRecycler() {
         models = databaseHelper.selectTodaysDoseAndNotTaken();
         List<DoseModel> filtered = new ArrayList<>();
         for(DoseModel dm: models) {

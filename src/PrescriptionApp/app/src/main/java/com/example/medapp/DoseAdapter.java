@@ -115,7 +115,7 @@ public class DoseAdapter extends RecyclerView.Adapter<DoseAdapter.MyViewHolder> 
                     databaseHelper.takeMedicationLate(doseModel, medModel);
                     String msg = "You have taken " + doseModel.getAmount() + " of " + medModel.getName();
                     Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
-                    fragment.displayApplRecycler();
+                    fragment.displayRecycler();
                 }
             })
             .setIcon(android.R.drawable.ic_dialog_alert)
@@ -157,7 +157,7 @@ public class DoseAdapter extends RecyclerView.Adapter<DoseAdapter.MyViewHolder> 
         databaseHelper.takeMedication(doseModel, medModel, onTime);
         String msg = "You have taken " + doseModel.getAmount() + " of " + medModel.getName();
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
-        fragment.displayApplRecycler();
+        fragment.displayRecycler();
     }
 
 

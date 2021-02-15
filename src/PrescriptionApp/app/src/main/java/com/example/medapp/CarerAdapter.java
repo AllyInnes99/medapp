@@ -18,10 +18,12 @@ public class CarerAdapter extends RecyclerView.Adapter<CarerAdapter.MyViewHolder
 
     private Context context;
     private List<ContactDetails> contacts;
+    private CarerActivity activity;
 
-    public CarerAdapter(Context context, List<ContactDetails> contacts) {
+    public CarerAdapter(Context context, List<ContactDetails> contacts, CarerActivity activity) {
         this.context = context;
         this.contacts = contacts;
+        this.activity = activity;
     }
 
     @NonNull
@@ -39,7 +41,7 @@ public class CarerAdapter extends RecyclerView.Adapter<CarerAdapter.MyViewHolder
         holder.mainLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                activity.addToCalendar(contact);
             }
         });
 
