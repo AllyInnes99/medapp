@@ -29,7 +29,7 @@ import java.util.List;
 public class PeopleAPIHelper {
 
     private static final String TAG = "MedApp";
-
+    public static final String PATIENT = "patient";
     private com.google.api.services.people.v1.PeopleService service;
     private DatabaseHelper databaseHelper;
     private static final NetHttpTransport NET_HTTP_TRANSPORT =
@@ -54,53 +54,22 @@ public class PeopleAPIHelper {
         return service;
     }
 
+    /**
+     * Method that calls the People API and receives the authenticated user's contacts, and then adds them
+     * to the app's database if they are listed as a patient
+     */
     public void getContacts() {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-
-                    /*
-                    ListContactGroupsResponse contactGroup = service.contactGroups().list().execute();
-                    List<ContactGroup> groups = contactGroup.getContactGroups();
-                    for(ContactGroup group: groups) {
-                        String name = group.getName();
-                        if(name.equals("Patient")){
-                            Log.w(TAG, group.toPrettyString());
-                        }
-                        //Log.w(TAG, name);
-                    }
-                    */
-
                     ListConnectionsResponse response = service.people().connections()
                         .list("people/me")
                         .setPersonFields("names,emailAddresses,relations")
                         .execute();
 
                     if(response != null && response.size() > 0) {
-                        List<Person> connections = response.getConnections();
-                        for(Person person: connections) {
-                            List<EmailAddress> emails = person.getEmailAddresses();
-                            List<Name> names = person.getNames();
-                            List<Relation> relations = person.getRelations();
-                            if(names != null && emails != null && relations != null && names.size() > 0) {
-                                Relation relation = relations.get(0);
-                                if(isPatient(relation)) {
-                                    Log.w(TAG, "here");
-                                    String name = names.get(0).getDisplayName();
-                                    String email = emails.get(0).getValue();
-                                    String id = person.getResourceName();
-                                    ContactDetails cd = new ContactDetails(id, name, email);
-                                    databaseHelper.addContact(cd);
-                                }
-                            }
-                            else {
-                                Log.w(TAG, "No names available");
-                            }
-                        }
-                    }
-                    else {
-                        Log.w(TAG, "No connections found");
+                        checkConnections(response);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -109,9 +78,43 @@ public class PeopleAPIHelper {
         }).start();
     }
 
-    private boolean isPatient(Relation relation) {
-        return relation.getPerson().toLowerCase().equals("patient");
+    /**
+     * Method that goes through the response of the API call and checks the user's connections in
+     * an attempt to find patients
+     * @param response data returned by API call
+     */
+    private void checkConnections(ListConnectionsResponse response) {
+        List<Person> connections = response.getConnections();
+        for(Person person: connections) {
+            List<EmailAddress> emails = person.getEmailAddresses();
+            List<Name> names = person.getNames();
+            List<Relation> relations = person.getRelations();
+            if(names != null && emails != null && relations != null && names.size() > 0) {
+                Relation relation = relations.get(0);
+                if(isPatient(relation)) {
+                    addContact(person, names.get(0).getDisplayName(), emails.get(0).getValue());
+                }
+            }
+        }
     }
 
+    /**
+     * From a person in the user's contacts, add the contact to the database
+     * @param person the person to add
+     * @param name the person's name
+     * @param email the person's email address
+     */
+    private void addContact(Person person, String name, String email) {
+        ContactDetails cd = new ContactDetails(person.getResourceName(), name, email);
+        databaseHelper.addContact(cd);
+    }
 
+    /**
+     * Method that checks if the relation of the contact is a patient
+     * @param relation the relation to the user
+     * @return true if relation is a patient, false otherwise
+     */
+    private boolean isPatient(Relation relation) {
+        return relation.getPerson().toLowerCase().equals(PATIENT);
+    }
 }

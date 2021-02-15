@@ -1,12 +1,16 @@
 package com.example.medapp;
 
 import android.content.Context;
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
 
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Class that represents a medication that a user is to take
@@ -101,7 +105,9 @@ public class MedicationModel implements Serializable {
         Map<String, Integer> takenPerDay = new HashMap<>();
 
         for(String day: App.days) {
-            takenPerDay.put(day, 0);
+            if(!day.isEmpty()){
+                takenPerDay.put(day, 0);
+            }
         }
 
         for(DoseModel doseModel: doses) {

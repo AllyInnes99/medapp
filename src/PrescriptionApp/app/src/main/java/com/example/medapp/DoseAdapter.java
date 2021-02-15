@@ -20,6 +20,9 @@ import org.joda.time.Period;
 import java.util.Calendar;
 import java.util.List;
 
+/**
+ * Adapter representing a row for the recyclerview of medication doses to be taken in a given day
+ */
 public class DoseAdapter extends RecyclerView.Adapter<DoseAdapter.MyViewHolder> {
 
     private Context context;

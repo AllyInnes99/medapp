@@ -97,8 +97,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-
+        String dropQuery = "DROP TABLE IF EXISTS ";
+        db.execSQL(dropQuery + MEDICATION_TABLE);
+        db.execSQL(dropQuery + DOSE_TABLE);
+        db.execSQL(dropQuery + LOG_TABLE);
+        db.execSQL(dropQuery + REFILL_TABLE);
+        db.execSQL(dropQuery + CONTACTS_TABLE);
+        onCreate(db);
     }
 
 
@@ -521,7 +526,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     */
 
     public List<RefillData> selectAllRefill() {
-        String rawQuery = "SELECT * FROM " + LOG_TABLE;
+        String rawQuery = "SELECT * FROM " + REFILL_TABLE;
         return executeRefillQuery(rawQuery);
     }
 
@@ -562,7 +567,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /*
         CONTACT QUERIES
     */
-    public List<ContactDetails> selectContacts() {
+    public List<ContactDetails> selectAllContacts() {
         String rawQuery = "SELECT * FROM " + CONTACTS_TABLE;
         return executeContactQuery(rawQuery);
 

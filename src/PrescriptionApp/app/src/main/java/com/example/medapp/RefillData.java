@@ -88,12 +88,5 @@ public class RefillData {
         this.originalQty = originalQty;
     }
 
-    private String padDate(int val){
-        String valStr = Integer.toString(val);
-        if(val < 10){
-            valStr = "0" + valStr;
-        }
-        return valStr;
-    }
 
 }

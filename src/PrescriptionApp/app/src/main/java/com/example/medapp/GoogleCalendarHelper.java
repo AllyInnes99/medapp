@@ -35,21 +35,21 @@ public class GoogleCalendarHelper {
     private EventAttendee contact;
     private static final String CALENDAR_ID = "primary";
 
-
+    /**
+     * Initialise a Google Calendar api connection
+     * @param context the app context
+     */
     public GoogleCalendarHelper(Context context) {
         this.databaseHelper = new DatabaseHelper(context);
-        this.refillReminderDays = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).
-                                                    getString("reminderDay", ""));
-
+        setRefillReminderDays(context);
         GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2
                 (context, Collections.singleton(CalendarScopes.CALENDAR_EVENTS));
         credential.setSelectedAccount(GoogleSignIn.getLastSignedInAccount(context).getAccount());
 
-        // build the service that will be used to make API calls
         this.service = new com.google.api.services.calendar.Calendar.Builder(
-                        NET_HTTP_TRANSPORT, JSON_FACTORY, credential)
-                        .setApplicationName(context.getString(R.string.app_name))
-                        .build();
+            NET_HTTP_TRANSPORT, JSON_FACTORY, credential)
+            .setApplicationName(context.getString(R.string.app_name))
+            .build();
     }
 
     /**
@@ -523,6 +523,11 @@ public class GoogleCalendarHelper {
         return valStr;
     }
 
+    /**
+     * Given a day of the week, obtain the next occurrence of that day
+     * @param dow Calender.{%DAY}
+     * @return Calendar obj set to the next occurrence of provided day
+     */
     private Calendar nextDayOfWeek(int dow) {
         Calendar date = Calendar.getInstance();
         int diff = dow - date.get(Calendar.DAY_OF_WEEK);
@@ -531,6 +536,17 @@ public class GoogleCalendarHelper {
         }
         date.add(Calendar.DAY_OF_MONTH, diff);
         return date;
+    }
+
+    private void setRefillReminderDays(Context context) {
+        String i = PreferenceManager.getDefaultSharedPreferences(context).
+                getString("reminderDay", "");
+        if(i == null) {
+            this.refillReminderDays = 7;
+        }
+        else {
+            this.refillReminderDays = Integer.parseInt(i);
+        }
     }
 
 }
