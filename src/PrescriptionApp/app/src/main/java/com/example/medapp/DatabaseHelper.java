@@ -440,9 +440,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Calendar c = Calendar.getInstance();
         c.add(Calendar.DATE, -1);
 
-        // get yesterdays day
-        Toast.makeText(context, App.days.get(c.get(Calendar.DAY_OF_WEEK)), Toast.LENGTH_LONG).show();
-
         // Get the day as a string
         String day = App.days.get(calendar.get(c.DAY_OF_WEEK));
 
