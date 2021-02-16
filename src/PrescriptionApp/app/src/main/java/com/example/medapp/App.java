@@ -11,6 +11,7 @@ import android.provider.CalendarContract;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class App extends Application {
@@ -54,7 +55,7 @@ public class App extends Application {
     }
 
     private String createChannelID(MedicationModel m) {
-        String channelID = m.getName().toUpperCase() + "_CHANNEL";
+        String channelID = m.getName().toUpperCase(Locale.ROOT) + "_CHANNEL";
         channelIDs.put(m, channelID);
         return channelID;
     }

@@ -24,6 +24,7 @@ import com.google.api.services.people.v1.model.Relation;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 
 public class PeopleAPIHelper {
@@ -115,6 +116,6 @@ public class PeopleAPIHelper {
      * @return true if relation is a patient, false otherwise
      */
     private boolean isPatient(Relation relation) {
-        return relation.getPerson().toLowerCase().equals(PATIENT);
+        return relation.getPerson().toLowerCase(Locale.ROOT).equals(PATIENT);
     }
 }

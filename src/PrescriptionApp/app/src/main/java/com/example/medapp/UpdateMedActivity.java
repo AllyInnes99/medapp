@@ -129,7 +129,7 @@ public class UpdateMedActivity extends AppCompatActivity {
 
                 }
                 catch(Exception e){
-                    Toast.makeText(UpdateMedActivity.this, e.toString(), Toast.LENGTH_SHORT);
+                    Toast.makeText(UpdateMedActivity.this, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                 }
 
             }

@@ -16,6 +16,7 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
+import java.util.Locale;
 
 public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.MyViewHolder> {
 
@@ -94,9 +95,9 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.My
             medicationModels.addAll(copy);
         }
         else {
-            query = query.toLowerCase();
+            query = query.toLowerCase(Locale.ROOT);
             for(MedicationModel model: copy) {
-                if(model.getName().toLowerCase().contains(query)){
+                if(model.getName().toLowerCase(Locale.ROOT).contains(query)){
                     medicationModels.add(model);
                 }
             }

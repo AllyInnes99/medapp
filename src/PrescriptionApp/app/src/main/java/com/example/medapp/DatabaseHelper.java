@@ -808,6 +808,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
+     * Method that counts the no. of patient contacts the google user has
+     * @return
+     */
+    public int countContacts() {
+        String queryString = "SELECT COUNT (*) FROM " + CONTACTS_TABLE;
+        return countRowHelper(queryString);
+    }
+
+    /**
      * Helper method that is used to perform count operations on the DB
      * @param queryString the query to be executed
      * @return the resulting int of the COUNT query

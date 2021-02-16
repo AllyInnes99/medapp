@@ -55,14 +55,12 @@ public class CarerAdapter extends RecyclerView.Adapter<CarerAdapter.MyViewHolder
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView contact_name, contact_email;
-        CheckBox checkBox;
         LinearLayout mainLayout;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             contact_name = itemView.findViewById(R.id.contact_name);
             contact_email = itemView.findViewById(R.id.contact_email);
-            checkBox = itemView.findViewById(R.id.checkBox);
             mainLayout = itemView.findViewById(R.id.mainLayout);
         }
     }

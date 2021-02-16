@@ -85,6 +85,9 @@ public class AddDosesActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Method that adds the doses to the database
+     */
     private void addToDatabase() {
         databaseHelper.addMedication(medModel);
         List<MedicationModel> mModels = databaseHelper.selectAllMedication();
@@ -115,6 +118,11 @@ public class AddDosesActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Method that starts a notification for a medication does, if the medication is meant
+     * to be taken later in the day
+     * @param doseModel the dose that a notification is to be created for
+     */
     private void initialiseNotification(DoseModel doseModel){
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(System.currentTimeMillis());
@@ -140,15 +148,30 @@ public class AddDosesActivity extends AppCompatActivity {
 
             PendingIntent pendingIntent = PendingIntent.getBroadcast(AddDosesActivity.this, doseModel.getDoseId() + 2, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
-            Toast.makeText(AddDosesActivity.this, "Registered alarm.", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(AddDosesActivity.this, "Registered alarm.", Toast.LENGTH_SHORT).show();
         }
 
     }
 
     private void addToGoogleCal() {
-        final GoogleCalendarHelper gac = new GoogleCalendarHelper(AddDosesActivity.this);
+        GoogleCalendarHelper gch = new GoogleCalendarHelper(AddDosesActivity.this);
         medModel = databaseHelper.selectMedicationFromID(medModel.getMedicationId());
-        Toast.makeText(AddDosesActivity.this, "Adding reminder events to Google Calendar", Toast.LENGTH_SHORT).show();
+        if(databaseHelper.countContacts() > 0) {
+            promptToAddContacts(gch);
+        }
+        else {
+            addEvents(gch);
+        }
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        displayRecycler();
+    }
+
+    private void promptToAddContacts(final GoogleCalendarHelper gch) {
         new MaterialAlertDialogBuilder(AddDosesActivity.this)
             .setTitle("Select Patients")
             .setMessage("Would you like to assign a patient to this medication? The details of the medication will be shared with them on Google Calendar.")
@@ -164,20 +187,16 @@ public class AddDosesActivity extends AppCompatActivity {
             .setNegativeButton("no", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    gac.addDoseReminder(medModel);
-                    gac.addRefillEvents(medModel);
-                    returnToMainActivity();
+                    addEvents(gch);
                 }
             })
             .show();
-
     }
 
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        displayRecycler();
+    private void addEvents(GoogleCalendarHelper gch) {
+        gch.addDoseReminder(medModel);
+        gch.addRefillEvents(medModel);
+        returnToMainActivity();
     }
 
     private void displayRecycler() {

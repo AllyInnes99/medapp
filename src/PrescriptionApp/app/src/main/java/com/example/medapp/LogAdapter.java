@@ -51,7 +51,7 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.MyViewHolder> {
         holder.log_amount.setText(String.format("Amount to be taken: %s", log.getAmount()));
         holder.log_on_time.setText(String.format("On time: %s", getOnTimeString(log)));
         holder.log_taken.setText(String.format("Taken: %s", getTakenString(log)));
-        DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        DateFormat format = SimpleDateFormat.getDateInstance();
         holder.log_date.setText(String.format("%s", format.format(log.getTime())));
 
         holder.mainLayout.setOnClickListener(new View.OnClickListener() {

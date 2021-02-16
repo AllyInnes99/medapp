@@ -26,6 +26,7 @@
 
         <EditText
             android:id="@+id/et_time"
+            android:inputType="time"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
