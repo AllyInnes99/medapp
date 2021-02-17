@@ -6,8 +6,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.icu.text.UnicodeSetSpanner;
 import android.widget.Toast;
+
+import androidx.preference.PreferenceManager;
 
 import java.util.Calendar;
 import java.util.List;
@@ -47,6 +50,23 @@ public class DailyEventReceiver extends BroadcastReceiver {
             }
         }
     }
+
+
+    private void setRefillReminder(MedicationModel med) {
+        Toast.makeText(mContext, "reminderSet", Toast.LENGTH_SHORT).show();
+
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(System.currentTimeMillis());
+        c.set(Calendar.HOUR_OF_DAY, 9);
+
+        AlarmManager alarmManager = (AlarmManager)mContext.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(mContext, RefillReminder.class);
+        intent.setAction("android.intent.action.NOTIFY");
+        intent.putExtra("medId", med.getMedicationId());
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, med.getMedicationId() + 2, intent, 0);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
+    }
+
 
     /**
      * Method that creates a notification for a given dose of medication
@@ -106,7 +126,7 @@ public class DailyEventReceiver extends BroadcastReceiver {
             for(DoseModel d: doseModels) {
                 String day = d.getDay();
                 if((App.days.indexOf(day) == cDay || day.equals("Daily"))&& !d.isTaken()){
-                    databaseHelper.takeMedication(d, m, true);
+                    databaseHelper.takeMedication(d, m);
                 }
             }
         }
@@ -117,9 +137,14 @@ public class DailyEventReceiver extends BroadcastReceiver {
      */
     private void decrementDaysUntilEmpty(){
         List<MedicationModel> medModels = databaseHelper.selectAllMedication();
+        int refill = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(mContext).
+                getString("reminderDay", "7"));
         for(MedicationModel med: medModels) {
             int dec = med.getDaysUntilEmpty() - 1;
             med.setDaysUntilEmpty(dec);
+            if(!med.isRefillRequested() && med.getDaysUntilEmpty() < refill) {
+                setRefillReminder(med);
+            }
             databaseHelper.updateMedication(med);
         }
     }
