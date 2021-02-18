@@ -1,6 +1,6 @@
 *.apk
 *.iml
-/output-metadata.json
+.output-metadata.json
 .gradle
 /local.properties
 /.idea/caches

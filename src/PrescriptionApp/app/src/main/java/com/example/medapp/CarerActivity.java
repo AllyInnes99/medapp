@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -38,6 +39,17 @@ public class CarerActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        GoogleCalendarHelper gac = new GoogleCalendarHelper(context);
+        gac.addDoseReminder(medModel);
+        gac.addRefillEvents(medModel);
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        Toast.makeText(context, "Successfully created medication " + medModel.getName(), Toast.LENGTH_SHORT).show();
+        startActivity(intent);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         displayRecycler();
@@ -59,7 +71,7 @@ public class CarerActivity extends AppCompatActivity {
         databaseHelper.updateMedication(medModel);
         Intent intent = new Intent(context, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        Toast.makeText(context, "Successfully create medication " + medModel.getName(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, "Successfully created medication " + medModel.getName(), Toast.LENGTH_SHORT).show();
         startActivity(intent);
     }
 }
