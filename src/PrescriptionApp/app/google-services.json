@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "760826647786-3lh9lao07700m4lu5re65vrf4v6j957r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.medapp",
+            "certificate_hash": "bca51773809002897474a7641686fa9cf2e79fbb"
+          }
+        },
+        {
           "client_id": "760826647786-jbc1utq3ral02couvo0iep2djvu2mqbs.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -22,7 +30,7 @@
           }
         },
         {
-          "client_id": "760826647786-9rhj3v45f57sdtu9t8anpksu8a4cala5.apps.googleusercontent.com",
+          "client_id": "760826647786-auv3uj2k1je1dmjiohges1d846evjqm7.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
