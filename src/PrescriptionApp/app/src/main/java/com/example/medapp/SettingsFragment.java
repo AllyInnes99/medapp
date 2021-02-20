@@ -32,7 +32,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         PreferenceCategory googlePreferences = findPreference("google");
         Preference googleLogin = findPreference("login");
         Preference googleSignout = findPreference("logout");
-        Preference selectCarers = findPreference("carer");
         Preference doseEvents = findPreference("dose_events");
         Preference reminderEvents = findPreference("refill_reminders");
         ListPreference lp = findPreference("reminderDay");
@@ -48,7 +47,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         else {
             googlePreferences.removePreference(googleSignout);
             googlePreferences.removePreference(calendar);
-            googlePreferences.removePreference(selectCarers);
             googlePreferences.removePreference(doseEvents);
             googlePreferences.removePreference(reminderEvents);
         }
@@ -88,22 +86,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 }
             });
 
-            selectCarers.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    Intent i = new Intent(requireContext(), CarerActivity.class);
-                    startActivity(i);
-                    return true;
-                }
-            });
 
         }
-
-
-
-
-
-
 
     }
 

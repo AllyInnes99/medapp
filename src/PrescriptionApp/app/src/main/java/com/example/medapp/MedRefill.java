@@ -106,7 +106,6 @@ public class MedRefill extends AppCompatActivity {
             inputVal = Integer.parseInt(v);
             int original = medModel.getQuantity();
             int newQuantity = original + inputVal;
-            Toast.makeText(context, Integer.toString(newQuantity), Toast.LENGTH_LONG).show();
 
 
             medModel.setQuantity(newQuantity);
@@ -176,7 +175,6 @@ public class MedRefill extends AppCompatActivity {
         int year = c.get(Calendar.YEAR);
         RefillData data = new RefillData(medModel.getMedicationId(), day, month, year, refill, original);
         boolean t = databaseHelper.addRefill(data);
-        Toast.makeText(context, Boolean.toString(t), Toast.LENGTH_SHORT).show();
     }
 
     public void displayRecycler() {

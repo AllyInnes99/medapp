@@ -2,10 +2,12 @@ package com.example.medapp;
 
 import android.content.Context;
 import android.os.Build;
+import android.provider.ContactsContract;
 
 import androidx.annotation.RequiresApi;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +31,6 @@ public class MedicationModel implements Serializable {
     private boolean refillRequested;
     private String calendarRefill;
     private String calendarEmpty;
-
 
     /**
      * Constructor that is used when first creating a medication
@@ -98,7 +99,7 @@ public class MedicationModel implements Serializable {
     /**
      * Function that calcs. the no. of days until a medication runs out of supply
      * @return the no. of days until the med is empty
-     */
+
     public int daysUntilEmpty(DatabaseHelper databaseHelper) {
         Calendar c = Calendar.getInstance();
         List<DoseModel> doses = databaseHelper.selectDoseFromMedication(this);
@@ -139,6 +140,41 @@ public class MedicationModel implements Serializable {
             dayCount++;
         }
         return dayCount;
+    }
+    */
+
+    /**
+     * Function that calcs. the no. of days until a medication runs out of supply
+     * @param databaseHelper retrieves data from db when required
+     * @return the no. of days until the med is empty
+     *
+    */
+    public int calcDaysUntilEmpty(DatabaseHelper databaseHelper) {
+        List<String> days = new ArrayList<>(App.days);
+        days.remove(0);
+        int count = 0;
+
+        Calendar c = Calendar.getInstance();
+        int day = c.get(Calendar.DAY_OF_WEEK) - 1;
+
+        Map<Integer, Integer> noToBeTaken = new HashMap<>(days.size());
+        int current = this.getQuantity();
+        while(current > 0) {
+            int target = day % days.size();
+            if(noToBeTaken.get(target) == null) {
+                int total = 0;
+                List<DoseModel> doses = databaseHelper.selectDoseFromDay(days.get(target));
+                for(DoseModel dose: doses) {
+                    total += dose.getAmount();
+                }
+                noToBeTaken.put(target, total);
+            }
+            current -= noToBeTaken.get(target);
+            day += 1;
+            count += 1;
+        }
+
+        return count;
     }
 
     /**

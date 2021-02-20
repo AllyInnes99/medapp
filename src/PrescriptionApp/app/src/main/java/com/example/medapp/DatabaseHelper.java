@@ -398,7 +398,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @return a list of dose to be taken on the given day
      */
     public List<DoseModel> selectDoseFromDay(String day) {
-        String rawQuery = "SELECT * FROM " + DOSE_TABLE + " WHERE " + COL_DAY + " = " + day;
+        String rawQuery = "SELECT * FROM " + DOSE_TABLE + " WHERE "
+                        + COL_DAY + " = '" + day
+                        + "' OR " + COL_DAY + " = 'Daily'";
         return executeDoseQuery(rawQuery);
     }
 
@@ -837,7 +839,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param medModel the medication we want to update the given field
      */
     public void updateDaysUntilEmpty(MedicationModel medModel) {
-        int days = medModel.daysUntilEmpty(this);
+        int days = medModel.calcDaysUntilEmpty(this);
         ContentValues cv = new ContentValues();
         cv.put(COL_DAYS_UNTIL_EMPTY, days);
         updateMedicationRow(medModel, cv);

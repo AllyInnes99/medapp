@@ -27,13 +27,6 @@
             app:key="logout">
         </Preference>
 
-        <Preference
-            app:title="Select carer"
-            app:summary="Select carers from your Google Contacts"
-            app:key="carer">
-        </Preference>
-
-
         <SwitchPreferenceCompat
             app:key="calendar"
             app:title="Enable Google Calendar"

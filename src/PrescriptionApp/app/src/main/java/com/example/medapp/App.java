@@ -77,14 +77,14 @@ public class App extends Application {
 
             NotificationChannel medChannel = new NotificationChannel(
                     MED_TAKING_CHANNEL,
-                    "Med Channel",
+                    "Dose Reminders",
                     NotificationManager.IMPORTANCE_HIGH
             );
-            medChannel.setDescription("Notifications that alert users to take their medication");
+            medChannel.setDescription("Notifications that alert users to take doses of medication at appointed time.");
 
             NotificationChannel refillChannel = new NotificationChannel(
                     REFILL_CHANNEL,
-                    "Refill Channel",
+                    "Refill Reminders",
                     NotificationManager.IMPORTANCE_HIGH
             );
             refillChannel.setDescription("Notifications that alert user that they need to re-supply certain med");
