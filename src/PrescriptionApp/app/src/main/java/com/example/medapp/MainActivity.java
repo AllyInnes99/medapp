@@ -15,9 +15,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -27,18 +25,16 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
 
     BottomNavigationView bottomNavigationView;
     NavController navController;
@@ -62,7 +58,7 @@ public class MainActivity extends AppCompatActivity{
         setRefreshAlarm();
 
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(MainActivity.this);
-        if(acct != null) {
+        if (acct != null) {
             PeopleAPIHelper peopleApi = new PeopleAPIHelper(MainActivity.this);
             //Toast.makeText(MainActivity.this, Boolean.toString(peopleApi.getService() == null), Toast.LENGTH_LONG).show();
             peopleApi.getContacts();
@@ -80,7 +76,6 @@ public class MainActivity extends AppCompatActivity{
             try {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
-                //Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
                 firebaseAuthWithGoogle(account.getIdToken());
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
@@ -95,20 +90,12 @@ public class MainActivity extends AppCompatActivity{
         super.onResume();
     }
 
-    private void setMedicationAlarm(){
-        // get every application in the db
-        DatabaseHelper databaseHelper = new DatabaseHelper(MainActivity.this);
-        List<DoseModel> applications = databaseHelper.selectAllDoses();
-        for(DoseModel doseModel : applications){
-            setApplicationAlarm(doseModel);
-        }
-    }
-
     /**
      * Method that creates a reminder notification for user to take certain medication
+     *
      * @param model - the application to be notified
      */
-    private void setApplicationAlarm(DoseModel model){
+    private void setApplicationAlarm(DoseModel model) {
         Calendar c = Calendar.getInstance();
         String[] time = model.timeToHourAndMin();
         int hour = Integer.parseInt(time[0]);
@@ -120,7 +107,7 @@ public class MainActivity extends AppCompatActivity{
         c.set(Calendar.MINUTE, mins);
 
 
-        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, AlertReceiver.class);
         intent.setAction("android.intent.action.NOTIFY");
 
@@ -137,7 +124,7 @@ public class MainActivity extends AppCompatActivity{
      * medication that the user wishes to do so.
      */
     private void setDailyEventAlarm() {
-        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
         // set calendar to begin at midnight the next day
         Calendar c = Calendar.getInstance();
@@ -150,9 +137,6 @@ public class MainActivity extends AppCompatActivity{
         // Setup intent to pass to receiver
         Intent intent = new Intent(MainActivity.this, DailyEventReceiver.class);
         intent.setAction("android.intent.action.NOTIFY");
-
-        // Register the custom broadcast receiver
-        //MainActivity.this.registerReceiver(new DailyEventReceiver(), new IntentFilter());
 
         // Set up pendingIntent for the broadcast to specify action in the future
         PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, DAILY_EVENT_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -168,7 +152,7 @@ public class MainActivity extends AppCompatActivity{
      * a new week
      */
     private void setRefreshAlarm() {
-        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
         // Setup calendar obj so that it is set to the coming Monday at 00:00
         Calendar c = Calendar.getInstance();
@@ -182,9 +166,6 @@ public class MainActivity extends AppCompatActivity{
         Intent intent = new Intent(MainActivity.this, RefreshReceiver.class);
         intent.setAction("android.intent.action.NOTIFY");
 
-        // Register the custom broadcast receiver
-        //MainActivity.this.registerReceiver(new RefreshReceiver(), new IntentFilter());
-
         // Set up pendingIntent for the broadcast to specify action in the future
         PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, WEEKLY_EVENT_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -192,6 +173,12 @@ public class MainActivity extends AppCompatActivity{
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
     }
 
+    /**
+     * Method that performs the authentication of the user's Google account with the Firebase
+     * backend
+     *
+     * @param idToken user's idToken of their Google account
+     */
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         mAuth.signInWithCredential(credential)

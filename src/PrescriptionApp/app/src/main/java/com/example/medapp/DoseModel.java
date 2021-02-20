@@ -18,17 +18,18 @@ public class DoseModel implements Comparable<DoseModel>, Serializable {
     private String calendarID;
 
     private static List<String> dayList = Arrays.asList("Sunday", "Monday", "Tuesday", "Wednesday",
-                                                        "Thursday", "Friday", "Saturday");
+            "Thursday", "Friday", "Saturday");
 
     /**
      * Initialise a DoseModel instance, used when initially creating dose
+     *
      * @param medicationId the int ID of the medication model that this dose references
-     * @param time - String that represents the time for dose is to be taken
-     * @param day - String for the day of when this dose is to be taken
-     * @param amount - int for the amount of medicine to be taken in this dose
+     * @param time         - String that represents the time for dose is to be taken
+     * @param day          - String for the day of when this dose is to be taken
+     * @param amount       - int for the amount of medicine to be taken in this dose
      */
     public DoseModel(int medicationId, String time, String day, int amount) {
-        this.doseId = (int)System.currentTimeMillis();
+        this.doseId = (int) System.currentTimeMillis();
         this.medicationId = medicationId;
         this.time = time;
         this.day = day;
@@ -39,33 +40,34 @@ public class DoseModel implements Comparable<DoseModel>, Serializable {
 
     /**
      * Initialise DoseModel instance, used when retrieving dose from database
-     * @param doseId unique int ID that identifies the dose in the DB
+     *
+     * @param doseId       unique int ID that identifies the dose in the DB
      * @param medicationId int ID of the medicaiton that this dose references
-     * @param timeMinutes int that represents the minutes of when the dose is to be taken
-     * @param timeHour int that represents the hours of when the dose is to be taken
-     * @param day String that represents the day of when the dose is to be taken
-     * @param amount integer that represents the no. of the medication that should be taken w/ dose
-     * @param isTaken bool that represents whether the medication has been taken
-     * @param calendarID String for ID of the Google Calendar event for the dose
+     * @param timeMinutes  int that represents the minutes of when the dose is to be taken
+     * @param timeHour     int that represents the hours of when the dose is to be taken
+     * @param day          String that represents the day of when the dose is to be taken
+     * @param amount       integer that represents the no. of the medication that should be taken w/ dose
+     * @param isTaken      bool that represents whether the medication has been taken
+     * @param calendarID   String for ID of the Google Calendar event for the dose
      */
     public DoseModel(int doseId, int medicationId, int timeMinutes, int timeHour, String day,
-                                            int amount, boolean isTaken, String calendarID) {
+                     int amount, boolean isTaken, String calendarID) {
         this.doseId = doseId;
         this.medicationId = medicationId;
-        this.time = intTimeToString(timeHour) +":"+ intTimeToString(timeMinutes);
+        this.time = intTimeToString(timeHour) + ":" + intTimeToString(timeMinutes);
         this.day = day;
         this.amount = amount;
         this.isTaken = isTaken;
         this.calendarID = calendarID;
     }
 
-    public String[] timeToHourAndMin(){
+    public String[] timeToHourAndMin() {
         return this.getTime().split(":");
     }
 
     private String intTimeToString(int time) {
         String returnString = Integer.toString(time);
-        if(returnString.length() == 1){
+        if (returnString.length() == 1) {
             returnString = "0" + returnString;
         }
         return returnString;
@@ -139,7 +141,7 @@ public class DoseModel implements Comparable<DoseModel>, Serializable {
     public int compareTo(DoseModel o) {
         String thisTime = this.getTime();
         String otherTime = o.getTime();
-        if(thisTime.equals(otherTime)) return 0;
+        if (thisTime.equals(otherTime)) return 0;
         return thisTime.compareTo(otherTime);
     }
 }

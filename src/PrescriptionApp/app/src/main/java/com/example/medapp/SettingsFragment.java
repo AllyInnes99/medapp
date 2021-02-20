@@ -23,6 +23,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
+/**
+ * Fragment that displays the shared preferences options to the user
+ */
 public class SettingsFragment extends PreferenceFragmentCompat {
 
     @Override
@@ -39,27 +42,26 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         final GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(requireContext());
 
-        if(acct != null) {
+        if (acct != null) {
             googlePreferences.removePreference(googleLogin);
             googleSignout.setSummary(String.format("Currently signed in as %s", acct.getDisplayName()));
             calendar.setChecked(true);
-        }
-        else {
+        } else {
             googlePreferences.removePreference(googleSignout);
             googlePreferences.removePreference(calendar);
             googlePreferences.removePreference(doseEvents);
             googlePreferences.removePreference(reminderEvents);
         }
 
-        if(lp != null) {
+        if (lp != null) {
             lp.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    if(acct != null) {
+                    if (acct != null) {
                         int prev = Integer.parseInt(sp.getString("reminderDay", ""));
                         GoogleCalendarHelper gch = new GoogleCalendarHelper(requireContext());
                         int v = Integer.parseInt(newValue.toString());
-                        if(v != prev) {
+                        if (v != prev) {
                             gch.updateRefillReminderEvents(v);
                         }
                     }
@@ -68,7 +70,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             });
         }
 
-        if(googleLogin != null) {
+        if (googleLogin != null) {
             googleLogin.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
@@ -77,7 +79,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     return true;
                 }
             });
-
             googleSignout.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
@@ -85,12 +86,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     return true;
                 }
             });
-
-
         }
-
     }
 
+    /**
+     * Method that signs the user out of their Google Account
+     */
     private void signOutOfGoogle() {
         Scope scope = new Scope("https://www.googleapis.com/auth/calendar.events");
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -102,15 +103,15 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         FirebaseAuth.getInstance().signOut();
         mGoogleSignInClient.signOut().addOnCompleteListener(requireActivity(),
-            new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    Toast.makeText(getActivity(), "Signed out.", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(getActivity(), MainActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                }
-            });
+                new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Toast.makeText(getActivity(), "Signed out.", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(getActivity(), MainActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                    }
+                });
     }
 
 

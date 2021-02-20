@@ -11,6 +11,9 @@ import android.widget.Toast;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+/**
+ * Extended broadcast receiver for the medication refill events
+ */
 public class RefillReminder extends BroadcastReceiver {
     public static final int DEFAULT = -1;
 
@@ -43,11 +46,6 @@ public class RefillReminder extends BroadcastReceiver {
                     .setAutoCancel(true)
                     .build();
             notificationManager.notify(1, notification);
-
-
         }
-
-
-
     }
 }

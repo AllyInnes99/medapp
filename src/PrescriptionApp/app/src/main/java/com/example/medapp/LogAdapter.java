@@ -57,25 +57,24 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.MyViewHolder> {
         holder.mainLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!log.isTaken()) {
+                if (!log.isTaken()) {
                     new MaterialAlertDialogBuilder(context)
-                        .setTitle("Register medication as taken")
-                        .setMessage("You missed this dose. Would you like to register it as taken?")
-                        .setPositiveButton("yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                updateMissedDose(log, medModel);
-                            }
-                        })
-                        .setNegativeButton("no", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(context, "No", Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .setIcon(android.R.drawable.ic_input_add)
-                        .show();
-                }
-                else {
+                            .setTitle("Register medication as taken")
+                            .setMessage("You missed this dose. Would you like to register it as taken?")
+                            .setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    updateMissedDose(log, medModel);
+                                }
+                            })
+                            .setNegativeButton("no", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Toast.makeText(context, "No", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .setIcon(android.R.drawable.ic_input_add)
+                            .show();
+                } else {
                     new MaterialAlertDialogBuilder(context)
                             .setTitle("Log Entry")
                             .setMessage(log.getMsg())

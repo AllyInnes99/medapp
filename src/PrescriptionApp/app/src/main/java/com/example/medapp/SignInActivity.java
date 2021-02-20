@@ -25,49 +25,36 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+/**
+ * Activity that when launched, the user is prompted to sign in with their Google account
+ */
 public class SignInActivity extends AppCompatActivity {
 
     private static final String TAG = "Google Activity";
     private static int GOOGLE_SIGN_IN = 100;
     private FirebaseAuth mAuth;
-    private GoogleSignInClient mGoogleSignInClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
-
-        /*
-         define scope for calendar API to prompt user to give permission for accessing their
-         Google Calendar - full list of scopes can be found here:
-                https://developers.google.com/identity/protocols/oauth2/scopes
-         */
         Scope scope = new Scope("https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/contacts.readonly");
-
-
-        // Configure sign-in to request the user's ID, email address, and basic
-        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestScopes(scope)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
-
-        // Build a GoogleSignInClient with the options specified by gso.
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
+        GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         mAuth = FirebaseAuth.getInstance();
-
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, GOOGLE_SIGN_IN);
-
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null) {
+        if (currentUser != null) {
             startActivity(new Intent(SignInActivity.this, MainActivity.class));
         }
     }
@@ -80,12 +67,10 @@ public class SignInActivity extends AppCompatActivity {
         if (requestCode == GOOGLE_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
-                // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
                 firebaseAuthWithGoogle(account.getIdToken());
             } catch (ApiException e) {
-                // Google Sign In failed, update UI appropriately
                 Toast.makeText(SignInActivity.this, "You did not sign-in with Google.", Toast.LENGTH_SHORT).show();
                 finish();
                 Log.w(TAG, "Google sign in failed", e);
@@ -94,21 +79,26 @@ public class SignInActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Authenticate the Google account with the Firebase backend
+     *
+     * @param idToken token representing the user's Google account
+     */
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         mAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-            if (task.isSuccessful()) {
-                // Sign in success, update UI with the signed-in user's information
-                Log.d(TAG, "signInWithCredential:success");
-                Toast.makeText(SignInActivity.this, "Authentication success", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(SignInActivity.this, MainActivity.class));
-            } else {
-                // If sign in fails, display a message to the user.
-                Log.w(TAG, "signInWithCredential:failure", task.getException());
-                Toast.makeText(SignInActivity.this, "Authentication Failed.", Toast.LENGTH_SHORT).show();
-            }
+                if (task.isSuccessful()) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d(TAG, "signInWithCredential:success");
+                    Toast.makeText(SignInActivity.this, "Authentication success", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(SignInActivity.this, MainActivity.class));
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w(TAG, "signInWithCredential:failure", task.getException());
+                    Toast.makeText(SignInActivity.this, "Authentication Failed.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

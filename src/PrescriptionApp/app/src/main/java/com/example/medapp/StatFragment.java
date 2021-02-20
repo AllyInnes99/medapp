@@ -44,7 +44,6 @@ public class StatFragment extends Fragment {
     LogAdapter logAdapter;
 
     public StatFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -63,29 +62,7 @@ public class StatFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!logs.isEmpty()){
-                    new MaterialAlertDialogBuilder(requireContext())
-                        .setTitle("Just checking...")
-                        .setMessage("Are you sure you want to delete your log history? This cannot be undone.")
-
-                        .setPositiveButton("yes", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                for(MedicationLog log: logs) {
-                                    databaseHelper.deleteLog(log);
-                                }
-                                Toast.makeText(requireContext(), "Deleted your logs history", Toast.LENGTH_SHORT).show();
-                                displayRecycler();
-                            }
-                        })
-
-                        .setNegativeButton("no", null)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .show();
-                }
-                else{
-                    Toast.makeText(requireContext(), "There are no log events to delete.", Toast.LENGTH_SHORT).show();
-                }
-
+                deleteLogs();
             }
         });
 
@@ -106,6 +83,36 @@ public class StatFragment extends Fragment {
         displayRecycler();
     }
 
+    /**
+     * Method that prompts the user to delete all of their medication taking logs
+     */
+    private void deleteLogs() {
+        if (!logs.isEmpty()) {
+            new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("Just checking...")
+                    .setMessage("Are you sure you want to delete your log history? This cannot be undone.")
+
+                    .setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            for (MedicationLog log : logs) {
+                                databaseHelper.deleteLog(log);
+                            }
+                            Toast.makeText(requireContext(), "Deleted your logs history", Toast.LENGTH_SHORT).show();
+                            displayRecycler();
+                        }
+                    })
+
+                    .setNegativeButton("no", null)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        } else {
+            Toast.makeText(requireContext(), "There are no log events to delete.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Method that adds the logs to the recycler view
+     */
     public void displayRecycler() {
         logs = databaseHelper.selectAllLogs();
         Collections.sort(logs);

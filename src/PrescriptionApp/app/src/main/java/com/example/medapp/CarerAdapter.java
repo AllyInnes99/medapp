@@ -4,8 +4,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -14,6 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+/**
+ * Recycler view adapter for selecting a patient
+ */
 public class CarerAdapter extends RecyclerView.Adapter<CarerAdapter.MyViewHolder> {
 
     private Context context;
@@ -31,7 +32,8 @@ public class CarerAdapter extends RecyclerView.Adapter<CarerAdapter.MyViewHolder
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.contact_row, parent, false);
-        return new CarerAdapter.MyViewHolder(view);    }
+        return new CarerAdapter.MyViewHolder(view);
+    }
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {

@@ -44,10 +44,9 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.My
 
         String days = sp.getString("reminderDay", "7");
 
-        if(model.isRefillRequested()){
+        if (model.isRefillRequested()) {
             holder.imageView.setImageResource(R.drawable.ic_baseline_hourglass_full_24);
-        }
-        else if(model.getDaysUntilEmpty() > Integer.parseInt(days)) {
+        } else if (model.getDaysUntilEmpty() > Integer.parseInt(days)) {
             holder.imageView.setImageDrawable(null);
         }
 
@@ -85,19 +84,19 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.My
 
     /**
      * Method to be used when filtering
+     *
      * @param query
      */
-    public void filter(String query){
+    public void filter(String query) {
         DatabaseHelper dbHelper = new DatabaseHelper(context);
         List<MedicationModel> copy = dbHelper.selectAllMedication();
         medicationModels.clear();
-        if(query.isEmpty()){
+        if (query.isEmpty()) {
             medicationModels.addAll(copy);
-        }
-        else {
+        } else {
             query = query.toLowerCase(Locale.ROOT);
-            for(MedicationModel model: copy) {
-                if(model.getName().toLowerCase(Locale.ROOT).contains(query)){
+            for (MedicationModel model : copy) {
+                if (model.getName().toLowerCase(Locale.ROOT).contains(query)) {
                     medicationModels.add(model);
                 }
             }

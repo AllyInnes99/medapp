@@ -10,6 +10,9 @@ import android.content.IntentFilter;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+/**
+ * Extension of broadcastReceiver for the med taking notifications
+ */
 public class AlertReceiver extends BroadcastReceiver {
 
     @Override

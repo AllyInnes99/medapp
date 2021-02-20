@@ -19,7 +19,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
+/**
+ * Activity that is created when first adding new medicine
+ */
 public class CreateMedicationActivity extends AppCompatActivity {
 
     TextInputEditText et_name, et_quantity, et_strength;
@@ -27,9 +29,9 @@ public class CreateMedicationActivity extends AppCompatActivity {
     Button submit_btn;
     SwitchMaterial autoTake;
 
-    final String[] medTypes = new String[] {"tablet", "pill", "injection", "powder",
-                                            "drops", "inhalers", "topical"};
-    final String[] measurements = new String[] {"g", "mg", "ml", "l"};
+    final String[] medTypes = new String[]{"tablet", "pill", "injection", "powder",
+            "drops", "inhalers", "topical"};
+    final String[] measurements = new String[]{"g", "mg", "ml", "l"};
 
 
     @Override
@@ -54,56 +56,54 @@ public class CreateMedicationActivity extends AppCompatActivity {
 
         submit_btn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
 
                 MedicationModel model;
                 Intent intent;
                 try {
-                    intent = new Intent(CreateMedicationActivity.this, AddDosesActivity.class);
-                    String medicationName =  et_name.getText().toString();
-                    if(medicationName.trim().isEmpty()) {
+                    String medicationName = et_name.getText().toString();
+                    if (medicationName.trim().isEmpty()) {
                         throw new Exception("Please insert a valid name.");
                     }
 
                     String qtyStr = et_quantity.getText().toString();
-                    if(qtyStr.trim().isEmpty()){
+                    if (qtyStr.trim().isEmpty()) {
                         throw new Exception("Please insert a value for the current quantity of medication");
                     }
                     int quantity = Integer.parseInt(qtyStr);
 
                     String doseStr = et_strength.getText().toString();
 
-                    if(doseStr.trim().isEmpty()){
+                    if (doseStr.trim().isEmpty()) {
                         throw new Exception("Please insert a value for the strength of one instance of medication");
                     }
                     double dosage = Double.parseDouble(doseStr);
 
                     String selectedType = dropdown_type.getText().toString();
-                    if(selectedType.trim().isEmpty()){
+                    if (selectedType.trim().isEmpty()) {
                         throw new Exception("Please select a type from the dropdown menu.");
                     }
 
                     String selectedMeasurement = dropdown_measurement.getText().toString();
-                    if(selectedMeasurement.trim().isEmpty()){
+                    if (selectedMeasurement.trim().isEmpty()) {
                         throw new Exception("Please select a measurement from the dropdown menu.");
                     }
-
                     boolean take = autoTake.isChecked();
-
-
                     model = new MedicationModel(medicationName, quantity, selectedType, dosage, selectedMeasurement, take);
+                    intent = new Intent(CreateMedicationActivity.this, AddDosesActivity.class);
                     intent.putExtra("MedModel", model);
                     startActivity(intent);
-                }
-                catch (NumberFormatException e) {
+                } catch (NumberFormatException e) {
                     Toast.makeText(CreateMedicationActivity.this, "Invalid number for quantity", Toast.LENGTH_SHORT).show();
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     Toast.makeText(CreateMedicationActivity.this, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                    //finish();
                 }
             }
         });
+
+    }
+
+    private void validateInput(){
 
     }
 

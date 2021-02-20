@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.joda.time.Period;
+
 import java.util.Calendar;
 import java.util.List;
 
@@ -53,23 +54,20 @@ public class DoseAdapter extends RecyclerView.Adapter<DoseAdapter.MyViewHolder> 
         holder.appl_time_txt.setText("Time: " + doseModel.getTime());
         holder.appl_med_txt.setText("Name: " + medModel.getName());
 
-        holder.button.setOnClickListener(new View.OnClickListener(){
+        holder.button.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View v) {
-                if(doseModel.getAmount() > medModel.getQuantity()){
+                if (doseModel.getAmount() > medModel.getQuantity()) {
                     String msg = "You don't have enough stock to take this medication.";
                     Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
-                }
-                else{
+                } else {
                     int diff = timeInterval(doseModel);
-                    if(diff < -1) {
+                    if (diff < -1) {
                         medTakenTooLate(medModel, doseModel);
-                    }
-                    else if(diff > 1) {
+                    } else if (diff > 1) {
                         medTakenTooEarly(medModel, doseModel);
-                    }
-                    else {
+                    } else {
                         registerMedAsTaken(doseModel, medModel, true);
                     }
                 }
@@ -80,6 +78,7 @@ public class DoseAdapter extends RecyclerView.Adapter<DoseAdapter.MyViewHolder> 
     /**
      * Method that calculates difference in hours between the actual time the medication has been taken
      * compared to the expected time
+     *
      * @param doseModel the dose of which the user is attempting to take
      * @return int that represents the difference in hours between expected and actual
      */
@@ -95,36 +94,38 @@ public class DoseAdapter extends RecyclerView.Adapter<DoseAdapter.MyViewHolder> 
 
     /**
      * Method that defines the behaviour of when a medication is taken too late
-     * @param medModel the medication that is to be taken
+     *
+     * @param medModel  the medication that is to be taken
      * @param doseModel the dose of the medication that is to be taken
      */
     private void medTakenTooLate(final MedicationModel medModel, final DoseModel doseModel) {
         new MaterialAlertDialogBuilder(context)
-            .setTitle("Just checking...")
-            .setMessage("This dose of " + medModel.getName() + " was set to be taken at "
-                    + doseModel.getTime() + ". Did you take it on time?")
+                .setTitle("Just checking...")
+                .setMessage("This dose of " + medModel.getName() + " was set to be taken at "
+                        + doseModel.getTime() + ". Did you take it on time?")
 
-            .setPositiveButton("yes", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    registerMedAsTaken(doseModel, medModel, true);
-                }
-            })
+                .setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        registerMedAsTaken(doseModel, medModel, true);
+                    }
+                })
 
-            .setNegativeButton("no", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    databaseHelper.takeMedicationLate(doseModel, medModel);
-                    String msg = "You have taken " + doseModel.getAmount() + " of " + medModel.getName();
-                    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
-                    fragment.displayRecycler();
-                }
-            })
-            .setIcon(android.R.drawable.ic_dialog_alert)
-            .show();
+                .setNegativeButton("no", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        databaseHelper.takeMedicationLate(doseModel, medModel);
+                        String msg = "You have taken " + doseModel.getAmount() + " of " + medModel.getName();
+                        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+                        fragment.displayRecycler();
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
     /**
      * Method that defines the behaviour of when a medication is taken too early
-     * @param medModel the medication that is to be taken
+     *
+     * @param medModel  the medication that is to be taken
      * @param doseModel the dose of the medication that is to be taken
      */
     private void medTakenTooEarly(final MedicationModel medModel, final DoseModel doseModel) {
@@ -150,8 +151,9 @@ public class DoseAdapter extends RecyclerView.Adapter<DoseAdapter.MyViewHolder> 
 
     /**
      * Method that makes changes to the database so that the provided medication dose is listed as taken
+     *
      * @param doseModel the dose of the medication to be taken
-     * @param medModel the medication that is to be taken
+     * @param medModel  the medication that is to be taken
      */
     private void registerMedAsTaken(DoseModel doseModel, MedicationModel medModel, boolean onTime) {
         databaseHelper.takeMedication(doseModel, medModel, onTime);
@@ -170,6 +172,7 @@ public class DoseAdapter extends RecyclerView.Adapter<DoseAdapter.MyViewHolder> 
 
         TextView appl_med_txt, appl_amount_txt, appl_time_txt;
         Button button;
+
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             appl_med_txt = itemView.findViewById(R.id.appl_med_txt);

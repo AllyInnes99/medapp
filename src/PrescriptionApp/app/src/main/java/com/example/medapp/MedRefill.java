@@ -65,7 +65,7 @@ public class MedRefill extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 int btnID = toggleGroup.getCheckedButtonId();
-                switch(btnID) {
+                switch (btnID) {
                     case R.id.btn_add:
                         addToQuantity();
                         break;
@@ -77,7 +77,6 @@ public class MedRefill extends AppCompatActivity {
                 }
             }
         });
-
 
 
         btn_request.setOnClickListener(new View.OnClickListener() {
@@ -93,20 +92,21 @@ public class MedRefill extends AppCompatActivity {
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         displayRecycler();
     }
 
-
+    /**
+     * Method that is called to add to the quantity after refill
+     */
     private void addToQuantity() {
         try {
             String v = et_new.getText().toString();
-            if(v.equals("")) throw new NullPointerException("Empty input for new quantity.");
+            if (v.equals("")) throw new NullPointerException("Empty input for new quantity.");
             inputVal = Integer.parseInt(v);
             int original = medModel.getQuantity();
             int newQuantity = original + inputVal;
-
 
             medModel.setQuantity(newQuantity);
             medModel.setRefillRequested(false);
@@ -122,20 +122,22 @@ public class MedRefill extends AppCompatActivity {
             addRefillLog(newQuantity, original);
             closeActivity();
 
-        }
-        catch (NullPointerException e) {
+        } catch (NullPointerException e) {
             Toast.makeText(context, "Input value is empty.", Toast.LENGTH_SHORT).show();
         }
     }
 
+    /**
+     * Method that is called to remove from the quantity when requested
+     */
     private void removeFromQuantity() {
         try {
             String v = et_new.getText().toString();
-            if(v.equals("")) throw new NullPointerException("Empty input for new quantity.");
+            if (v.equals("")) throw new NullPointerException("Empty input for new quantity.");
             inputVal = Integer.parseInt(v);
             int original = medModel.getQuantity();
             int newQuantity = original - inputVal;
-            if(newQuantity < 0){
+            if (newQuantity < 0) {
                 newQuantity = 0;
             }
             medModel.setQuantity(newQuantity);
@@ -148,13 +150,15 @@ public class MedRefill extends AppCompatActivity {
             Toast.makeText(context, "Updated quantity of medication", Toast.LENGTH_SHORT).show();
             addRefillLog(newQuantity, original);
             closeActivity();
-        }
-        catch (NullPointerException e) {
+        } catch (NullPointerException e) {
             Toast.makeText(context, "Input value is empty.", Toast.LENGTH_SHORT).show();
         }
     }
 
 
+    /**
+     * Method that updates the events in the user's Google Calendar upon update of quantity
+     */
     private void updateGoogleCal() {
         medModel = databaseHelper.selectMedicationFromID(medModel.getMedicationId());
         GoogleCalendarHelper gch = new GoogleCalendarHelper(context);
@@ -162,24 +166,34 @@ public class MedRefill extends AppCompatActivity {
     }
 
 
+    /**
+     * Helper method that closes the activity and returns to the main activity
+     */
     private void closeActivity() {
         Intent i = new Intent(context, MainActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
     }
 
+    /**
+     * Method that adds a refill log event to the database
+     * @param refill - the new quantity after refill
+     * @param original - the original val before refill
+     */
     private void addRefillLog(int refill, int original) {
         Calendar c = Calendar.getInstance();
         int day = c.get(Calendar.DAY_OF_MONTH);
         int month = c.get(Calendar.MONTH) + 1;
         int year = c.get(Calendar.YEAR);
         RefillData data = new RefillData(medModel.getMedicationId(), day, month, year, refill, original);
-        boolean t = databaseHelper.addRefill(data);
+        databaseHelper.addRefill(data);
     }
 
+    /**
+     * Method that displays the med refill logs
+     */
     public void displayRecycler() {
         data = databaseHelper.selectRefillFromMed(medModel);
-        //Collections.sort(data);
         refillAdapter = new RefillAdapter(context, data);
         recyclerView.setAdapter(refillAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));

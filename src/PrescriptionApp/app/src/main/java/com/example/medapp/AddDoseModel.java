@@ -16,10 +16,11 @@ public class AddDoseModel implements Serializable {
 
     /**
      * Constructor for creating a dose model
-     * @param time String that reps. the time of when the dose is to be taken
+     *
+     * @param time     String that reps. the time of when the dose is to be taken
      * @param quantity int that reps. the amount of the medication is to be taken at the given dose
      */
-    public AddDoseModel(String time, int quantity){
+    public AddDoseModel(String time, int quantity) {
         this.time = time;
         this.quantity = quantity;
         this.days = new ArrayList<>();
@@ -28,13 +29,14 @@ public class AddDoseModel implements Serializable {
     /**
      * If the days of the dose is size 7 (i.e. it has every day in it), then the dose is to be taken
      * every day. This method returns whether the dose is a daily dose or not.
+     *
      * @return true if the dose is to be taken daily, false otherwise
      */
-    public boolean isDoseDaily(){
+    public boolean isDoseDaily() {
         return getDays().size() == 7;
     }
 
-    private void addDay(String day){
+    private void addDay(String day) {
         this.days.add(day);
     }
 

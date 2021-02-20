@@ -26,7 +26,7 @@ public class EditMedDosesActivity extends AppCompatActivity {
     AddDoseAdapter doseAdapter;
     GoogleCalendarHelper gch;
     List<String> days = Arrays.asList("Monday", "Tuesday", "Wednesday", "Thursday",
-                                        "Friday", "Saturday", "Sunday");
+            "Friday", "Saturday", "Sunday");
     Context context = EditMedDosesActivity.this;
     DatabaseHelper databaseHelper = new DatabaseHelper(context);
     List<AddDoseModel> tempModels;
@@ -73,14 +73,13 @@ public class EditMedDosesActivity extends AppCompatActivity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!tempModels.isEmpty()) {
+                if (!tempModels.isEmpty()) {
                     addToDatabase();
                     Intent output = new Intent();
                     output.putExtra("refill", medModel.getDaysUntilEmpty());
                     setResult(RESULT_OK, output);
                     finish();
-                }
-                else {
+                } else {
                     Toast.makeText(EditMedDosesActivity.this, "Please add at least one dose.", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -91,29 +90,28 @@ public class EditMedDosesActivity extends AppCompatActivity {
     /**
      * Method that makes changes to the database to accommodate the newly created/removed doses
      */
-    private void addToDatabase(){
+    private void addToDatabase() {
 
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(context);
 
         // remove all previous doseModels from db and Google Calendar
-        for(DoseModel dm: doseModels) {
-            if(acct != null) {
+        for (DoseModel dm : doseModels) {
+            if (acct != null) {
                 gch.deleteDoseEvent(dm);
             }
             databaseHelper.deleteDose(dm);
         }
 
         String daily = "Daily";
-        for(AddDoseModel dm: tempModels){
-            if(dm.isDoseDaily()){
+        for (AddDoseModel dm : tempModels) {
+            if (dm.isDoseDaily()) {
                 DoseModel m = new DoseModel(medModel.getMedicationId(), dm.getTime(),
-                                            daily, dm.getQuantity());
+                        daily, dm.getQuantity());
                 databaseHelper.addDose(m);
-            }
-            else {
-                for(String day: dm.getDays()){
+            } else {
+                for (String day : dm.getDays()) {
                     DoseModel m = new DoseModel(medModel.getMedicationId(), dm.getTime(),
-                                                day, dm.getQuantity());
+                            day, dm.getQuantity());
                     databaseHelper.addDose(m);
                 }
             }
@@ -123,31 +121,33 @@ public class EditMedDosesActivity extends AppCompatActivity {
         medModel = databaseHelper.selectMedicationFromID(medModel.getMedicationId());
 
         // add the new Doses to Google Calendar
-        if(acct != null) {
+        if (acct != null) {
             gch = new GoogleCalendarHelper(context);
-            gch.updateRefillEvent(medModel) ;
+            gch.updateRefillEvent(medModel);
             gch.updateEmptyEvent(medModel);
             gch.addDoseReminder(medModel);
         }
     }
 
-
-
+    /**
+     * Method that retrieves the data from the database about the doses, and converts them into
+     * AddDoseModel instances so that they can be displayed in the page correctly
+     */
     private void getData() {
         List<String> tempDays = new ArrayList<>();
         String prevTime = "";
         int prevAmount = 0;
-        for(DoseModel dm: doseModels) {
+        for (DoseModel dm : doseModels) {
             String day = dm.getDay();
             String time = dm.getTime();
 
             // if the dose is one that is taken every day, then simply just add every day to model
-            if(day.equals("Daily")){
+            if (day.equals("Daily")) {
                 AddDoseModel addDoseModel = new AddDoseModel(dm.getTime(), dm.getAmount());
                 addDoseModel.setDays(days);
 
 
-                if(!tempDays.isEmpty()) {
+                if (!tempDays.isEmpty()) {
                     Toast.makeText(context, "here", Toast.LENGTH_SHORT).show();
                     AddDoseModel prevDose = new AddDoseModel(prevTime, prevAmount);
                     prevDose.setDays(new ArrayList<>(tempDays));
@@ -156,9 +156,7 @@ public class EditMedDosesActivity extends AppCompatActivity {
                 }
                 tempModels.add(addDoseModel);
                 prevTime = "";
-            }
-
-            else if(!prevTime.equals(time) && !tempDays.isEmpty()) {
+            } else if (!prevTime.equals(time) && !tempDays.isEmpty()) {
                 AddDoseModel addDoseModel = new AddDoseModel(prevTime, dm.getAmount());
                 addDoseModel.setDays(new ArrayList<>(tempDays));
                 tempModels.add(addDoseModel);
@@ -175,7 +173,7 @@ public class EditMedDosesActivity extends AppCompatActivity {
         }
 
         // if the last dose was not daily, then add it to the list
-        if(!tempDays.isEmpty()) {
+        if (!tempDays.isEmpty()) {
             DoseModel dm = doseModels.get(doseModels.size() - 1);
             AddDoseModel addDoseModel = new AddDoseModel(dm.getTime(), dm.getAmount());
             addDoseModel.setDays(new ArrayList<>(tempDays));
@@ -183,6 +181,9 @@ public class EditMedDosesActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Method that populates the recyclerview with the doses
+     */
     private void displayRecycler() {
         doseAdapter = new AddDoseAdapter(EditMedDosesActivity.this, tempModels);
         recyclerView.setAdapter(doseAdapter);

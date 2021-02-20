@@ -26,7 +26,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-
+/**
+ * Class that is used as a helper to make People API requests
+ */
 public class PeopleAPIHelper {
 
     private static final String TAG = "MedApp";
@@ -41,12 +43,12 @@ public class PeopleAPIHelper {
         GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2(
                 context, Collections.singleton(PeopleServiceScopes.CONTACTS_READONLY));
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(context);
-        if(acct != null) {
+        if (acct != null) {
             credential.setSelectedAccount(acct.getAccount());
             this.service = new PeopleService.Builder(
-                NET_HTTP_TRANSPORT, JSON_FACTORY, credential)
-                .setApplicationName(context.getString(R.string.app_name))
-                .build();
+                    NET_HTTP_TRANSPORT, JSON_FACTORY, credential)
+                    .setApplicationName(context.getString(R.string.app_name))
+                    .build();
             this.databaseHelper = new DatabaseHelper(context);
         }
     }
@@ -65,11 +67,11 @@ public class PeopleAPIHelper {
             public void run() {
                 try {
                     ListConnectionsResponse response = service.people().connections()
-                        .list("people/me")
-                        .setPersonFields("names,emailAddresses,relations")
-                        .execute();
+                            .list("people/me")
+                            .setPersonFields("names,emailAddresses,relations")
+                            .execute();
 
-                    if(response != null && response.size() > 0) {
+                    if (response != null && response.size() > 0) {
                         checkConnections(response);
                     }
                 } catch (IOException e) {
@@ -82,17 +84,18 @@ public class PeopleAPIHelper {
     /**
      * Method that goes through the response of the API call and checks the user's connections in
      * an attempt to find patients
+     *
      * @param response data returned by API call
      */
     private void checkConnections(ListConnectionsResponse response) {
         List<Person> connections = response.getConnections();
-        for(Person person: connections) {
+        for (Person person : connections) {
             List<EmailAddress> emails = person.getEmailAddresses();
             List<Name> names = person.getNames();
             List<Relation> relations = person.getRelations();
-            if(names != null && emails != null && relations != null && names.size() > 0) {
+            if (names != null && emails != null && relations != null && names.size() > 0) {
                 Relation relation = relations.get(0);
-                if(isPatient(relation)) {
+                if (isPatient(relation)) {
                     addContact(person, names.get(0).getDisplayName(), emails.get(0).getValue());
                 }
             }
@@ -101,9 +104,10 @@ public class PeopleAPIHelper {
 
     /**
      * From a person in the user's contacts, add the contact to the database
+     *
      * @param person the person to add
-     * @param name the person's name
-     * @param email the person's email address
+     * @param name   the person's name
+     * @param email  the person's email address
      */
     private void addContact(Person person, String name, String email) {
         ContactDetails cd = new ContactDetails(person.getResourceName(), name, email);
@@ -112,6 +116,7 @@ public class PeopleAPIHelper {
 
     /**
      * Method that checks if the relation of the contact is a patient
+     *
      * @param relation the relation to the user
      * @return true if relation is a patient, false otherwise
      */

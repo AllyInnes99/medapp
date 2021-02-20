@@ -18,6 +18,9 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
+/**
+ * Activity that is called the create a dose of a medication
+ */
 public class CreateDoseActivity extends AppCompatActivity {
 
     Button btn_time, btn_add;
@@ -52,7 +55,7 @@ public class CreateDoseActivity extends AppCompatActivity {
 
         daysToBeTakenOn = new ArrayList<>();
         checkBoxes = Arrays.asList(monday, tuesday, wednesday, thursday,
-                                    friday, saturday, sunday);
+                friday, saturday, sunday);
 
         databaseHelper = new DatabaseHelper(CreateDoseActivity.this);
 
@@ -82,7 +85,7 @@ public class CreateDoseActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 boolean checked = select_all.isChecked();
-                for(MaterialCheckBox checkBox: checkBoxes) {
+                for (MaterialCheckBox checkBox : checkBoxes) {
                     checkBox.setChecked(checked);
                 }
             }
@@ -95,17 +98,17 @@ public class CreateDoseActivity extends AppCompatActivity {
                 daysToBeTakenOn.clear();
                 try {
                     String time = et_time.getText().toString();
-                    if(time.trim().isEmpty()){
+                    if (time.trim().isEmpty()) {
                         throw new Exception("Please select a time");
                     }
                     String amountStr = et_amount.getText().toString();
-                    if(amountStr.trim().isEmpty()){
+                    if (amountStr.trim().isEmpty()) {
                         throw new Exception("Please select the amount of medication to be taken at this time");
                     }
                     int amount = Integer.parseInt(amountStr);
                     addDoseModel = new AddDoseModel(time, amount);
                     checkSelectedBoxes();
-                    if(daysToBeTakenOn.isEmpty()){
+                    if (daysToBeTakenOn.isEmpty()) {
                         throw new Exception("Please select the days where this medication is to be taken on");
                     }
                     addDoseModel.setDays(daysToBeTakenOn);
@@ -114,8 +117,7 @@ public class CreateDoseActivity extends AppCompatActivity {
                     setResult(RESULT_OK, output);
                     finish();
 
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     Toast.makeText(CreateDoseActivity.this, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
@@ -124,7 +126,7 @@ public class CreateDoseActivity extends AppCompatActivity {
 
     private String padString(int target) {
         String output = Integer.toString(target);
-        if(target < 10){
+        if (target < 10) {
             return "0" + output;
         }
         return output;
@@ -135,11 +137,11 @@ public class CreateDoseActivity extends AppCompatActivity {
      * representation to the list maintaining which days the dose is to be taken on
      */
     private void checkSelectedBoxes() {
-        for(MaterialCheckBox checkBox: checkBoxes) {
-            if(checkBox.isChecked()) {
+        for (MaterialCheckBox checkBox : checkBoxes) {
+            if (checkBox.isChecked()) {
                 daysToBeTakenOn.add(checkBox.getTag().toString());
             }
-            if(daysToBeTakenOn.size() == 7){
+            if (daysToBeTakenOn.size() == 7) {
                 daysToBeTakenOn.clear();
                 daysToBeTakenOn.add("Daily");
             }

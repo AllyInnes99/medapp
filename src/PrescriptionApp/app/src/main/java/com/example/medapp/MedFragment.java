@@ -17,7 +17,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.List;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment that represents the list of medications that the user has added to the app
  */
 public class MedFragment extends Fragment {
 
@@ -39,34 +39,16 @@ public class MedFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_med, container, false);
         btnAdd = view.findViewById(R.id.floating_add_button_med);
         recyclerView = view.findViewById(R.id.recycler_view_med);
-        //searchView = view.findViewById(R.id.searchView);
 
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 startActivity(new Intent(getActivity(), CreateMedicationActivity.class));
             }
         });
-
-        /*
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                medicationAdapter.filter(query);
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                medicationAdapter.filter(newText);
-                return true;
-            }
-        });
-        */
         return view;
     }
 

@@ -1,5 +1,8 @@
 package com.example.medapp;
 
+/**
+ * Class that represents a contact in the user's Google Contacts
+ */
 public class ContactDetails {
 
     private String id;

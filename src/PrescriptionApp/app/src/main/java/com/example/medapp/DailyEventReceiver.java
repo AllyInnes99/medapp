@@ -26,9 +26,7 @@ public class DailyEventReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Toast.makeText(context, "MedApp: Updating medication", Toast.LENGTH_SHORT).show();
-        Toast.makeText(context, "Test", Toast.LENGTH_SHORT).show();
-
+        Toast.makeText(context, "MedApp: Syncing medication", Toast.LENGTH_SHORT).show();
         databaseHelper = new DatabaseHelper(context);
         mContext = context;
         autoTakeMedication();
@@ -43,9 +41,9 @@ public class DailyEventReceiver extends BroadcastReceiver {
      */
     private void setNotificationsForToday() {
         List<DoseModel> doses = databaseHelper.selectTodaysDoseAndNotTaken();
-        for(DoseModel dose: doses) {
+        for (DoseModel dose : doses) {
             MedicationModel m = databaseHelper.selectMedicationFromDose(dose);
-            if(!m.isAutoTake()){
+            if (!m.isAutoTake()) {
                 createNotification(m, dose);
             }
         }
@@ -53,13 +51,11 @@ public class DailyEventReceiver extends BroadcastReceiver {
 
 
     private void setRefillReminder(MedicationModel med) {
-        Toast.makeText(mContext, "reminderSet", Toast.LENGTH_SHORT).show();
-
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(System.currentTimeMillis());
         c.set(Calendar.HOUR_OF_DAY, 9);
 
-        AlarmManager alarmManager = (AlarmManager)mContext.getSystemService(Context.ALARM_SERVICE);
+        AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(mContext, RefillReminder.class);
         intent.setAction("android.intent.action.NOTIFY");
         intent.putExtra("medId", med.getMedicationId());
@@ -70,7 +66,8 @@ public class DailyEventReceiver extends BroadcastReceiver {
 
     /**
      * Method that creates a notification for a given dose of medication
-     * @param medModel the medication that is to be taken
+     *
+     * @param medModel  the medication that is to be taken
      * @param doseModel the dose of the medication
      */
     private void createNotification(MedicationModel medModel, DoseModel doseModel) {
@@ -88,7 +85,7 @@ public class DailyEventReceiver extends BroadcastReceiver {
         c.set(Calendar.SECOND, 0);
         c.set(Calendar.MILLISECOND, 0);
 
-        AlarmManager alarmManager = (AlarmManager)mContext.getSystemService(Context.ALARM_SERVICE);
+        AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(mContext, AlertReceiver.class);
         intent.setAction("android.intent.action.NOTIFY");
 
@@ -118,14 +115,14 @@ public class DailyEventReceiver extends BroadcastReceiver {
         // Get every medication that is set to be auto-taken
         List<MedicationModel> medModels = databaseHelper.selectAutoTakenMeds();
 
-        for(MedicationModel m: medModels) {
+        for (MedicationModel m : medModels) {
 
             // Get the doses for the med
             List<DoseModel> doseModels = databaseHelper.selectDoseFromMedication(m);
 
-            for(DoseModel d: doseModels) {
+            for (DoseModel d : doseModels) {
                 String day = d.getDay();
-                if((App.days.indexOf(day) == cDay || day.equals("Daily"))&& !d.isTaken()){
+                if ((App.days.indexOf(day) == cDay || day.equals("Daily")) && !d.isTaken()) {
                     databaseHelper.takeMedication(d, m);
                 }
             }
@@ -135,14 +132,14 @@ public class DailyEventReceiver extends BroadcastReceiver {
     /**
      * Method that decreases the daysUntilEmpty field for each medication by one.
      */
-    private void decrementDaysUntilEmpty(){
+    private void decrementDaysUntilEmpty() {
         List<MedicationModel> medModels = databaseHelper.selectAllMedication();
         int refill = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(mContext).
                 getString("reminderDay", "7"));
-        for(MedicationModel med: medModels) {
+        for (MedicationModel med : medModels) {
             int dec = med.getDaysUntilEmpty() - 1;
             med.setDaysUntilEmpty(dec);
-            if(!med.isRefillRequested() && med.getDaysUntilEmpty() < refill) {
+            if (!med.isRefillRequested() && med.getDaysUntilEmpty() < refill) {
                 setRefillReminder(med);
             }
             databaseHelper.updateMedication(med);
@@ -156,14 +153,12 @@ public class DailyEventReceiver extends BroadcastReceiver {
 
         List<DoseModel> notTaken = databaseHelper.selectYesterdaysDoseAndNotTaken();
 
-        Toast.makeText(mContext, Integer.toString(notTaken.size()), Toast.LENGTH_LONG).show();
-
-        if(!notTaken.isEmpty()) {
+        if (!notTaken.isEmpty()) {
             String msg = "Medication not taken";
             Calendar c = Calendar.getInstance();
-            for(DoseModel dose: notTaken) {
+            for (DoseModel dose : notTaken) {
                 MedicationLog log = new MedicationLog(dose.getMedicationId(), msg, dose.getAmount(),
-                                                     c.getTimeInMillis(), false, false);
+                        c.getTimeInMillis(), false, false);
                 databaseHelper.addLog(log);
             }
         }

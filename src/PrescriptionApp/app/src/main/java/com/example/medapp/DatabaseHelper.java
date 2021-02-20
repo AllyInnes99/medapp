@@ -8,18 +8,11 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.widget.Toast;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
 
-import com.google.api.services.people.v1.model.ListDirectoryPeopleResponse;
-
-import java.sql.Ref;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -76,7 +69,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String FOREIGN_KEY =
             "FOREIGN KEY (" + COL_MEDICATION_ID + ") REFERENCES " + MEDICATION_TABLE
-            + " ( " + COL_MEDICATION_ID + ") ON DELETE CASCADE)";
+                    + " ( " + COL_MEDICATION_ID + ") ON DELETE CASCADE)";
 
     Calendar calendar = Calendar.getInstance();
     private Context context;
@@ -115,6 +108,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Method that creates the medication table in the database
+     *
      * @param db the instance of the SQLite database we are adding this table to
      */
     private void createMedicationTable(SQLiteDatabase db) {
@@ -135,11 +129,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Method that creates the dose table in the database
+     *
      * @param db the instance of the SQLite database we are adding this table to
      */
     private void createDoseTable(SQLiteDatabase db) {
         String createQuery
-                = "CREATE TABLE "  + DOSE_TABLE + " ("
+                = "CREATE TABLE " + DOSE_TABLE + " ("
                 + COL_DOSE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + COL_MEDICATION_ID + " INTEGER, "
                 + COL_TIME_HOUR + " INTEGER, "
@@ -154,6 +149,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Method that creates the log table in the database
+     *
      * @param db the instance of the SQLite database we are adding this table to
      */
     private void createLogTable(SQLiteDatabase db) {
@@ -172,6 +168,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Method that creates the refill table in the database
+     *
      * @param db the instance of the SQLite database we are adding this table to
      */
     private void createRefillTable(SQLiteDatabase db) {
@@ -200,6 +197,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Method that adds a row to the medication table from medication object
+     *
      * @param medicationModel model to be added to the database
      * @return true if added successfully, false otherwise
      */
@@ -223,6 +221,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Method that adds a row to the application table from an application object
+     *
      * @param doseModel - object to be added as a row in db
      * @return true if added successfully, false otherwise
      */
@@ -246,6 +245,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Method that adds a log entry to the database
+     *
      * @param log the log entry to be added
      * @return true if added successfully, false otherwise
      */
@@ -264,6 +264,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Method that adds a refill log event to the database
+     *
      * @param data the refill log data to be added
      * @return true if added successfully, false otherwise
      */
@@ -291,15 +292,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Method that performs a "select all" query on the medication table
+     *
      * @return List of every medication entry in the table
      */
-    public List<MedicationModel> selectAllMedication(){
+    public List<MedicationModel> selectAllMedication() {
         String rawQuery = "SELECT * FROM " + MEDICATION_TABLE + " ORDER BY " + COL_MEDICATION_ID + " DESC";
         return executeMedicationQuery(rawQuery);
     }
 
     /**
      * Method that selects a medication object from the DB via a provided ID
+     *
      * @param id the ID of the targeted medication
      * @return the medication object with matching ID
      */
@@ -311,17 +314,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Method that selects the medication that the provided dose object is for
+     *
      * @param doseModel the dose that we want to find the medication for
      * @return the medication object that the dose is for
      */
     public MedicationModel selectMedicationFromDose(DoseModel doseModel) {
         String rawQuery = "SELECT * FROM " + MEDICATION_TABLE
-                        + " WHERE " + COL_MEDICATION_ID + " = " + doseModel.getMedicationId();
+                + " WHERE " + COL_MEDICATION_ID + " = " + doseModel.getMedicationId();
         return executeMedicationQuery(rawQuery).get(0);
     }
 
     /**
      * Helper method used to obtain list of medication objects from db
+     *
      * @param rawQuery - the query to be executed on db
      * @return - list of med objs representing rows in db matching query
      */
@@ -330,7 +335,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(rawQuery, null);
 
-        if (cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
             do {
                 int i = 0;
                 int id = cursor.getInt(i++);
@@ -346,10 +351,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String calendarRefill = cursor.getString(i++);
                 String calendarEmpty = cursor.getString(i++);
                 MedicationModel model = new MedicationModel(id, name, qty, daysUntilEmpty, type, dosage, measurement,
-                                                            profile, autoTake, refillRequested, calendarRefill, calendarEmpty);
+                        profile, autoTake, refillRequested, calendarRefill, calendarEmpty);
                 returnList.add(model);
 
-            } while(cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
 
         cursor.close();
@@ -360,17 +365,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * Method that gets all of the doses that belong to a specific medication, by use of
      * the MedicationID foreign key
+     *
      * @param model - the medication model that we are trying to get the doses for
      * @return a list of doses models
      */
     public List<DoseModel> selectDoseFromMedication(MedicationModel model) {
         int medID = model.getMedicationId();
-        String rawQuery = "SELECT * FROM " + DOSE_TABLE + " WHERE " + COL_MEDICATION_ID  + " = " + medID;
+        String rawQuery = "SELECT * FROM " + DOSE_TABLE + " WHERE " + COL_MEDICATION_ID + " = " + medID;
         return executeDoseQuery(rawQuery);
     }
 
     /**
      * Method that selects all of the medications that are listed as autotaken
+     *
      * @return list of medication objects that are all set as autotaken
      */
     public List<MedicationModel> selectAutoTakenMeds() {
@@ -385,6 +392,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Method that gets all of the doses set up in the database
+     *
      * @return a list of dose models
      */
     public List<DoseModel> selectAllDoses() {
@@ -394,18 +402,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Method that gets all the doses that are to be taken on a specific day
+     *
      * @param day - String denoting the day of the week
      * @return a list of dose to be taken on the given day
      */
     public List<DoseModel> selectDoseFromDay(String day) {
         String rawQuery = "SELECT * FROM " + DOSE_TABLE + " WHERE "
-                        + COL_DAY + " = '" + day
-                        + "' OR " + COL_DAY + " = 'Daily'";
+                + COL_DAY + " = '" + day
+                + "' OR " + COL_DAY + " = 'Daily'";
         return executeDoseQuery(rawQuery);
     }
 
     /**
      * Method that selects a dose object via a provided ID
+     *
      * @param id the ID of the dose we are looking for
      * @return Dose object that has been found
      */
@@ -417,6 +427,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Method that obtains the doses of medication that are to be taken today
+     *
      * @return list of dose objects that are to be taken today
      */
     public List<DoseModel> selectTodaysDoseAndNotTaken() {
@@ -427,13 +438,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // In query, we check taken == 0 as this is how false is represented in SQLite
         String rawQuery = "SELECT * FROM " + DOSE_TABLE +
                 " WHERE (" + COL_DAY + " = '" + day +
-                "' OR " + COL_DAY + " = 'Daily')"  +
+                "' OR " + COL_DAY + " = 'Daily')" +
                 " AND (" + COL_TAKEN + " = 0 )";
         return executeDoseQuery(rawQuery);
     }
 
     /**
      * Method that obtains the doses of medication that were to be taken yesterday
+     *
      * @return list of dose objects that are to be taken today
      */
     public List<DoseModel> selectYesterdaysDoseAndNotTaken() {
@@ -448,13 +460,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // In query, we check taken == 0 as this is how false is represented in SQLite
         String rawQuery = "SELECT * FROM " + DOSE_TABLE +
                 " WHERE (" + COL_DAY + " = '" + day +
-                "' OR " + COL_DAY + " = 'Daily')"  +
+                "' OR " + COL_DAY + " = 'Daily')" +
                 " AND (" + COL_TAKEN + " = 0 )";
         return executeDoseQuery(rawQuery);
     }
 
     /**
      * Helper method to obtain a list of dose models via provided query
+     *
      * @param rawQuery - SQL query to be made on db
      * @return list of dose models as a result of the query
      */
@@ -463,7 +476,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(rawQuery, null);
 
-        if(cursor.moveToFirst()) {
+        if (cursor.moveToFirst()) {
             do {
                 int i = 0;
                 int doseID = cursor.getInt(i++);
@@ -477,10 +490,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String calID = cursor.getString(i++);
 
                 DoseModel m = new DoseModel(doseID, medID, timeMinute, timeHour,
-                                            day, amount, isTaken, calID);
+                        day, amount, isTaken, calID);
                 returnList.add(m);
 
-            } while(cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
         cursor.close();
         return returnList;
@@ -500,7 +513,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(rawQuery, null);
 
-        if(cursor.moveToFirst()) {
+        if (cursor.moveToFirst()) {
             do {
                 int i = 0;
                 int logId = cursor.getInt(i++);
@@ -514,7 +527,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 MedicationLog medLog = new MedicationLog(logId, medId, msg, amount, time, taken, onTime);
                 returnList.add(medLog);
 
-            } while(cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
         cursor.close();
         return returnList;
@@ -543,7 +556,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(rawQuery, null);
 
-        if(cursor.moveToFirst()) {
+        if (cursor.moveToFirst()) {
             do {
                 int i = 0;
                 int refillId = cursor.getInt(i++);
@@ -557,7 +570,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 RefillData data = new RefillData(refillId, medId, day, month, year, refill, original);
                 returnList.add(data);
 
-            } while(cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
         cursor.close();
         return returnList;
@@ -577,7 +590,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(rawQuery, null);
 
-        if(cursor.moveToFirst()) {
+        if (cursor.moveToFirst()) {
             do {
                 int i = 0;
                 String id = cursor.getString(i++);
@@ -586,7 +599,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 boolean selected = SQLiteIntToBool(cursor.getInt(i++));
                 ContactDetails cd = new ContactDetails(id, name, email, selected);
                 returnList.add(cd);
-            } while(cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
         cursor.close();
         return returnList;
@@ -596,32 +609,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * Method that finds the target medication model in database, and if found it is deleted.
      * Due to the foreign key constraint, the doses of the medication and also logs are deleted too
+     *
      * @param medModel - object that represents the medication that is to be removed.
      */
     public void deleteMedication(MedicationModel medModel) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(MEDICATION_TABLE, COL_MEDICATION_ID + " = " + medModel.getMedicationId(), null);
     }
+
     /**
      * Method that finds the target dose model in database, and if found it is deleted.
+     *
      * @param model - object that represents the dose that is to be removed.
      */
-    public void deleteDose(DoseModel model){
+    public void deleteDose(DoseModel model) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(DOSE_TABLE, COL_DOSE_ID + " = " + model.getDoseId(), null);
 
         // cancel the pending intent for the dose
         Intent intent = new Intent(context, AlertReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context,  model.getDoseId() + 2, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, model.getDoseId() + 2, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(pendingIntent);
     }
 
     /**
      * Method that finds the target log model in database, and if found it is deleted.
+     *
      * @param log - object that represents the log that is to be removed.
      */
-    public void deleteLog(MedicationLog log){
+    public void deleteLog(MedicationLog log) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(LOG_TABLE, COL_LOG_ID + " = " + log.getLogId(), null);
     }
@@ -630,17 +647,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void takeMedication(DoseModel doseModel, MedicationModel medModel, boolean onTime) {
         takeMedication(doseModel, medModel);
         String msg;
-        if(onTime) {
+        if (onTime) {
             msg = medModel.getName() + " taken on time.";
-        }
-        else {
+        } else {
 
             String actualTime = calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE);
             msg = medModel.getName() + " meant to be taken at " + doseModel.getTime()
-                + ". Actually taken at " + actualTime;
+                    + ". Actually taken at " + actualTime;
         }
         MedicationLog log = new MedicationLog(medModel.getMedicationId(), msg, doseModel.getAmount(),
-                                            calendar.getTimeInMillis(), true, onTime);
+                calendar.getTimeInMillis(), true, onTime);
         addLog(log);
 
     }
@@ -660,8 +676,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * Method that is called for when the medication is to be taken, updating the total quantity of
      * the medication according to the amount to be taken, and setting the application to be taken
+     *
      * @param doseModel - the application model mirroring the row to have isTaken set to true
-     * @param medModel - the medication model mirroring the row to have quantity updated
+     * @param medModel  - the medication model mirroring the row to have quantity updated
      */
     public void takeMedication(DoseModel doseModel, MedicationModel medModel) {
         ContentValues cvMed = new ContentValues(1);
@@ -681,8 +698,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * Method that is called to update the Google Calendar ID for the empty event
      * for a given medication
+     *
      * @param medModel the medication to update the event ID for
-     * @param id the new value of the ID for the event
+     * @param id       the new value of the ID for the event
      */
     public void updateCalRefillId(MedicationModel medModel, String id) {
         ContentValues cv = new ContentValues(1);
@@ -693,8 +711,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * Method that is called to update the Google Calendar ID for the empty event
      * for a given medication
+     *
      * @param medModel the medication to update the event ID for
-     * @param id the new value of the ID for the event
+     * @param id       the new value of the ID for the event
      */
     public void updateEmptyID(MedicationModel medModel, String id) {
         ContentValues cv = new ContentValues(1);
@@ -705,8 +724,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * Method that is called to update the Google Calendar ID for a given dose
      * taking event for a medication
+     *
      * @param doseModel the dose to update the event ID for
-     * @param id the new value of the ID for the event
+     * @param id        the new value of the ID for the event
      */
     public void updateDoseCalendarID(DoseModel doseModel, String id) {
         ContentValues cv = new ContentValues();
@@ -718,7 +738,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * Method that is called weekly that refreshes the every application in the db so that its
      * IS_TAKEN column is reset to false
      */
-    public void refreshDoses(){
+    public void refreshDoses() {
         ContentValues cv = new ContentValues();
         cv.put(COL_TAKEN, false);
         SQLiteDatabase db = this.getWritableDatabase();
@@ -740,6 +760,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Method that is called to update a medication in the database
+     *
      * @param med the medication to be updated
      */
     public void updateMedication(MedicationModel med) {
@@ -758,8 +779,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Function that takes values to be updated in a row in MEDICATION_TABLE and makes the changes
+     *
      * @param medModel - the application to be targeted
-     * @param cv - the values to be updated
+     * @param cv       - the values to be updated
      */
     public void updateMedicationRow(MedicationModel medModel, ContentValues cv) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -770,13 +792,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Function that takes values to be updated in a row in APPLICATION_TABLE and makes the changes
+     *
      * @param doseModel - the application to be targeted
-     * @param cv - the values to be updated
+     * @param cv        - the values to be updated
      */
     public void updateDose(DoseModel doseModel, ContentValues cv) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.update(DOSE_TABLE, cv, COL_DOSE_ID + "= "
-                    + doseModel.getDoseId(), null);
+                + doseModel.getDoseId(), null);
         db.close();
     }
 
@@ -791,26 +814,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Method that returns the number of medications in the medication table
+     *
      * @return int that is the no. of rows in MEDICATION_TABLE
      */
-    public int countMedication(){
+    public int countMedication() {
         String queryString = "SELECT COUNT (*) FROM " + MEDICATION_TABLE;
         return countRowHelper(queryString);
     }
 
     /**
      * Method counts the no. of doses from a given medication
+     *
      * @param medModel medication that we want to count the no. of doses from
      * @return int that is the no. of doses for the given medication
      */
-    public int countApplicationFromMed(MedicationModel medModel){
+    public int countApplicationFromMed(MedicationModel medModel) {
         String queryString = "SELECT COUNT (*) FROM " + DOSE_TABLE
-                                + "WHERE " + COL_MEDICATION_ID + " = " + medModel.getMedicationId();
+                + "WHERE " + COL_MEDICATION_ID + " = " + medModel.getMedicationId();
         return countRowHelper(queryString);
     }
 
     /**
      * Method that counts the no. of patient contacts the google user has
+     *
      * @return
      */
     public int countContacts() {
@@ -820,10 +846,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Helper method that is used to perform count operations on the DB
+     *
      * @param queryString the query to be executed
      * @return the resulting int of the COUNT query
      */
-    private int countRowHelper(String queryString){
+    private int countRowHelper(String queryString) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(queryString, null);
         cursor.moveToFirst();
@@ -836,6 +863,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Method that is called to update the no. of days until a medication is empty
+     *
      * @param medModel the medication we want to update the given field
      */
     public void updateDaysUntilEmpty(MedicationModel medModel) {
@@ -848,6 +876,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * SQLite databases represent boolean variable as integers, with 0 for false and 1 for true.
      * To convert back into boolean for the model, check for equality with 1
+     *
      * @param b - the integer representing the boolean
      * @return true or false, depending on if b is 1 or 0
      */
@@ -859,6 +888,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * When using the insert method on a SQLiteDatabase instance, a long value is returned that
      * denotes if the data was added to the db successfully. If the value returned is negative,
      * that therefore means that the data has not been inserted properly
+     *
      * @param insert - long value that represents the success
      * @return false if negative, true otherwise
      */

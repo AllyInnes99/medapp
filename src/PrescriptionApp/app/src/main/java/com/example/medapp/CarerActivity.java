@@ -14,6 +14,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Activity where the user selects a patient for the medication
+ */
 public class CarerActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
@@ -34,8 +37,6 @@ public class CarerActivity extends AppCompatActivity {
         medModel = databaseHelper.selectMedicationFromID(medId);
         recyclerView = findViewById(R.id.recyclerView);
         displayRecycler();
-
-
     }
 
     @Override
@@ -55,6 +56,9 @@ public class CarerActivity extends AppCompatActivity {
         displayRecycler();
     }
 
+    /**
+     * Method that displays the available contacts to the recyclerview
+     */
     public void displayRecycler() {
         contacts = databaseHelper.selectAllContacts();
         carerAdapter = new CarerAdapter(context, contacts, this);
@@ -62,6 +66,11 @@ public class CarerActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
     }
 
+    /**
+     * Method that adds the medication to the calendar, including the patient
+     *
+     * @param contact the patient who the mediciation is for
+     */
     public void addToCalendar(ContactDetails contact) {
         GoogleCalendarHelper gac = new GoogleCalendarHelper(context);
         gac.setContact(contact);

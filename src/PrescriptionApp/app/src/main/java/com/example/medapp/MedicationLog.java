@@ -1,7 +1,5 @@
 package com.example.medapp;
 
-import java.util.Calendar;
-
 /**
  * Class that represents an entry of the medication taking history log
  */
@@ -33,16 +31,6 @@ public class MedicationLog implements Comparable<MedicationLog> {
         this.time = time;
         this.taken = taken;
         this.onTime = onTime;
-    }
-
-    public Calendar timeToCalendar() {
-        Calendar c = Calendar.getInstance();
-        c.setTimeInMillis(this.time);
-        return c;
-    }
-
-    public void CalendarToTime(Calendar c) {
-        setTime(c.getTimeInMillis());
     }
 
     /*

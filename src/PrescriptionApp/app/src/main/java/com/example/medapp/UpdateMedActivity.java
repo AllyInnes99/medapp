@@ -23,7 +23,7 @@ import java.util.Locale;
 
 public class UpdateMedActivity extends AppCompatActivity {
 
-    Button btn_update, btn_delete, btn_cal, btn_dose, btn_refill;
+    Button btn_update, btn_delete, btn_dose, btn_refill;
     TextInputEditText et_name, et_quantity, et_refill, et_dosage;
     AutoCompleteTextView dropdown_measurement, dropdown_type;
     MedicationModel medModel;
@@ -33,7 +33,7 @@ public class UpdateMedActivity extends AppCompatActivity {
     int originalQuantity;
     private static final int DOSE_ACTIVITY_REQUEST_CODE = 42;
     final List<String> medTypes = Arrays.asList("tablet", "pill", "injection", "powder",
-                                                "drops", "inhalers", "topical");
+            "drops", "inhalers", "topical");
     final List<String> measurements = Arrays.asList("g", "mg", "ml", "l");
 
     @Override
@@ -57,7 +57,6 @@ public class UpdateMedActivity extends AppCompatActivity {
 
         btn_update = findViewById(R.id.btn_update);
         btn_delete = findViewById(R.id.btn_del);
-        //btn_cal = findViewById(R.id.btn_cal);
         btn_dose = findViewById(R.id.btn_dose);
         btn_refill = findViewById(R.id.btn_refill);
 
@@ -68,9 +67,6 @@ public class UpdateMedActivity extends AppCompatActivity {
 
         dropdown_measurement = findViewById(R.id.dropdown_measurement);
         dropdown_type = findViewById(R.id.dropdown_type);
-
-
-
         autoTake = findViewById(R.id.autotake);
 
         // get the medication via ID passed by intent
@@ -96,9 +92,9 @@ public class UpdateMedActivity extends AppCompatActivity {
         btn_update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try{
-                    String medicationName =  et_name.getText().toString();
-                    if(!MedicationModel.validateMedicationName(medicationName)) {
+                try {
+                    String medicationName = et_name.getText().toString();
+                    if (!MedicationModel.validateMedicationName(medicationName)) {
                         throw new Exception("Invalid medication name");
                     }
                     int quantity = Integer.parseInt(et_quantity.getText().toString());
@@ -117,7 +113,7 @@ public class UpdateMedActivity extends AppCompatActivity {
                     medModel.setAutoTake(autoTake.isChecked());
 
                     databaseHelper.updateMedication(medModel);
-                    if(quantity != originalQuantity) {
+                    if (quantity != originalQuantity) {
                         databaseHelper.updateDaysUntilEmpty(medModel);
                         medModel = databaseHelper.selectMedicationFromID(medModel.getMedicationId());
                         GoogleCalendarHelper gch = new GoogleCalendarHelper(UpdateMedActivity.this);
@@ -127,8 +123,7 @@ public class UpdateMedActivity extends AppCompatActivity {
                     Toast.makeText(UpdateMedActivity.this, "Successfully updated medication", Toast.LENGTH_SHORT).show();
                     finish();
 
-                }
-                catch(Exception e){
+                } catch (Exception e) {
                     Toast.makeText(UpdateMedActivity.this, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                 }
 
@@ -137,10 +132,10 @@ public class UpdateMedActivity extends AppCompatActivity {
 
         btn_delete.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 try {
                     List<DoseModel> doses = databaseHelper.selectDoseFromMedication(medModel);
-                    if(GoogleSignIn.getLastSignedInAccount(UpdateMedActivity.this) != null) {
+                    if (GoogleSignIn.getLastSignedInAccount(UpdateMedActivity.this) != null) {
                         GoogleCalendarHelper gac = new GoogleCalendarHelper(UpdateMedActivity.this);
                         gac.deleteMedEvents(medModel, doses);
                     }
@@ -203,9 +198,9 @@ public class UpdateMedActivity extends AppCompatActivity {
     }
 
 
-    private void cancelNotification(MedicationModel model){
+    private void cancelNotification(MedicationModel model) {
         List<DoseModel> doseModels = databaseHelper.selectDoseFromMedication(model);
-        for(DoseModel doseModel : doseModels){
+        for (DoseModel doseModel : doseModels) {
 
         }
     }

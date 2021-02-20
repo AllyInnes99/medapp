@@ -18,6 +18,9 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.util.Calendar;
 import java.util.List;
 
+/**
+ * RecyclerView adapter for the refill logs for a medicine
+ */
 public class RefillAdapter extends RecyclerView.Adapter<RefillAdapter.MyViewHolder> {
 
     private Context context;
@@ -39,16 +42,15 @@ public class RefillAdapter extends RecyclerView.Adapter<RefillAdapter.MyViewHold
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         final RefillData data = refillData.get(position);
-        String date = createDateString(data);
+        String date = data.createDateString();
         holder.refill_date.setText(date);
 
         String txt;
         int diff = data.getRefillAmount() - data.getOriginalQty();
-        if(diff > 0) {
+        if (diff > 0) {
             txt = "+" + diff;
             holder.refill_amount.setTextColor(Color.GREEN);
-        }
-        else {
+        } else {
             txt = Integer.toString(diff);
             holder.refill_amount.setTextColor(Color.RED);
         }
@@ -58,7 +60,7 @@ public class RefillAdapter extends RecyclerView.Adapter<RefillAdapter.MyViewHold
             @Override
             public void onClick(View v) {
                 String msg = "Original quantity: " + data.getOriginalQty()
-                            + "\nNew quantity: " + data.getRefillAmount();
+                        + "\nNew quantity: " + data.getRefillAmount();
                 new MaterialAlertDialogBuilder(context)
                         .setTitle("Refill Entry")
                         .setMessage(msg)
@@ -88,16 +90,6 @@ public class RefillAdapter extends RecyclerView.Adapter<RefillAdapter.MyViewHold
         }
     }
 
-    private String createDateString(RefillData data){
-        return String.format("%s-%s-%s", padDate(data.getDay()), padDate(data.getMonth()), data.getYear());
-    }
 
-    private String padDate(int val){
-        String valStr = Integer.toString(val);
-        if(val < 10){
-            valStr = "0" + valStr;
-        }
-        return valStr;
-    }
 
 }

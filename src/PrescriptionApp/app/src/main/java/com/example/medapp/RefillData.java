@@ -32,6 +32,29 @@ public class RefillData {
         this.originalQty = originalQty;
     }
 
+    /**
+     * Method that creates a readable date for the refill log
+     *
+     * @return formatted String that represents the date
+     */
+    public String createDateString() {
+        return String.format("%s-%s-%s", padDate(this.getDay()), padDate(this.getMonth()), this.getYear());
+    }
+
+    /**
+     * Helper method that pads the date value to have a leading 0 if it is single digit
+     *
+     * @param val int representing the date value
+     * @return padded string with preceding 0 if required
+     */
+    private String padDate(int val) {
+        String valStr = Integer.toString(val);
+        if (val < 10) {
+            valStr = "0" + valStr;
+        }
+        return valStr;
+    }
+
     public int getId() {
         return id;
     }

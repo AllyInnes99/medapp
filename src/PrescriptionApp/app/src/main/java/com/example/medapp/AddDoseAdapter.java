@@ -16,6 +16,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * RecyclerView adapter for the doses to be added for a medication
+ */
 public class AddDoseAdapter extends RecyclerView.Adapter<AddDoseAdapter.MyViewHolder> {
 
     private Context context;
@@ -57,8 +60,7 @@ public class AddDoseAdapter extends RecyclerView.Adapter<AddDoseAdapter.MyViewHo
             String tag = textView.getTag().toString();
             if (days.contains(tag) || days.contains("Daily")) {
                 textView.setTextColor(Color.BLACK);
-            }
-            else {
+            } else {
                 textView.setTextColor(Color.LTGRAY);
             }
         }
