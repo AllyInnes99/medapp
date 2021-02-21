@@ -148,7 +148,7 @@ public class AddDosesActivity extends AppCompatActivity {
 
             PendingIntent pendingIntent = PendingIntent.getBroadcast(AddDosesActivity.this, doseModel.getDoseId() + 2, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
-            //Toast.makeText(AddDosesActivity.this, "Registered alarm.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(AddDosesActivity.this, "Registered alarm.", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -208,7 +208,7 @@ public class AddDosesActivity extends AppCompatActivity {
     private void returnToMainActivity() {
         Intent intent = new Intent(AddDosesActivity.this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        Toast.makeText(AddDosesActivity.this, "Successfully create medication " + medModel.getName(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(AddDosesActivity.this, "Successfully created medication " + medModel.getName(), Toast.LENGTH_SHORT).show();
         startActivity(intent);
     }
 
