@@ -2,6 +2,8 @@ package com.example.medapp;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import android.content.Intent;
 import android.os.Build;
@@ -139,6 +141,7 @@ public class UpdateMedActivity extends AppCompatActivity {
                         GoogleCalendarHelper gac = new GoogleCalendarHelper(UpdateMedActivity.this);
                         gac.deleteMedEvents(medModel, doses);
                     }
+                    cancelNotifications();
                     databaseHelper.deleteMedication(medModel);
                     Toast.makeText(UpdateMedActivity.this, "Successfully deleted medication", Toast.LENGTH_SHORT).show();
                     finish();
@@ -158,25 +161,6 @@ public class UpdateMedActivity extends AppCompatActivity {
             }
         });
 
-        /*
-        btn_cal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(UpdateMedActivity.this, "Adding reminder events to Google Calendar", Toast.LENGTH_SHORT).show();
-                GoogleCalendarHelper gac = new GoogleCalendarHelper(UpdateMedActivity.this);
-                model = databaseHelper.selectMedicationFromID(model.getMedicationId());
-                try {
-                    gac.addDoseReminder(model);
-                    gac.addRefillEvents(model);
-                    gac.updateMedEvents(model);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                model = databaseHelper.selectMedicationFromID(model.getMedicationId());
-                finish();
-            }
-        });
-        */
 
         btn_dose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -197,11 +181,14 @@ public class UpdateMedActivity extends AppCompatActivity {
         et_refill.setText(date);
     }
 
-
-    private void cancelNotification(MedicationModel model) {
-        List<DoseModel> doseModels = databaseHelper.selectDoseFromMedication(model);
+    /**
+     * Helper method that cancels all of the pending notifications for a medicine upon removal
+     */
+    private void cancelNotifications() {
+        List<DoseModel> doseModels = databaseHelper.selectDoseFromMedication(medModel);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(UpdateMedActivity.this);
         for (DoseModel doseModel : doseModels) {
-
+            notificationManager.cancel(doseModel.getDoseId());
         }
     }
 

@@ -386,10 +386,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return executeMedicationQuery(rawQuery);
     }
 
-    /*
-     --- SELECT QUERIES FOR DOSE_TABLE ---
-    */
-
     /**
      * Method that gets all of the doses set up in the database
      *
@@ -440,6 +436,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 " WHERE (" + COL_DAY + " = '" + day +
                 "' OR " + COL_DAY + " = 'Daily')" +
                 " AND (" + COL_TAKEN + " = 0 )";
+        return executeDoseQuery(rawQuery);
+    }
+
+    public List<DoseModel> selectTodayDosesFromMed(MedicationModel medModel) {
+        int id = medModel.getMedicationId();
+        String day = App.days.get(calendar.get(Calendar.DAY_OF_WEEK));
+        String rawQuery = "SELECT * FROM " + DOSE_TABLE +
+                " WHERE (" + COL_DAY + " = '" + day +
+                "' OR " + COL_DAY + " = 'Daily')" +
+                " AND ( " + COL_MEDICATION_ID + " =" + id + ")";
         return executeDoseQuery(rawQuery);
     }
 

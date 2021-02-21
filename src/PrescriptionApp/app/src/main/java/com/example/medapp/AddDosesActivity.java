@@ -110,12 +110,10 @@ public class AddDosesActivity extends AppCompatActivity {
 
         // update days until refill for med
         databaseHelper.updateDaysUntilEmpty(medModel);
-
-        List<DoseModel> addedDoses = databaseHelper.selectDoseFromMedication(medModel);
-        for(DoseModel dose: addedDoses) {
+        List<DoseModel> todayDoses = databaseHelper.selectTodayDosesFromMed(medModel);
+        for(DoseModel dose: todayDoses) {
             initialiseNotification(dose);
         }
-
     }
 
     /**
@@ -141,14 +139,11 @@ public class AddDosesActivity extends AppCompatActivity {
             AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
             Intent intent = new Intent(this, AlertReceiver.class);
             intent.setAction("android.intent.action.NOTIFY");
-
-            intent.putExtra("quantity", doseModel.getAmount());
-            intent.putExtra("name", medModel.getName());
-
+            intent.putExtra("medID", medModel.getMedicationId());
+            intent.putExtra("doseID", doseModel.getDoseId());
 
             PendingIntent pendingIntent = PendingIntent.getBroadcast(AddDosesActivity.this, doseModel.getDoseId() + 2, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
-            Toast.makeText(AddDosesActivity.this, "Registered alarm.", Toast.LENGTH_SHORT).show();
         }
 
     }

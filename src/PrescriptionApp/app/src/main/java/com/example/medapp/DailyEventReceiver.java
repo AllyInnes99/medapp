@@ -88,16 +88,8 @@ public class DailyEventReceiver extends BroadcastReceiver {
         AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(mContext, AlertReceiver.class);
         intent.setAction("android.intent.action.NOTIFY");
-
-        intent.putExtra("quantity", doseModel.getAmount());
-        intent.putExtra("name", medModel.getName());
-
         intent.putExtra("medID", medModel.getMedicationId());
         intent.putExtra("doseID", doseModel.getDoseId());
-
-        // Register receiver
-        //mContext.getApplicationContext().registerReceiver(new AlertReceiver(), new IntentFilter());
-
         PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, doseModel.getDoseId() + 2, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
     }
