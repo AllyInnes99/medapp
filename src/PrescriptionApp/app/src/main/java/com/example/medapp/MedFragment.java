@@ -34,6 +34,8 @@ public class MedFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requireActivity().setTitle("MedApp - Medication");
+
     }
 
     @Override

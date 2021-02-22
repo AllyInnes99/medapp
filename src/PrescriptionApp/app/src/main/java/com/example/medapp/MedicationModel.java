@@ -106,46 +106,30 @@ public class MedicationModel implements Serializable {
      * @return the no. of days until the med is empty
      */
     public int calcDaysUntilEmpty(DatabaseHelper databaseHelper) {
-        List<String> days = new ArrayList<>(App.days);
-        days.remove(0);
+        List<String> dayStrings = new ArrayList<>(App.days);
+        dayStrings.remove(0);
         int count = 0;
-
         Calendar c = Calendar.getInstance();
-        int day = c.get(Calendar.DAY_OF_WEEK) - 1;
-
-        Map<Integer, Integer> noToBeTaken = new HashMap<>(days.size());
+        int dayVal = c.get(Calendar.DAY_OF_WEEK) - 1;
+        Map<Integer, Integer> noToBeTaken = new HashMap<>(dayStrings.size());
         int current = this.getQuantity();
         while (current > 0) {
-            int target = day % days.size();
+            int target = dayVal % dayStrings.size();
             if (noToBeTaken.get(target) == null) {
                 int total = 0;
-                List<DoseModel> doses = databaseHelper.selectDoseFromDay(days.get(target));
+                List<DoseModel> doses = databaseHelper.selectDoseFromDay(dayStrings.get(target));
                 for (DoseModel dose : doses) {
                     total += dose.getAmount();
                 }
                 noToBeTaken.put(target, total);
             }
             current -= noToBeTaken.get(target);
-            day += 1;
+            dayVal += 1;
             count += 1;
         }
-
         return count;
     }
 
-    /**
-     * Helper function that is used to avoid NULL pointer errors, by setting null values to 0
-     *
-     * @param takenMap HashMap that is used
-     * @param target   the key we want to look up
-     * @return 0 if get results in null, otherwise the value.
-     */
-    private int mapFiller(Map<String, Integer> takenMap, String target) {
-        if (takenMap.get(target) == null) {
-            return 0;
-        }
-        return takenMap.get(target);
-    }
 
     /**
      * @return a String that prints the contents of a medication object

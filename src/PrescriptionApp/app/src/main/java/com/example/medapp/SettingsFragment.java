@@ -30,6 +30,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        requireActivity().setTitle("MedApp - Settings");
         setPreferencesFromResource(R.xml.root_preferences, rootKey);
         final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(requireContext());
         PreferenceCategory googlePreferences = findPreference("google");

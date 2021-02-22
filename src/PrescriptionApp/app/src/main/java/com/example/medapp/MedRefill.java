@@ -58,6 +58,9 @@ public class MedRefill extends AppCompatActivity {
         medModel = databaseHelper.selectMedicationFromID(medID);
         String prevQty = Integer.toString(medModel.getQuantity());
 
+        setTitle(String.format("MedApp - Refill %s", medModel.getName()));
+
+
         et_current.setText(prevQty);
         toggleGroup.check(R.id.btn_add);
 

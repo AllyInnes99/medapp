@@ -38,6 +38,8 @@ public class CreateMedicationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_medication);
+        setTitle("MedApp - Create Med");
+
 
         et_name = findViewById(R.id.et_name);
         et_quantity = findViewById(R.id.et_quantity);

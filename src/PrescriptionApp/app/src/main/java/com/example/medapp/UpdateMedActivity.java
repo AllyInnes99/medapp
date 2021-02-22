@@ -76,6 +76,9 @@ public class UpdateMedActivity extends AppCompatActivity {
         medModel = databaseHelper.selectMedicationFromID(id);
         originalQuantity = medModel.getQuantity();
 
+        setTitle(String.format("MedApp - Edit %s", medModel.getName()));
+
+
         // set the values of the texts
         et_name.setText(medModel.getName());
         et_quantity.setText(String.format(Locale.UK, "%d", medModel.getQuantity()));

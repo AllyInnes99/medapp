@@ -38,6 +38,8 @@ public class CreateDoseActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_dose);
 
         medModel = (MedicationModel) getIntent().getSerializableExtra("MedModel");
+        setTitle(String.format("MedApp - Create %s Dose", medModel.getName()));
+
         et_time = findViewById(R.id.et_time);
         et_amount = findViewById(R.id.et_amount);
         btn_time = findViewById(R.id.btn_time);

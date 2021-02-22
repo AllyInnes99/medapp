@@ -42,20 +42,22 @@ public class AlertReceiver extends BroadcastReceiver {
         int quantity = doseModel.getAmount();
         String name = medModel.getName();
 
-        String title = "MedApp: Take " + name;
-        String msg = "Time to take " + quantity + " of " + name;
+        if(!doseModel.isTaken()) {
+            String title = "MedApp: Take " + name;
+            String msg = "Time to take " + quantity + " of " + name;
 
-        Notification notification = new NotificationCompat.Builder(context, App.MED_TAKING_CHANNEL)
-                .setSmallIcon(R.drawable.ic_healing)
-                .setContentTitle(title)
-                .setContentText(msg)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setCategory(NotificationCompat.CATEGORY_REMINDER)
-                .setContentIntent(pendingIntent)
-                .setAutoCancel(true)
-                .addAction(R.drawable.ic_healing, context.getApplicationContext().getString(R.string.take), takePendingIntent)
-                .setAutoCancel(true)
-                .build();
-        notificationManager.notify(doseModel.getDoseId(), notification);
+            Notification notification = new NotificationCompat.Builder(context, App.MED_TAKING_CHANNEL)
+                    .setSmallIcon(R.drawable.ic_healing)
+                    .setContentTitle(title)
+                    .setContentText(msg)
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setCategory(NotificationCompat.CATEGORY_REMINDER)
+                    .setContentIntent(pendingIntent)
+                    .setAutoCancel(true)
+                    .addAction(R.drawable.ic_healing, context.getApplicationContext().getString(R.string.take), takePendingIntent)
+                    .setAutoCancel(true)
+                    .build();
+            notificationManager.notify(doseModel.getDoseId(), notification);
+        }
     }
 }

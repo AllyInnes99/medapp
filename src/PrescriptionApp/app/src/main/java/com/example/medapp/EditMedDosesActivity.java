@@ -1,9 +1,12 @@
 package com.example.medapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,6 +19,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 public class EditMedDosesActivity extends AppCompatActivity {
@@ -52,6 +56,8 @@ public class EditMedDosesActivity extends AppCompatActivity {
         int id = getIntent().getIntExtra("medID", 0);
         medModel = databaseHelper.selectMedicationFromID(id);
         doseModels = databaseHelper.selectDoseFromMedication(medModel);
+        setTitle(String.format("MedApp - Edit %s Doses", medModel.getName()));
+
         originalDoses = new ArrayList<>(doseModels);
         getData();
 
@@ -93,26 +99,31 @@ public class EditMedDosesActivity extends AppCompatActivity {
     private void addToDatabase() {
 
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(context);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+
 
         // remove all previous doseModels from db and Google Calendar
-        for (DoseModel dm : doseModels) {
+        for (DoseModel originalDose : doseModels) {
             if (acct != null) {
-                gch.deleteDoseEvent(dm);
+                gch.deleteDoseEvent(originalDose);
+                notificationManager.cancel(originalDose.getDoseId());
             }
-            databaseHelper.deleteDose(dm);
+            databaseHelper.deleteDose(originalDose);
         }
 
         String daily = "Daily";
         for (AddDoseModel dm : tempModels) {
             if (dm.isDoseDaily()) {
-                DoseModel m = new DoseModel(medModel.getMedicationId(), dm.getTime(),
+                DoseModel newDose = new DoseModel(medModel.getMedicationId(), dm.getTime(),
                         daily, dm.getQuantity());
-                databaseHelper.addDose(m);
+                databaseHelper.addDose(newDose);
+                initialiseNotification(newDose);
             } else {
                 for (String day : dm.getDays()) {
                     DoseModel m = new DoseModel(medModel.getMedicationId(), dm.getTime(),
                             day, dm.getQuantity());
                     databaseHelper.addDose(m);
+                    initialiseNotification(m);
                 }
             }
         }
@@ -188,6 +199,38 @@ public class EditMedDosesActivity extends AppCompatActivity {
         doseAdapter = new AddDoseAdapter(EditMedDosesActivity.this, tempModels);
         recyclerView.setAdapter(doseAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(EditMedDosesActivity.this));
+    }
+
+    /**
+     * Method that starts a notification for a medication does, if the medication is meant
+     * to be taken later in the day
+     * @param doseModel the dose that a notification is to be created for
+     */
+    private void initialiseNotification(DoseModel doseModel){
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(System.currentTimeMillis());
+
+        String[] time = doseModel.timeToHourAndMin();
+        int hour = Integer.parseInt(time[0]);
+        int mins = Integer.parseInt(time[1]);
+
+        // Set calendar to represent the day
+        c.set(Calendar.HOUR_OF_DAY, hour);
+        c.set(Calendar.MINUTE, mins);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+
+        if(Calendar.getInstance().getTimeInMillis() < c.getTimeInMillis()){
+            AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+            Intent intent = new Intent(this, AlertReceiver.class);
+            intent.setAction("android.intent.action.NOTIFY");
+            intent.putExtra("medID", medModel.getMedicationId());
+            intent.putExtra("doseID", doseModel.getDoseId());
+
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, doseModel.getDoseId() + 2, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+        }
+
     }
 
 }

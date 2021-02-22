@@ -54,6 +54,8 @@ public class AddDosesActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         floatingActionButton = findViewById(R.id.addApplicationButton);
         nextButton = findViewById(R.id.nextButton);
+        setTitle(String.format("MedApp - Add Doses for %s", medModel.getName()));
+
         displayRecycler();
 
         floatingActionButton.setOnClickListener(new View.OnClickListener() {

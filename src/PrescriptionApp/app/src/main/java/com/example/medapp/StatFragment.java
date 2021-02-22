@@ -49,6 +49,7 @@ public class StatFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requireActivity().setTitle("MedApp - Logs");
     }
 
     @Override
