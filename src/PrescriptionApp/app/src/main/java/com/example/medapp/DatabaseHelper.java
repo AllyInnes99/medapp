@@ -1,6 +1,7 @@
 package com.example.medapp;
 
 import android.app.AlarmManager;
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
@@ -9,6 +10,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.preference.PreferenceManager;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -664,7 +669,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         MedicationLog log = new MedicationLog(medModel.getMedicationId(), msg, doseModel.getAmount(),
                 calendar.getTimeInMillis(), true, onTime);
         addLog(log);
-
     }
 
     public void takeMedicationLate(DoseModel doseModel, MedicationModel medModel) {
@@ -677,6 +681,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         MedicationLog log = new MedicationLog(medModel.getMedicationId(), msg, doseModel.getAmount(),
                 calendar.getTimeInMillis(), true, false);
         addLog(log);
+
     }
 
     /**
@@ -695,6 +700,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         int newQuantity = medModel.getQuantity() - amount;
         cvMed.put(COL_QUANTITY, newQuantity);
         updateMedicationRow(medModel, cvMed);
+
+        String i = PreferenceManager.getDefaultSharedPreferences(context).
+                getString("reminderDay", "7");
+        int d  = Integer.parseInt(i);
+        if(newQuantity < d && !medModel.isRefillRequested()) {
+            createRefillNotificiation(medModel);
+        }
 
         // register dose as taken
         cvAppl.put(COL_TAKEN, true);
@@ -901,5 +913,32 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private boolean isAdded(long insert) {
         return insert >= 0;
     }
+
+    private void createRefillNotificiation(MedicationModel med) {
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+
+        Intent tapIntent = new Intent(context, MedRefill.class);
+        tapIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        tapIntent.putExtra("medID", med.getMedicationId());
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, tapIntent, 0);
+
+
+        String medName = med.getName();
+        String title = medName + " supply low";
+        String msg = String.format("Your supply of %s will run out soon. Please order new prescription.", medName);
+
+        Notification notification = new NotificationCompat.Builder(context, App.REFILL_CHANNEL)
+                .setSmallIcon(R.drawable.ic_healing)
+                .setContentTitle(title)
+                .setContentText(msg)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_REMINDER)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+                .build();
+        notificationManager.notify(-med.getMedicationId(), notification);
+    }
+
 
 }

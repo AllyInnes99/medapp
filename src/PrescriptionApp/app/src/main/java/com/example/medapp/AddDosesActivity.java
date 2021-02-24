@@ -72,11 +72,11 @@ public class AddDosesActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(!tempModels.isEmpty()) {
-                    addToDatabase();
                     if(GoogleSignIn.getLastSignedInAccount(AddDosesActivity.this) != null){
                         addToGoogleCal();
                     }
                     else {
+                        addToDatabase();
                         returnToMainActivity();
                     }
 
@@ -152,6 +152,7 @@ public class AddDosesActivity extends AppCompatActivity {
     }
 
     private void addToGoogleCal() {
+        addToDatabase();
         GoogleCalendarHelper gch = new GoogleCalendarHelper(AddDosesActivity.this);
         medModel = databaseHelper.selectMedicationFromID(medModel.getMedicationId());
         if(databaseHelper.countContacts() > 0) {

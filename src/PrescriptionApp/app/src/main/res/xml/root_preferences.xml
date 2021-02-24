@@ -3,6 +3,7 @@
 
     <PreferenceCategory app:title="Refill Reminders">
 
+
         <ListPreference
             app:title="No. of days for refill reminder"
             app:key="reminderDay"
@@ -12,10 +13,6 @@
             app:entryValues="@array/refillDaysVals">
         </ListPreference>
 
-        <Preference
-            app:title="Test"
-            app:key="test">
-        </Preference>
 
     </PreferenceCategory>
 

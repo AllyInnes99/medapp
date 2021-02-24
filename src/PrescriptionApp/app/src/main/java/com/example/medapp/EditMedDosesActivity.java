@@ -104,11 +104,13 @@ public class EditMedDosesActivity extends AppCompatActivity {
 
         // remove all previous doseModels from db and Google Calendar
         for (DoseModel originalDose : doseModels) {
-            if (acct != null) {
-                gch.deleteDoseEvent(originalDose);
-                notificationManager.cancel(originalDose.getDoseId());
-            }
             databaseHelper.deleteDose(originalDose);
+            notificationManager.cancel(originalDose.getDoseId());
+            Toast.makeText(context, originalDose.getCalendarID(), Toast.LENGTH_SHORT).show();
+            if (acct != null && originalDose.getCalendarID() != null) {
+                gch = new GoogleCalendarHelper(context);
+                gch.deleteDoseEvent(originalDose);
+            }
         }
 
         String daily = "Daily";
@@ -159,7 +161,6 @@ public class EditMedDosesActivity extends AppCompatActivity {
 
 
                 if (!tempDays.isEmpty()) {
-                    Toast.makeText(context, "here", Toast.LENGTH_SHORT).show();
                     AddDoseModel prevDose = new AddDoseModel(prevTime, prevAmount);
                     prevDose.setDays(new ArrayList<>(tempDays));
                     tempModels.add(prevDose);

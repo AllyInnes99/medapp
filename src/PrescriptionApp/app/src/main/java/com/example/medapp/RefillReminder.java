@@ -18,15 +18,13 @@ public class RefillReminder extends BroadcastReceiver {
     public static final int DEFAULT = -1;
 
     @Override
-    public void onReceive(Context context, Intent intent) {
-        Toast.makeText(context, "received", Toast.LENGTH_SHORT).show();
-        DatabaseHelper databaseHelper = new DatabaseHelper(context);
+    public void onReceive(Context context, Intent intent) { DatabaseHelper databaseHelper = new DatabaseHelper(context);
         int medId = intent.getIntExtra("medId", DEFAULT);
         if (medId != DEFAULT) {
             MedicationModel med = databaseHelper.selectMedicationFromID(medId);
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
 
-            Intent tapIntent = new Intent(context, UpdateMedActivity.class);
+            Intent tapIntent = new Intent(context, MedRefill.class);
             tapIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             tapIntent.putExtra("medID", med.getMedicationId());
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, tapIntent, 0);
@@ -45,7 +43,7 @@ public class RefillReminder extends BroadcastReceiver {
                     .setContentIntent(pendingIntent)
                     .setAutoCancel(true)
                     .build();
-            notificationManager.notify(1, notification);
+            notificationManager.notify(-med.getMedicationId(), notification);
         }
     }
 }
