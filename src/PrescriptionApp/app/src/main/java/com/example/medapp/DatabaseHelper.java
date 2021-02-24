@@ -873,7 +873,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param medModel the medication we want to update the given field
      */
     public void updateDaysUntilEmpty(MedicationModel medModel) {
-        int days = medModel.calcDaysUntilEmpty(this);
+        int days = medModel.daysUntilEmpty(this);
         ContentValues cv = new ContentValues();
         cv.put(COL_DAYS_UNTIL_EMPTY, days);
         updateMedicationRow(medModel, cv);

@@ -12,6 +12,11 @@
             app:entryValues="@array/refillDaysVals">
         </ListPreference>
 
+        <Preference
+            app:title="Test"
+            app:key="test">
+        </Preference>
+
     </PreferenceCategory>
 
     <PreferenceCategory app:title="Google" app:key="google">

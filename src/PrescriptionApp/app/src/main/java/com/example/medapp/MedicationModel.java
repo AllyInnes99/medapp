@@ -101,34 +101,66 @@ public class MedicationModel implements Serializable {
 
     /**
      * Function that calcs. the no. of days until a medication runs out of supply
-     *
-     * @param databaseHelper retrieves data from db when required
+     * @param model - the med to find out
      * @return the no. of days until the med is empty
      */
-    public int calcDaysUntilEmpty(DatabaseHelper databaseHelper) {
-        List<String> dayStrings = new ArrayList<>(App.days);
-        dayStrings.remove(0);
-        int count = 0;
+    public int daysUntilEmpty(DatabaseHelper databaseHelper) {
         Calendar c = Calendar.getInstance();
-        int dayVal = c.get(Calendar.DAY_OF_WEEK) - 1;
-        Map<Integer, Integer> noToBeTaken = new HashMap<>(dayStrings.size());
-        int current = this.getQuantity();
-        while (current > 0) {
-            int target = dayVal % dayStrings.size();
-            if (noToBeTaken.get(target) == null) {
-                int total = 0;
-                List<DoseModel> doses = databaseHelper.selectDoseFromDay(dayStrings.get(target));
-                for (DoseModel dose : doses) {
-                    total += dose.getAmount();
+        List<DoseModel> doses = databaseHelper.selectDoseFromMedication(this);
+        Map<String, Integer> takenPerDay = new HashMap<>();
+        takenPerDay.put("Monday", 0);
+        takenPerDay.put("Tuesday", 0);
+        takenPerDay.put("Wednesday", 0);
+        takenPerDay.put("Thursday", 0);
+        takenPerDay.put("Friday", 0);
+        takenPerDay.put("Saturday", 0);
+        takenPerDay.put("Sunday", 0);
+
+        for(DoseModel doseModel: doses) {
+            String d = doseModel.getDay();
+            int count = doseModel.getAmount();
+
+            if(d.equals("Daily")){
+                for(String key: takenPerDay.keySet()){
+                    int original = takenPerDay.get(key);
+                    takenPerDay.put(key, original + count);
                 }
-                noToBeTaken.put(target, total);
             }
-            current -= noToBeTaken.get(target);
-            dayVal += 1;
-            count += 1;
+            else {
+                int original = takenPerDay.get(d);
+                takenPerDay.put(d, original + count);
+            }
         }
-        return count;
+
+        Map<Integer, Integer> m = new HashMap<>();
+        m.put(Calendar.SUNDAY, mapFiller(takenPerDay, "Sunday"));
+        m.put(Calendar.MONDAY, mapFiller(takenPerDay, "Monday"));
+        m.put(Calendar.TUESDAY, mapFiller(takenPerDay, "Tuesday"));
+        m.put(Calendar.WEDNESDAY, mapFiller(takenPerDay, "Wednesday"));
+        m.put(Calendar.THURSDAY, mapFiller(takenPerDay, "Thursday"));
+        m.put(Calendar.FRIDAY, mapFiller(takenPerDay, "Friday"));
+        m.put(Calendar.SATURDAY, mapFiller(takenPerDay, "Saturday"));
+        takenPerDay.clear();
+
+        int current = this.getQuantity();
+        int dayCount = 0;
+
+        // from today's date, continuously subtract from the current qty for each day and then
+        while(current > 0) {
+            current -= m.get(c.get(Calendar.DAY_OF_WEEK));
+            c.add(Calendar.DATE, 1);
+            dayCount++;
+        }
+        return dayCount;
     }
+
+    private int mapFiller(Map<String, Integer> takenMap, String target){
+        if(takenMap.get(target) == null){
+            return 0;
+        }
+        return takenMap.get(target);
+    }
+
 
 
     /**

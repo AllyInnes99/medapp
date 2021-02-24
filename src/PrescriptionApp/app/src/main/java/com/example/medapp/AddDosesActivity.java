@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -175,10 +176,7 @@ public class AddDosesActivity extends AppCompatActivity {
             .setPositiveButton("yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    medModel = databaseHelper.selectAllMedication().get(0);
-                    Intent i = new Intent(AddDosesActivity.this, CarerActivity.class);
-                    i.putExtra("medId", medModel.getMedicationId());
-                    startActivity(i);
+                    chooseContact(gch);
                 }
             })
             .setNegativeButton("no", new DialogInterface.OnClickListener() {
@@ -188,6 +186,34 @@ public class AddDosesActivity extends AppCompatActivity {
                 }
             })
             .show();
+    }
+
+    private void chooseContact(final GoogleCalendarHelper gch) {
+        DatabaseHelper db = new DatabaseHelper(AddDosesActivity.this);
+        final List<ContactDetails> contacts = db.selectAllContacts();
+        List<String> names = new ArrayList<>();
+        for(ContactDetails contact: contacts) {
+            names.add(contact.getName());
+        }
+        String[] options = names.toArray(new String[0]);
+        final ContactDetails[] sel = {contacts.get(0)};
+        AlertDialog.Builder builder = new AlertDialog.Builder(AddDosesActivity.this);
+        builder.setTitle("Select patient");
+        builder.setSingleChoiceItems(options, 0, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                sel[0] = contacts.get(which); }
+        });
+
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                gch.setContact(sel[0]);
+                addEvents(gch);
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     private void addEvents(GoogleCalendarHelper gch) {
