@@ -29,8 +29,7 @@ public class CreateMedicationActivity extends AppCompatActivity {
     Button submit_btn;
     SwitchMaterial autoTake;
 
-    final String[] medTypes = new String[]{"tablet", "pill", "injection", "powder",
-            "drops", "inhalers", "topical"};
+    final String[] medTypes = new String[]{ "pill(s)", "sachet(s)", "ml(s)", "scoop(s)", "drop(s)"};
     final String[] measurements = new String[]{"g", "mg", "ml", "l"};
 
 
