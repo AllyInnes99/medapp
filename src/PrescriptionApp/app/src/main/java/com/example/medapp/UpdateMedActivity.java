@@ -19,6 +19,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -35,22 +36,17 @@ public class UpdateMedActivity extends AppCompatActivity {
     DatabaseHelper databaseHelper = new DatabaseHelper(UpdateMedActivity.this);
     int originalQuantity;
     private static final int DOSE_ACTIVITY_REQUEST_CODE = 42;
-    final List<String> medTypes = Arrays.asList("tablet", "pill", "injection", "powder",
-            "drops", "inhalers", "topical");
+    final List<String> medTypes = Arrays.asList("pill(s)", "sachet(s)", "ml(s)", "scoop(s)", "drop(s)");
     final List<String> measurements = Arrays.asList("g", "mg", "ml", "l");
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == DOSE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
-            //int refill = data.getIntExtra("refill", 0);
-            //displayRefillDate(refill);
             String msg = "Updated the doses of " + medModel.getName();
             Toast.makeText(UpdateMedActivity.this, msg, Toast.LENGTH_SHORT).show();
             finish();
         }
-
-
     }
 
     @Override
@@ -90,67 +86,24 @@ public class UpdateMedActivity extends AppCompatActivity {
         ArrayAdapter<String> measurementAdapter =
                 new ArrayAdapter<>(UpdateMedActivity.this, R.layout.list_item, measurements);
         dropdown_measurement.setAdapter(measurementAdapter);
+        dropdown_measurement.setSelection(measurements.indexOf(medModel.getMeasurement()));
 
         ArrayAdapter<String> typeAdapter =
                 new ArrayAdapter<String>(UpdateMedActivity.this, R.layout.list_item, medTypes);
         dropdown_type.setAdapter(typeAdapter);
+        dropdown_type.setSelection(medTypes.indexOf(medModel.getType()));
 
         btn_update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    String medicationName = et_name.getText().toString();
-                    if (!MedicationModel.validateMedicationName(medicationName)) {
-                        throw new Exception("Invalid medication name");
-                    }
-                    int quantity = Integer.parseInt(et_quantity.getText().toString());
-
-
-                    String selectedMeasurement = dropdown_measurement.getSelectedItem().toString();
-                    String selectedType = dropdown_type.getSelectedItem().toString();
-
-                    medModel.setName(medicationName);
-                    medModel.setQuantity(quantity);
-                    medModel.setMeasurement(selectedMeasurement);
-                    medModel.setType(selectedType);
-
-                    medModel.setAutoTake(autoTake.isChecked());
-
-                    databaseHelper.updateMedication(medModel);
-                    if (quantity != originalQuantity) {
-                        databaseHelper.updateDaysUntilEmpty(medModel);
-                        medModel = databaseHelper.selectMedicationFromID(medModel.getMedicationId());
-                        GoogleCalendarHelper gch = new GoogleCalendarHelper(UpdateMedActivity.this);
-                        gch.updateMedEvents(medModel);
-                    }
-
-                    Toast.makeText(UpdateMedActivity.this, "Successfully updated medication", Toast.LENGTH_SHORT).show();
-                    finish();
-
-                } catch (Exception e) {
-                    Toast.makeText(UpdateMedActivity.this, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                }
-
+                updateMed();
             }
         });
 
         btn_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    List<DoseModel> doses = databaseHelper.selectDoseFromMedication(medModel);
-                    if (GoogleSignIn.getLastSignedInAccount(UpdateMedActivity.this) != null) {
-                        GoogleCalendarHelper gac = new GoogleCalendarHelper(UpdateMedActivity.this);
-                        gac.deleteMedEvents(medModel, doses);
-                    }
-                    cancelNotifications();
-                    databaseHelper.deleteMedication(medModel);
-                    Toast.makeText(UpdateMedActivity.this, "Successfully deleted medication", Toast.LENGTH_SHORT).show();
-                    finish();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
+                deleteMed();
             }
         });
 
@@ -174,6 +127,49 @@ public class UpdateMedActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    private void deleteMed() {
+        List<DoseModel> doses = databaseHelper.selectDoseFromMedication(medModel);
+        if (GoogleSignIn.getLastSignedInAccount(UpdateMedActivity.this) != null) {
+            GoogleCalendarHelper gac = new GoogleCalendarHelper(UpdateMedActivity.this);
+            gac.deleteMedEvents(medModel, doses);
+        }
+        cancelNotifications();
+        databaseHelper.deleteMedication(medModel);
+        Toast.makeText(UpdateMedActivity.this, "Successfully deleted medication", Toast.LENGTH_SHORT).show();
+        finish();
+    }
+
+    private void updateMed() {
+        try {
+            String medicationName = et_name.getText().toString();
+            if (!MedicationModel.validateMedicationName(medicationName)) {
+                throw new Exception("Invalid medication name");
+            }
+            int quantity = Integer.parseInt(et_quantity.getText().toString());
+            String selectedMeasurement = dropdown_measurement.getSelectedItem().toString();
+            String selectedType = dropdown_type.getSelectedItem().toString();
+            medModel.setName(medicationName);
+            medModel.setQuantity(quantity);
+            medModel.setMeasurement(selectedMeasurement);
+            medModel.setType(selectedType);
+            medModel.setAutoTake(autoTake.isChecked());
+
+            databaseHelper.updateMedication(medModel);
+            if (quantity != originalQuantity) {
+                databaseHelper.updateDaysUntilEmpty(medModel);
+                medModel = databaseHelper.selectMedicationFromID(medModel.getMedicationId());
+                GoogleCalendarHelper gch = new GoogleCalendarHelper(UpdateMedActivity.this);
+                gch.updateMedEvents(medModel);
+            }
+
+            Toast.makeText(UpdateMedActivity.this, "Successfully updated medication", Toast.LENGTH_SHORT).show();
+            finish();
+
+        } catch (Exception e) {
+            Toast.makeText(UpdateMedActivity.this, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void displayRefillDate(int daysUntilRefill) {
