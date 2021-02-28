@@ -5,9 +5,6 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.icu.text.UnicodeSetSpanner;
 import android.widget.Toast;
 
 import androidx.preference.PreferenceManager;
@@ -22,13 +19,13 @@ import java.util.List;
 public class DailyEventReceiver extends BroadcastReceiver {
 
     DatabaseHelper databaseHelper;
-    Context mContext;
+    Context context;
 
     @Override
     public void onReceive(Context context, Intent intent) {
         Toast.makeText(context, "MedApp: Syncing medication", Toast.LENGTH_SHORT).show();
         databaseHelper = new DatabaseHelper(context);
-        mContext = context;
+        this.context = context;
         autoTakeMedication();
         logMedicationNotTaken();
         databaseHelper.refreshDailyDoses();
@@ -49,17 +46,20 @@ public class DailyEventReceiver extends BroadcastReceiver {
         }
     }
 
-
+    /**
+     * Method that sets a refill reminder for a given medication
+     * @param med medication that needs a refill reminder
+     */
     private void setRefillReminder(MedicationModel med) {
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(System.currentTimeMillis());
         c.set(Calendar.HOUR_OF_DAY, 9);
 
-        AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(mContext, RefillReminder.class);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(context, RefillReminder.class);
         intent.setAction("android.intent.action.NOTIFY");
         intent.putExtra("medId", med.getMedicationId());
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, med.getMedicationId() + 2, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, med.getMedicationId() + 2, intent, 0);
         alarmManager.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
     }
 
@@ -85,12 +85,12 @@ public class DailyEventReceiver extends BroadcastReceiver {
         c.set(Calendar.SECOND, 0);
         c.set(Calendar.MILLISECOND, 0);
 
-        AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(mContext, AlertReceiver.class);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(context, AlertReceiver.class);
         intent.setAction("android.intent.action.NOTIFY");
         intent.putExtra("medID", medModel.getMedicationId());
         intent.putExtra("doseID", doseModel.getDoseId());
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, doseModel.getDoseId() + 2, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, doseModel.getDoseId() + 2, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
     }
 
@@ -126,7 +126,7 @@ public class DailyEventReceiver extends BroadcastReceiver {
      */
     private void decrementDaysUntilEmpty() {
         List<MedicationModel> medModels = databaseHelper.selectAllMedication();
-        int refill = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(mContext).
+        int refill = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).
                 getString("reminderDay", "7"));
         for (MedicationModel med : medModels) {
             int dec = med.getDaysUntilEmpty() - 1;

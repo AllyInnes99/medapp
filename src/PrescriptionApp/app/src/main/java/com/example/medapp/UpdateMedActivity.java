@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -27,7 +28,7 @@ public class UpdateMedActivity extends AppCompatActivity {
 
     Button btn_update, btn_delete, btn_dose, btn_refill;
     TextInputEditText et_name, et_quantity, et_refill, et_dosage;
-    AutoCompleteTextView dropdown_measurement, dropdown_type;
+    Spinner dropdown_measurement, dropdown_type;
     MedicationModel medModel;
     SwitchMaterial autoTake;
 
@@ -105,16 +106,14 @@ public class UpdateMedActivity extends AppCompatActivity {
                     int quantity = Integer.parseInt(et_quantity.getText().toString());
 
 
-                    String selectedMeasurement = dropdown_measurement.getText().toString();
-                    String selectedType = dropdown_type.getText().toString();
+                    String selectedMeasurement = dropdown_measurement.getSelectedItem().toString();
+                    String selectedType = dropdown_type.getSelectedItem().toString();
 
-                    Toast.makeText(UpdateMedActivity.this, selectedType, Toast.LENGTH_SHORT).show();
                     medModel.setName(medicationName);
                     medModel.setQuantity(quantity);
                     medModel.setMeasurement(selectedMeasurement);
                     medModel.setType(selectedType);
 
-                    Toast.makeText(UpdateMedActivity.this, Boolean.toString(autoTake.isChecked()), Toast.LENGTH_SHORT).show();
                     medModel.setAutoTake(autoTake.isChecked());
 
                     databaseHelper.updateMedication(medModel);

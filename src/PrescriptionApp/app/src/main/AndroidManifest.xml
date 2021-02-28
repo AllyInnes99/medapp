@@ -16,7 +16,6 @@
         android:theme="@style/AppTheme">
         <activity android:name=".MedRefill" />
         <activity android:name=".EditMedDosesActivity" />
-        <activity android:name=".Test" />
         <activity
             android:name=".SignInActivity"
             android:noHistory="true" />
