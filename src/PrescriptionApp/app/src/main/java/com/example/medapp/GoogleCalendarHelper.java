@@ -2,6 +2,7 @@ package com.example.medapp;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.preference.PreferenceManager;
 
@@ -508,9 +509,10 @@ public class GoogleCalendarHelper {
      */
     private void setTime(Calendar cal, Event event) {
         String date = createDateString(cal);
-        DateTime dateTime = new DateTime(date);
+        String time = "12:30";
+        String dateTime = date + "T" + time + ":00-00:00";
         EventDateTime eventDateTime = new EventDateTime()
-                .setDate(dateTime)
+                .setDateTime(new DateTime(dateTime))
                 .setTimeZone("Europe/London");
         event.setStart(eventDateTime);
         event.setEnd(eventDateTime);
