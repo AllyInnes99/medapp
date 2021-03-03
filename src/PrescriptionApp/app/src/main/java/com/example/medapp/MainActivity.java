@@ -91,35 +91,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Method that creates a reminder notification for user to take certain medication
-     *
-     * @param model - the application to be notified
-     */
-    private void setApplicationAlarm(DoseModel model) {
-        Calendar c = Calendar.getInstance();
-        String[] time = model.timeToHourAndMin();
-        int hour = Integer.parseInt(time[0]);
-        int mins = Integer.parseInt(time[1]);
-
-        // Set calendar to represent the day
-        c.set(Calendar.DAY_OF_WEEK, model.dayToInt());
-        c.set(Calendar.HOUR, hour);
-        c.set(Calendar.MINUTE, mins);
-
-
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(this, AlertReceiver.class);
-        intent.setAction("android.intent.action.NOTIFY");
-
-        // Register receiver
-        MainActivity.this.registerReceiver(new AlertReceiver(), new IntentFilter());
-
-        intent.putExtra("MyModel", model);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, model.getDoseId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-    }
-
-    /**
      * Helper function that is called on creation to start the daily cycle of "automatically" taking
      * medication that the user wishes to do so.
      */

@@ -5,6 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -35,6 +38,7 @@ public class UpdateMedActivity extends AppCompatActivity {
 
     DatabaseHelper databaseHelper = new DatabaseHelper(UpdateMedActivity.this);
     int originalQuantity;
+    boolean originalAutoTake;
     private static final int DOSE_ACTIVITY_REQUEST_CODE = 42;
     final List<String> medTypes = Arrays.asList("pill(s)", "sachet(s)", "ml(s)", "scoop(s)", "drop(s)");
     final List<String> measurements = Arrays.asList("g", "mg", "ml", "l");
@@ -72,6 +76,7 @@ public class UpdateMedActivity extends AppCompatActivity {
         int id = getIntent().getIntExtra("medID", 0);
         medModel = databaseHelper.selectMedicationFromID(id);
         originalQuantity = medModel.getQuantity();
+        originalAutoTake = medModel.isAutoTake();
 
         setTitle(String.format("MedApp - Edit %s", medModel.getName()));
 
@@ -164,6 +169,18 @@ public class UpdateMedActivity extends AppCompatActivity {
                 gch.updateMedEvents(medModel);
             }
 
+            // if user has changes autotake from
+            if(originalAutoTake & !autoTake.isChecked()) {
+                cancelNotifications();
+            }
+            // otherwise, add notifications
+            else if (!originalAutoTake & autoTake.isChecked()) {
+                List<DoseModel> doses = databaseHelper.selectDoseFromMedication(medModel);
+                for(DoseModel dose: doses) {
+                    initialiseNotification(dose);
+                }
+             }
+
             Toast.makeText(UpdateMedActivity.this, "Successfully updated medication", Toast.LENGTH_SHORT).show();
             finish();
 
@@ -180,7 +197,7 @@ public class UpdateMedActivity extends AppCompatActivity {
     }
 
     /**
-     * Helper method that cancels all of the pending notifications for a medicine upon removal
+     * Helper method that cancels all of the pending notifications for a medicine
      */
     private void cancelNotifications() {
         List<DoseModel> doseModels = databaseHelper.selectDoseFromMedication(medModel);
@@ -190,4 +207,32 @@ public class UpdateMedActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Method that creates notifications for the doses of a medication
+     */
+    private void initialiseNotification(DoseModel doseModel){
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(System.currentTimeMillis());
+
+        String[] time = doseModel.timeToHourAndMin();
+        int hour = Integer.parseInt(time[0]);
+        int mins = Integer.parseInt(time[1]);
+
+        // Set calendar to represent the day
+        c.set(Calendar.HOUR_OF_DAY, hour);
+        c.set(Calendar.MINUTE, mins);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+
+        if(Calendar.getInstance().getTimeInMillis() < c.getTimeInMillis()){
+            AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+            Intent intent = new Intent(this, AlertReceiver.class);
+            intent.setAction("android.intent.action.NOTIFY");
+            intent.putExtra("medID", medModel.getMedicationId());
+            intent.putExtra("doseID", doseModel.getDoseId());
+
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(UpdateMedActivity.this, doseModel.getDoseId() + 2, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+        }
+    }
 }
