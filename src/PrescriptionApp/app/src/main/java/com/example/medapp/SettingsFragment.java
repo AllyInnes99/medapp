@@ -100,6 +100,17 @@ public class SettingsFragment extends PreferenceFragmentCompat {
      * Method that signs the user out of their Google Account
      */
     private void signOutOfGoogle() {
+
+        // Before signing out, delete med events from Google Calendar
+        GoogleCalendarHelper gch = new GoogleCalendarHelper(requireContext());
+        DatabaseHelper databaseHelper = new DatabaseHelper(requireContext());
+        List<MedicationModel> meds = databaseHelper.selectAllMedication();
+        for(MedicationModel med: meds) {
+            List<DoseModel> medDoses = databaseHelper.selectDoseFromMedication(med);
+            gch.deleteMedEvents(med, medDoses);
+        }
+
+
         Scope scope = new Scope("https://www.googleapis.com/auth/calendar.events");
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestScopes(scope)

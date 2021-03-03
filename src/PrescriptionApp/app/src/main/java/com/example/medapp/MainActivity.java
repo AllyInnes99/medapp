@@ -1,45 +1,31 @@
 package com.example.medapp;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
-import androidx.preference.PreferenceManager;
-import androidx.preference.SwitchPreferenceCompat;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.GoogleAuthProvider;
 
 
 import java.util.Calendar;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     BottomNavigationView bottomNavigationView;
     NavController navController;
     View parentLayout;
-    public static final int GOOGLE_SIGN_IN = 100;
     private FirebaseAuth mAuth;
 
     private static final int DAILY_EVENT_ID = 1;
@@ -66,24 +52,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == GOOGLE_SIGN_IN) {
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            try {
-                // Google Sign In was successful, authenticate with Firebase
-                GoogleSignInAccount account = task.getResult(ApiException.class);
-                firebaseAuthWithGoogle(account.getIdToken());
-            } catch (ApiException e) {
-                // Google Sign In failed, update UI appropriately
-                //Log.w(TAG, "Google sign in failed", e);
-            }
-        }
-
-    }
 
     @Override
     protected void onResume() {
@@ -144,29 +112,8 @@ public class MainActivity extends AppCompatActivity {
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
     }
 
-    /**
-     * Method that performs the authentication of the user's Google account with the Firebase
-     * backend
-     *
-     * @param idToken user's idToken of their Google account
-     */
-    private void firebaseAuthWithGoogle(String idToken) {
-        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            //Log.d(TAG, "signInWithCredential:success");
-                            Toast.makeText(MainActivity.this, "Authentication success", Toast.LENGTH_SHORT).show();
-                            //startActivity(new Intent(SignInActivity.this, MainActivity.class));
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            //Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Toast.makeText(MainActivity.this, "Authentication Failed.", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-    }
+
+
+
+
 }

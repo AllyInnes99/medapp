@@ -25,6 +25,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import java.util.List;
+
 /**
  * Activity that when launched, the user is prompted to sign in with their Google account
  */
@@ -93,6 +95,7 @@ public class SignInActivity extends AppCompatActivity {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInWithCredential:success");
                     Toast.makeText(SignInActivity.this, "Authentication success", Toast.LENGTH_SHORT).show();
+                    addToGoogleCalendar();
                     startActivity(new Intent(SignInActivity.this, MainActivity.class));
                 } else {
                     // If sign in fails, display a message to the user.
@@ -101,6 +104,19 @@ public class SignInActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    /**
+     * After signing in w/ Google, add pre-existing events to Google Calendar
+     */
+    private void addToGoogleCalendar() {
+        DatabaseHelper databaseHelper = new DatabaseHelper(SignInActivity.this);
+        GoogleCalendarHelper gch = new GoogleCalendarHelper(SignInActivity.this);
+        List<MedicationModel> meds = databaseHelper.selectAllMedication();
+        for(MedicationModel med: meds) {
+            gch.addRefillEvents(med);
+            gch.addDoseReminder(med);
+        }
     }
 
 }
