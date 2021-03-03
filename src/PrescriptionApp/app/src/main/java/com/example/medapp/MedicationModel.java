@@ -101,7 +101,6 @@ public class MedicationModel implements Serializable {
 
     /**
      * Function that calcs. the no. of days until a medication runs out of supply
-     * @param model - the med to find out
      * @return the no. of days until the med is empty
      */
     public int daysUntilEmpty(DatabaseHelper databaseHelper) {

@@ -29,20 +29,7 @@ public class DailyEventReceiverTest {
         med = new MedicationModel("name", 25, "pill", 0.5, "g", false);
         receiver = new DailyEventReceiver();
         Intent intent = new Intent("android.intent.action.NOTIFY");
-        receiver.onReceive(context, intent);
-    }
 
-    @Before
-    public void setUp() {
-        db.addMedication(med);
-    }
-
-
-    @After
-    public void tearDown() {
-        db.close();
-        context.deleteDatabase(db.getDatabaseName());
-        db = new DatabaseHelper(context);
     }
 
     @Test

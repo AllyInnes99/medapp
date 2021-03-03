@@ -39,7 +39,10 @@ android {
         versionName "1.0"
         multiDexEnabled true
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "com.vogella.android.daggerjunitmockito.MockTestRunner"
+
         vectorDrawables.useSupportLibrary = true
     }
 
@@ -107,4 +110,6 @@ dependencies {
 dependencies {
     implementation 'com.google.firebase:firebase-database:19.6.0'
     androidTestImplementation 'junit:junit:4.12'
+    // Set this dependency if you want to use the Hamcrest matcher library
+    implementation 'org.hamcrest:hamcrest-library:1.3'
 }
