@@ -788,6 +788,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COL_DOSAGE, med.getDosage());
         cv.put(COL_MEASUREMENT, med.getMeasurement());
         cv.put(COL_TYPE, med.getType());
+        cv.put(COL_TYPE, med.getType());
         cv.put(COL_PROFILE, med.getProfile());
         cv.put(COL_DAYS_UNTIL_EMPTY, med.getDaysUntilEmpty());
         cv.put(COL_AUTO_TAKE, med.isAutoTake());

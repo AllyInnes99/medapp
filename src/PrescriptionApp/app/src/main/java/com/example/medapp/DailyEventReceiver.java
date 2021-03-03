@@ -23,20 +23,22 @@ public class DailyEventReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Toast.makeText(context, "MedApp: Syncing medication", Toast.LENGTH_SHORT).show();
-        databaseHelper = new DatabaseHelper(context);
-        this.context = context;
-        autoTakeMedication();
-        logMedicationNotTaken();
-        databaseHelper.refreshDailyDoses();
-        setNotificationsForToday();
-        decrementDaysUntilEmpty();
+        if (intent.getAction().equals("android.intent.action.NOTIFY")) {
+            //Toast.makeText(context, "MedApp: Syncing medication", Toast.LENGTH_SHORT).show();
+            databaseHelper = new DatabaseHelper(context);
+            this.context = context;
+            autoTakeMedication();
+            logMedicationNotTaken();
+            databaseHelper.refreshDailyDoses();
+            setNotificationsForToday();
+            decrementDaysUntilEmpty();
+        }
     }
 
     /**
      * Method that sets all the notifications that are required for a given day
      */
-    private void setNotificationsForToday() {
+    public void setNotificationsForToday() {
         List<DoseModel> doses = databaseHelper.selectTodaysDoseAndNotTaken();
         for (DoseModel dose : doses) {
             MedicationModel m = databaseHelper.selectMedicationFromDose(dose);
@@ -124,10 +126,18 @@ public class DailyEventReceiver extends BroadcastReceiver {
     /**
      * Method that decreases the daysUntilEmpty field for each medication by one.
      */
-    private void decrementDaysUntilEmpty() {
+    public void decrementDaysUntilEmpty() {
         List<MedicationModel> medModels = databaseHelper.selectAllMedication();
-        int refill = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).
-                getString("reminderDay", "7"));
+
+        String i = PreferenceManager.getDefaultSharedPreferences(context).
+                getString("reminderDay", "7");
+        int refill;
+        if(i == null) {
+            refill = 7;
+        }
+        else {
+            refill = Integer.parseInt(i);
+        }
         for (MedicationModel med : medModels) {
             int dec = med.getDaysUntilEmpty() - 1;
             med.setDaysUntilEmpty(dec);
