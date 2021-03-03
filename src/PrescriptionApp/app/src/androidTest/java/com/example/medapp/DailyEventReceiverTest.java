@@ -80,6 +80,19 @@ public class DailyEventReceiverTest {
         assertNotEquals(originalSize, newSize);
     }
 
+    @Test
+    public void testDailyDoseRefreshed() {
+        for(DoseModel dose: doses) {
+            dose.setTaken(true);
+        }
+        receiver.onReceive(context, new Intent("android.intent.action.NOTIFY"));
+        List<DoseModel> updated = db.selectAllDoses();
+        for(int i=0; i < updated.size(); i++) {
+            DoseModel original = doses.get(i);
+            DoseModel refreshed = updated.get(i);
+            assertNotEquals(original.isTaken(), refreshed.isTaken());
+        }
+    }
 
 
 }

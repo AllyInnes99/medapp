@@ -12,7 +12,9 @@ public class RefreshReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        DatabaseHelper databaseHelper = new DatabaseHelper(context);
-        databaseHelper.refreshDoses();
+        if(intent.getAction().equals("android.intent.action.NOTIFY")) {
+            DatabaseHelper databaseHelper = new DatabaseHelper(context);
+            databaseHelper.refreshDoses();
+        }
     }
 }

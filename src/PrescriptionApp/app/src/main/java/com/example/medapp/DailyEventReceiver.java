@@ -5,7 +5,6 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.widget.Toast;
 
 import androidx.preference.PreferenceManager;
 
@@ -58,7 +57,7 @@ public class DailyEventReceiver extends BroadcastReceiver {
         c.set(Calendar.HOUR_OF_DAY, 9);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(context, RefillReminder.class);
+        Intent intent = new Intent(context, RefillReminderReceiver.class);
         intent.setAction("android.intent.action.NOTIFY");
         intent.putExtra("medId", med.getMedicationId());
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, med.getMedicationId() + 2, intent, 0);

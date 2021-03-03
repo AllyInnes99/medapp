@@ -16,6 +16,9 @@ import androidx.core.app.NotificationManagerCompat;
  */
 public class AlertReceiver extends BroadcastReceiver {
 
+    public int medId;
+    public int doseId;
+
     @Override
     public void onReceive(Context context, Intent intent) {
         Intent tapIntent = new Intent(context, MainActivity.class);
@@ -24,18 +27,18 @@ public class AlertReceiver extends BroadcastReceiver {
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
 
-        int medID = intent.getIntExtra("medID", 0);
-        int doseID = intent.getIntExtra("doseID", 0);
+        medId = intent.getIntExtra("medID", 0);
+        doseId = intent.getIntExtra("doseID", 0);
 
         Intent takeIntent = new Intent(context, TakeReceiver.class);
         takeIntent.setAction("action.intent.action.NOTIFY");
-        takeIntent.putExtra("doseID", doseID);
-        takeIntent.putExtra("medID", medID);
+        takeIntent.putExtra("doseID", doseId);
+        takeIntent.putExtra("medID", medId);
         PendingIntent takePendingIntent = PendingIntent.getBroadcast(context, 1, takeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         DatabaseHelper databaseHelper = new DatabaseHelper(context);
-        MedicationModel medModel = databaseHelper.selectMedicationFromID(medID);
-        DoseModel doseModel = databaseHelper.selectDoseFromID(doseID);
+        MedicationModel medModel = databaseHelper.selectMedicationFromID(medId);
+        DoseModel doseModel = databaseHelper.selectDoseFromID(doseId);
 
         int quantity = doseModel.getAmount();
         String name = medModel.getName();

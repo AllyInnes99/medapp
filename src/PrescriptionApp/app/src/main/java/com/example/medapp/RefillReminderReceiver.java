@@ -14,7 +14,7 @@ import androidx.core.app.NotificationManagerCompat;
 /**
  * Extended broadcast receiver for the medication refill events
  */
-public class RefillReminder extends BroadcastReceiver {
+public class RefillReminderReceiver extends BroadcastReceiver {
     public static final int DEFAULT = -1;
 
     @Override
