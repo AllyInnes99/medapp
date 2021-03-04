@@ -79,4 +79,4 @@ debugTests:
   stage: test
   script:
     - cd src/PrescriptionApp
-    - ./gradlew -Pci --console=plain :app:testDebug
+    - ./gradlew -Pci --console=plain :app:testDebugUnitTest
