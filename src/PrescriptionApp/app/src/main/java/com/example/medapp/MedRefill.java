@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.button.MaterialButtonToggleGroup;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Calendar;
@@ -85,9 +87,20 @@ public class MedRefill extends AppCompatActivity {
         btn_request.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                medModel.setRefillRequested(true);
-                databaseHelper.updateMedication(medModel);
-                closeActivity();
+                new MaterialAlertDialogBuilder(context)
+                        .setTitle("Request Refill")
+                        .setMessage("Would you like to inform MedApp that you have requested a refill? This does not update your medication quantity for you.")
+                        .setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                medModel.setRefillRequested(true);
+                                databaseHelper.updateMedication(medModel);
+                                closeActivity();
+                            }
+                        })
+                        .setNegativeButton("no", null)
+                        .show();
+
             }
         });
 
