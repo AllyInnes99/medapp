@@ -8,8 +8,10 @@ import androidx.preference.PreferenceManager;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.googleapis.testing.auth.oauth2.MockGoogleCredential;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.testing.http.MockHttpTransport;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.calendar.model.Event;
@@ -43,7 +45,13 @@ public class GoogleCalendarHelper {
      */
     public GoogleCalendarHelper(Context context) {
         this.databaseHelper = new DatabaseHelper(context);
-        setRefillReminderDays(context);
+        try {
+            setRefillReminderDays(context);
+        }
+        catch (Exception e) {
+            this.refillReminderDays = 7;
+        }
+
         GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2
                 (context, Collections.singleton(CalendarScopes.CALENDAR_EVENTS));
         credential.setSelectedAccount(GoogleSignIn.getLastSignedInAccount(context).getAccount());
@@ -52,6 +60,31 @@ public class GoogleCalendarHelper {
                 NET_HTTP_TRANSPORT, JSON_FACTORY, credential)
                 .setApplicationName(context.getString(R.string.app_name))
                 .build();
+    }
+
+    /**
+     * Constructor for unit test purposes - need to have mocks
+     * @param context
+     * @param credential
+     */
+    public GoogleCalendarHelper(Context context, MockGoogleCredential credential) {
+        this.databaseHelper = new DatabaseHelper(context);
+        try {
+            setRefillReminderDays(context);
+        }
+        catch (Exception e) {
+            this.refillReminderDays = 7;
+        }
+
+        this.service = new com.google.api.services.calendar.Calendar.Builder(
+                new MockHttpTransport(), JSON_FACTORY, credential)
+                .setApplicationName("MedApp")
+                .build();
+        Log.w("test", service.toString());
+    }
+
+    public com.google.api.services.calendar.Calendar getService() {
+        return this.service;
     }
 
     /**

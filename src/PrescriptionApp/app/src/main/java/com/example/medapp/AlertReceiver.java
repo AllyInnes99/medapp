@@ -34,7 +34,7 @@ public class AlertReceiver extends BroadcastReceiver {
         takeIntent.setAction("action.intent.action.NOTIFY");
         takeIntent.putExtra("doseID", doseId);
         takeIntent.putExtra("medID", medId);
-        PendingIntent takePendingIntent = PendingIntent.getBroadcast(context, 1, takeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent takePendingIntent = PendingIntent.getBroadcast(context, medId, takeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         DatabaseHelper databaseHelper = new DatabaseHelper(context);
         MedicationModel medModel = databaseHelper.selectMedicationFromID(medId);
