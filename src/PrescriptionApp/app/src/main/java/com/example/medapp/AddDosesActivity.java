@@ -25,7 +25,7 @@ import java.util.List;
 public class AddDosesActivity extends AppCompatActivity {
     MedicationModel medModel;
     RecyclerView recyclerView;
-    FloatingActionButton floatingActionButton, nextButton;
+    FloatingActionButton addDoseButton, nextButton;
     AddDoseAdapter doseAdapter;
     DatabaseHelper databaseHelper = new DatabaseHelper(AddDosesActivity.this);
     List<AddDoseModel> tempModels = new ArrayList<>();
@@ -53,13 +53,13 @@ public class AddDosesActivity extends AppCompatActivity {
 
         medModel = (MedicationModel) getIntent().getSerializableExtra("MedModel");
         recyclerView = findViewById(R.id.recyclerView);
-        floatingActionButton = findViewById(R.id.addApplicationButton);
+        addDoseButton = findViewById(R.id.addDoseButton);
         nextButton = findViewById(R.id.nextButton);
         setTitle(String.format("MedApp - Add Doses for %s", medModel.getName()));
 
         displayRecycler();
 
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+        addDoseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(AddDosesActivity.this, CreateDoseActivity.class);

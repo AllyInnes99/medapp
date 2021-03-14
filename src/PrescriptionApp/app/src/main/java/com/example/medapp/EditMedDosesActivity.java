@@ -62,7 +62,7 @@ public class EditMedDosesActivity extends AppCompatActivity {
         getData();
 
         recyclerView = findViewById(R.id.recyclerView);
-        floatingActionButton = findViewById(R.id.addApplicationButton);
+        floatingActionButton = findViewById(R.id.addDoseButton);
         nextButton = findViewById(R.id.nextButton);
 
         displayRecycler();

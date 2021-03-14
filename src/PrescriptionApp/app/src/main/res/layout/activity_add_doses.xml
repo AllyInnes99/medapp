@@ -7,7 +7,7 @@
     tools:context=".AddDosesActivity">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/addApplicationButton"
+        android:id="@+id/addDoseButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="64dp"
@@ -37,7 +37,7 @@
         android:layout_marginRight="64dp"
         android:layout_marginBottom="8dp"
         android:clickable="true"
-        app:layout_constraintBottom_toTopOf="@+id/addApplicationButton"
+        app:layout_constraintBottom_toTopOf="@+id/addDoseButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_next_foreground" />
 </androidx.constraintlayout.widget.ConstraintLayout>
