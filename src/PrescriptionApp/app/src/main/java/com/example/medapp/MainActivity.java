@@ -26,8 +26,6 @@ public class MainActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
     NavController navController;
     View parentLayout;
-    private FirebaseAuth mAuth;
-
     private static final int DAILY_EVENT_ID = 1;
     private static final int WEEKLY_EVENT_ID = 2;
 
@@ -39,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         navController = Navigation.findNavController(this, R.id.navFragment);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
-        mAuth = FirebaseAuth.getInstance();
         setDailyEventAlarm();
         setRefreshAlarm();
 
@@ -111,9 +108,5 @@ public class MainActivity extends AppCompatActivity {
         // Set repeating alarm that calls onReceive() of RefreshReceiver at supplied time
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
     }
-
-
-
-
 
 }

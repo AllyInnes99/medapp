@@ -1,22 +1,13 @@
 package com.example.medapp;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.widget.TimePicker;
 
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.test.espresso.Espresso;
-import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.action.ViewActions;
-import androidx.test.espresso.core.internal.deps.guava.collect.Iterables;
 import androidx.test.espresso.intent.Intents;
-import androidx.test.espresso.matcher.ViewMatchers;
+import androidx.test.filters.LargeTest;
 import androidx.test.rule.ActivityTestRule;
 import androidx.test.runner.AndroidJUnit4;
-import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
-import androidx.test.runner.lifecycle.Stage;
 
-import com.google.common.net.InternetDomainName;
 
 import org.junit.After;
 import org.junit.Before;
@@ -24,18 +15,14 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.Calendar;
-
-import static androidx.test.InstrumentationRegistry.getInstrumentation;
-import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 @RunWith(AndroidJUnit4.class)
+@LargeTest
 public class AddDoseUITest {
 
     @Rule
@@ -49,6 +36,11 @@ public class AddDoseUITest {
     @Before
     public void setup() {
         Intents.init();
+        MedicationModel newMed = new MedicationModel("new", 25, "pill", 0.5, "g", false);
+        Intent i = new Intent();
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        i.putExtra("MedModel", newMed);
+        activityRule.launchActivity(i);
     }
 
     @After
@@ -58,12 +50,7 @@ public class AddDoseUITest {
 
 
     @Test
-    public void testActivityStart() throws Exception {
-        MedicationModel newMed = new MedicationModel("new", 25, "pill", 0.5, "g", false);
-        Intent i = new Intent();
-        i.putExtra("MedModel", newMed);
-        activityRule.launchActivity(i);
-
+    public void testAddDoses() throws Exception {
         // Check recycler empty
         onView(withId(R.id.recyclerView)).check(new RecyclerViewItemCountAssertion(0));
 
@@ -71,17 +58,22 @@ public class AddDoseUITest {
         onView(withId(R.id.addDoseButton)).perform(click());
         intended(hasComponent(CreateDoseActivity.class.getName()));
 
-        // Add detail for the dose
+        // Add detail for the dose, w/ invalid quantity
         onView(withId(R.id.et_time)).perform(ViewActions.replaceText("10:00"));
         Thread.sleep(100);
 
-        onView(withId(R.id.et_amount)).perform(ViewActions.replaceText("1"));
+        onView(withId(R.id.et_amount)).perform(ViewActions.replaceText("0"));
         Thread.sleep(100);
 
         onView(withId(R.id.select_all)).perform(ViewActions.click());
         Thread.sleep(100);
 
-        // Add the dose
+        // Attempt to add dose
+        onView(withId(R.id.btnAdd)).perform(ViewActions.scrollTo(), ViewActions.click());
+        Thread.sleep(250);
+
+        // Update quantity field and try again
+        onView(withId(R.id.et_amount)).perform(ViewActions.replaceText("1"));
         onView(withId(R.id.btnAdd)).perform(ViewActions.scrollTo(), ViewActions.click());
         Thread.sleep(250);
 
@@ -92,7 +84,24 @@ public class AddDoseUITest {
         // Add the med and return to MainActivity
         onView(withId(R.id.nextButton)).perform(ViewActions.click());
         Thread.sleep(250);
+        intended(hasComponent(MainActivity.class.getName()));
+
+
     }
+
+
+    @Test
+    public void noDosesTest() {
+
+        // Firstly, assert that there are no doses in the recycler
+        onView(withId(R.id.recyclerView)).check(new RecyclerViewItemCountAssertion(0));
+
+        // Attempt to move to Main activity
+        onView(withId(R.id.nextButton)).perform(ViewActions.click());
+
+    }
+
+
 
 
 }

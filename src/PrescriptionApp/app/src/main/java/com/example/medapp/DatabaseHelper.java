@@ -847,9 +847,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param medModel medication that we want to count the no. of doses from
      * @return int that is the no. of doses for the given medication
      */
-    public int countApplicationFromMed(MedicationModel medModel) {
+    public int countDosesFromMed(MedicationModel medModel) {
         String queryString = "SELECT COUNT (*) FROM " + DOSE_TABLE
-                + "WHERE " + COL_MEDICATION_ID + " = " + medModel.getMedicationId();
+                + " WHERE " + COL_MEDICATION_ID + " = " + medModel.getMedicationId();
         return countRowHelper(queryString);
     }
 

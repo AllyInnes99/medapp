@@ -1,18 +1,10 @@
 package com.example.medapp;
 
-import android.content.Context;
-import android.os.Build;
-import android.provider.ContactsContract;
-
-import androidx.annotation.RequiresApi;
-
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Class that represents a medication that a user is to take
@@ -105,6 +97,9 @@ public class MedicationModel implements Serializable {
      */
     public int daysUntilEmpty(DatabaseHelper databaseHelper) {
         Calendar c = Calendar.getInstance();
+        if(databaseHelper.countDosesFromMed(this) == 0) {
+            return 0;
+        }
         List<DoseModel> doses = databaseHelper.selectDoseFromMedication(this);
         Map<String, Integer> takenPerDay = new HashMap<>();
         takenPerDay.put("Monday", 0);

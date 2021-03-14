@@ -37,7 +37,7 @@ public class MedRefill extends AppCompatActivity {
     RecyclerView recyclerView;
     List<RefillData> data;
     RefillAdapter refillAdapter;
-    int prevQty, inputVal;
+    int inputVal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +45,6 @@ public class MedRefill extends AppCompatActivity {
         setContentView(R.layout.activity_med_refill);
         context = MedRefill.this;
         databaseHelper = new DatabaseHelper(context);
-
-
         btn_add = findViewById(R.id.btn_add);
         btn_remove = findViewById(R.id.btn_remove);
         btn_request = findViewById(R.id.btn_request);
@@ -133,6 +131,7 @@ public class MedRefill extends AppCompatActivity {
             if (acct != null && medModel.getCalendarRefill() != null) {
                 updateGoogleCal();
             }
+
 
             Toast.makeText(context, "Updated quantity of medication", Toast.LENGTH_SHORT).show();
             addRefillLog(newQuantity, original);

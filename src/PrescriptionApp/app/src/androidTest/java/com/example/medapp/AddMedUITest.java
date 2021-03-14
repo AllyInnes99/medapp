@@ -8,6 +8,7 @@ import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.core.internal.deps.guava.collect.Iterables;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.espresso.matcher.ViewMatchers;
+import androidx.test.filters.LargeTest;
 import androidx.test.rule.ActivityTestRule;
 import androidx.test.runner.AndroidJUnit4;
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
@@ -33,6 +34,7 @@ import java.util.Collection;
 
 
 @RunWith(AndroidJUnit4.class)
+@LargeTest
 public class AddMedUITest {
 
     Activity currentActivity;
