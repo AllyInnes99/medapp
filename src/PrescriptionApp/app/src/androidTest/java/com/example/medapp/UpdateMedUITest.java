@@ -62,6 +62,9 @@ public class UpdateMedUITest {
     @After
     public void tearDown() throws Exception {
         Intents.release();
+        databaseHelper.close();
+        context.deleteDatabase(databaseHelper.getDatabaseName());
+        databaseHelper = new DatabaseHelper(context);
     }
 
     @Test
@@ -104,5 +107,57 @@ public class UpdateMedUITest {
         med = databaseHelper.selectAllMedication().get(0);
         assertEquals(originalAmount + amountToAdd, med.getQuantity());
 
+        // Go back to the update activity
+        Thread.sleep(500);
+        Intent i = new Intent();
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        i.putExtra("medID", med.getMedicationId());
+        activityRule.launchActivity(i);
+
+        // Go back to the refill activity
+        onView(withId(R.id.btn_refill)).perform(ViewActions.scrollTo(), ViewActions.click());
+        Thread.sleep(500);
+
+        // Check that there is an visible log entry for the med refill
+        onView(withId(R.id.recycler_view)).check(new RecyclerViewItemCountAssertion(1));
     }
+
+    @Test
+    public void testEditDoses() throws Exception {
+
+        DoseModel dose1 = new DoseModel(med.getMedicationId(), "09:20", "Tuesday", 1);
+        dose1.setMedicationId(med.getMedicationId());
+        databaseHelper.addDose(dose1);
+
+        // Click the edit doses button
+        onView(withId(R.id.btn_dose)).perform(ViewActions.scrollTo(), ViewActions.click());
+        intended(hasComponent(EditMedDosesActivity.class.getName()));
+        Thread.sleep(500);
+
+        // Check that there is one dose in the recycler
+        onView(withId(R.id.recyclerView)).check(new RecyclerViewItemCountAssertion(1));
+
+        // Add a new dose
+        Thread.sleep(500);
+        onView(withId(R.id.addDoseButton)).perform(ViewActions.click());
+        intended(hasComponent(CreateDoseActivity.class.getName()));
+
+        onView(withId(R.id.et_time)).perform(ViewActions.replaceText("10:25"));
+        onView(withId(R.id.et_amount)).perform(ViewActions.replaceText("1"));
+        onView(withId(R.id.select_all)).perform(ViewActions.click());
+        onView(withId(R.id.btnAdd)).perform(ViewActions.scrollTo(), ViewActions.click());
+
+        // Check that new dose has been added
+        onView(withId(R.id.recyclerView)).check(new RecyclerViewItemCountAssertion(2));
+        Thread.sleep(500);
+
+        // Press the add button to update the doses, and verify that they have been added
+        onView(withId(R.id.nextButton)).perform(ViewActions.click());
+        Thread.sleep(500);
+        int noOfDoses = databaseHelper.countDosesFromMed(med);
+        assertEquals(noOfDoses, 2);
+
+
+    }
+
 }

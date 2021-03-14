@@ -106,7 +106,6 @@ public class EditMedDosesActivity extends AppCompatActivity {
         for (DoseModel originalDose : doseModels) {
             databaseHelper.deleteDose(originalDose);
             notificationManager.cancel(originalDose.getDoseId());
-            Toast.makeText(context, originalDose.getCalendarID(), Toast.LENGTH_SHORT).show();
             if (acct != null && originalDose.getCalendarID() != null) {
                 gch = new GoogleCalendarHelper(context);
                 gch.deleteDoseEvent(originalDose);
