@@ -108,6 +108,10 @@ public class CreateDoseActivity extends AppCompatActivity {
                         throw new Exception("Please select the amount of medication to be taken at this time");
                     }
                     int amount = Integer.parseInt(amountStr);
+                    if(amount < 1) {
+                        throw new Exception("Please insert a non-zero amount");
+                    }
+
                     addDoseModel = new AddDoseModel(time, amount);
                     checkSelectedBoxes();
                     if (daysToBeTakenOn.isEmpty()) {
