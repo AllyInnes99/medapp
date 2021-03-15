@@ -72,13 +72,15 @@ public class GoogleCalendarHelper {
             public void run() {
                 try {
                     Events events = service.events().list(CALENDAR_ID).execute();
+                    Log.e("Medapp", Integer.toString(events.size()));
                     for(Event event: events.getItems()) {
+                        Log.e("Medapp", event.getSummary());
                         if(event.getSummary().contains("MedApp")) {
                             service.events().delete(CALENDAR_ID, event.getId()).execute();
-                            Thread.sleep(100);
+
                         }
                     }
-                } catch (IOException | InterruptedException e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
 
@@ -110,7 +112,10 @@ public class GoogleCalendarHelper {
                         Log.d("MedApp", "deleting dose event");
                         service.events().delete(CALENDAR_ID, doseModel.getCalendarID()).execute();
                     }
-                } catch (IOException | NullPointerException e) {
+                } catch (IOException e) {
+                    // If fail, try again
+                    deleteMedEvents(medModel, doses);
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -118,25 +123,6 @@ public class GoogleCalendarHelper {
 
     }
 
-    /**
-     * Method that deletes medication events via ID from Google Calendar
-     *
-     * @param ids list of Strings that represents the IDs of events to be deleted
-     */
-    public void deleteEventsById(final List<String> ids) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                for (String id : ids) {
-                    try {
-                        service.events().delete(CALENDAR_ID, id).execute();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }).start();
-    }
 
     public void setContact(ContactDetails contact) {
         this.contact = new EventAttendee();
@@ -157,18 +143,16 @@ public class GoogleCalendarHelper {
                 try {
                     service.events().delete(CALENDAR_ID, doseModel.getCalendarID()).execute();
                 } catch (IOException e) {
+                    deleteDoseEvent(doseModel);
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
+
             }
         }).start();
 
     }
 
-    public void deleteAllRefillEvents() {
-        List<MedicationModel> meds = databaseHelper.selectAllMedication();
-        BatchRequest batch = service.batch();
-
-    }
 
     /**
      * Method that deletes the refill event for a medication
@@ -183,6 +167,8 @@ public class GoogleCalendarHelper {
                 try {
                     service.events().delete(CALENDAR_ID, medModel.getCalendarRefill()).execute();
                 } catch (IOException e) {
+                    deleteRefillEvent(medModel);
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -198,6 +184,8 @@ public class GoogleCalendarHelper {
                 try {
                     service.events().delete(CALENDAR_ID, medModel.getCalendarEmpty()).execute();
                 } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -266,7 +254,7 @@ public class GoogleCalendarHelper {
      * @param medModel  the medication that is to be taken
      * @param doseModel the details of when to take the medication etc.
      */
-    public void updateDoseEvent(MedicationModel medModel, final DoseModel doseModel) {
+    public void updateDoseEvent(final MedicationModel medModel, final DoseModel doseModel) {
         final String eventID = doseModel.getCalendarID();
         if (eventID != null) {
             final Calendar c = Calendar.getInstance();
@@ -293,6 +281,8 @@ public class GoogleCalendarHelper {
                         Event updated = service.events().update(CALENDAR_ID, eventID, event).execute();
                         databaseHelper.updateDoseCalendarID(doseModel, updated.getId());
                     } catch (IOException e) {
+                        updateDoseEvent(medModel, doseModel);
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -320,7 +310,9 @@ public class GoogleCalendarHelper {
                         event.setDescription(getRefillMsg(medModel));
                         Event updated = service.events().update(CALENDAR_ID, eventID, event).execute();
                     } catch (IOException e) {
-                        Log.d("MedApp", e.toString());
+                        updateRefillEvent(medModel);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
 
                 }
@@ -333,7 +325,7 @@ public class GoogleCalendarHelper {
      *
      * @param medModel the medication that the event is to be updated for
      */
-    public void updateRefillEvent(final MedicationModel medModel, int val) {
+    public void updateRefillEvent(final MedicationModel medModel, final int val) {
         final String eventID = medModel.getCalendarRefill();
         if (eventID != null) {
             final Calendar c = Calendar.getInstance();
@@ -348,7 +340,9 @@ public class GoogleCalendarHelper {
                         Event updated = service.events().update(CALENDAR_ID, eventID, event).execute();
                         //databaseHelper.updateRefillID(medModel, updated.getId());
                     } catch (IOException e) {
-                        Log.d("MedApp", e.toString());
+                        updateRefillEvent(medModel, val);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
 
                 }
@@ -377,6 +371,8 @@ public class GoogleCalendarHelper {
                         //databaseHelper.updateRefillID(medModel, updated.getId());
                     } catch (IOException e) {
                         Log.d("MedApp", "error");
+                        e.printStackTrace();
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -486,7 +482,7 @@ public class GoogleCalendarHelper {
      * @param medModel the medication that the event is for
      * @param event    the event to be added to the calendar
      */
-    private void addRefillReminderEvent(final MedicationModel medModel, Event event) {
+    private void addRefillReminderEvent(final MedicationModel medModel, final Event event) {
         final Event[] events = {event};
         // Can't run IO operations on UI thread, so start new thread for operation
         Thread t = new Thread(new Runnable() {
@@ -496,8 +492,10 @@ public class GoogleCalendarHelper {
                     events[0] = service.events().insert(CALENDAR_ID, events[0]).execute();
                     String eventID = events[0].getId();
                     databaseHelper.updateCalRefillId(medModel, eventID);
-                } catch (final Exception e) {
-                    Log.e("MedApp", "exception", e);
+                } catch (IOException e) {
+                    addRefillReminderEvent(medModel, event);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -511,7 +509,7 @@ public class GoogleCalendarHelper {
      * @param medModel the medication that the event is for
      * @param event    the event to be added to the calendar
      */
-    private void addEmptyEvent(final MedicationModel medModel, Event event) {
+    private void addEmptyEvent(final MedicationModel medModel, final Event event) {
         final Event[] events = {event};
         // Can't run IO operations on UI thread, so start new thread for operation
         Thread t = new Thread(new Runnable() {
@@ -522,7 +520,9 @@ public class GoogleCalendarHelper {
                     String eventID = events[0].getId();
                     databaseHelper.updateEmptyID(medModel, eventID);
                 } catch (IOException e) {
-                    Log.e("MedApp", "exception", e);
+                    addEmptyEvent(medModel, event);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -535,7 +535,7 @@ public class GoogleCalendarHelper {
      * @param doseModel the dose of medication that is to be taken
      * @param event     the event that is to be added to the calendar
      */
-    private void addDoseEvent(final DoseModel doseModel, Event event) {
+    private void addDoseEvent(final DoseModel doseModel, final Event event) {
         final Event[] events = {event};
         new Thread(new Runnable() {
             @Override
@@ -545,6 +545,8 @@ public class GoogleCalendarHelper {
                     String eventID = events[0].getId();
                     databaseHelper.updateDoseCalendarID(doseModel, eventID);
                 } catch (IOException e) {
+                    addDoseEvent(doseModel, event);
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
