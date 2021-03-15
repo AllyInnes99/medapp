@@ -298,8 +298,8 @@ public class GoogleCalendarHelper {
                         Event event = service.events().get(CALENDAR_ID, eventID).execute();
                         Log.d("UpdateRefill", event.getSummary());
                         setTime(c, event);
+                        event.setDescription(getRefillMsg(medModel));
                         Event updated = service.events().update(CALENDAR_ID, eventID, event).execute();
-                        //databaseHelper.updateRefillID(medModel, updated.getId());
                     } catch (IOException e) {
                         Log.d("MedApp", e.toString());
                     }
@@ -434,7 +434,7 @@ public class GoogleCalendarHelper {
             c.add(Calendar.DATE, -refillReminderDays);
             String msg = String.format(medModel.getName() + " will run out of supply in %d days. Please order a new prescription.", refillReminderDays);
             Event refillEvent = new Event()
-                    .setDescription(msg)
+                    .setDescription(getRefillMsg())
                     .setSummary("MedApp: " + medModel.getName() + " Refill Reminder");
             setTime(c, refillEvent);
             if (contact != null) {
@@ -442,6 +442,11 @@ public class GoogleCalendarHelper {
             }
             addRefillReminderEvent(medModel, refillEvent);
         }
+    }
+
+    private String getRefillMsg(MedicationModel medModel) {
+        return String.format(medModel.getName() + " will run out of supply in %d days. Please order a new prescription.", refillReminderDays);
+
     }
 
     /**
