@@ -238,4 +238,9 @@ public class DatabaseTest {
         List<MedicationLog> logs = db.selectAllLogs();
         assertFalse(logs.isEmpty());
     }
+
+    @Test
+    public void testUpgradeDb() {
+
+    }
 }

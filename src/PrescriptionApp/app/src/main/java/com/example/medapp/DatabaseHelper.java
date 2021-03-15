@@ -705,7 +705,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 getString("reminderDay", "7");
         int d  = Integer.parseInt(i);
         if(newQuantity < d && !medModel.isRefillRequested()) {
-            createRefillNotificiation(medModel);
+            medModel.createRefillNotificiation(context);
         }
 
         // register dose as taken
@@ -914,32 +914,5 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private boolean isAdded(long insert) {
         return insert >= 0;
     }
-
-    private void createRefillNotificiation(MedicationModel med) {
-
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-
-        Intent tapIntent = new Intent(context, MedRefill.class);
-        tapIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        tapIntent.putExtra("medID", med.getMedicationId());
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, tapIntent, 0);
-
-
-        String medName = med.getName();
-        String title = medName + " supply low";
-        String msg = String.format("Your supply of %s will run out soon. Please order new prescription.", medName);
-
-        Notification notification = new NotificationCompat.Builder(context, App.REFILL_CHANNEL)
-                .setSmallIcon(R.drawable.ic_healing)
-                .setContentTitle(title)
-                .setContentText(msg)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setCategory(NotificationCompat.CATEGORY_REMINDER)
-                .setContentIntent(pendingIntent)
-                .setAutoCancel(true)
-                .build();
-        notificationManager.notify(-med.getMedicationId(), notification);
-    }
-
 
 }
