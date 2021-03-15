@@ -79,7 +79,6 @@ public class AddDosesActivity extends AppCompatActivity {
                         addToDatabase();
                         returnToMainActivity();
                     }
-
                 }
                 else {
                     Toast.makeText(AddDosesActivity.this, "Please add at least one dose.", Toast.LENGTH_SHORT).show();
