@@ -432,8 +432,9 @@ public class GoogleCalendarHelper {
         // Set a refill reminder event to remind users to refill their medication before it becomes empty
         if (medModel.getDaysUntilEmpty() >= refillReminderDays) {
             c.add(Calendar.DATE, -refillReminderDays);
+            String msg = String.format(medModel.getName() + " will run out of supply in %d days. Please order a new prescription.", refillReminderDays);
             Event refillEvent = new Event()
-                    .setDescription(medModel.getName() + " will run out of supply in 14 days. Please order a new prescription.")
+                    .setDescription(msg)
                     .setSummary("MedApp: " + medModel.getName() + " Refill Reminder");
             setTime(c, refillEvent);
             if (contact != null) {
