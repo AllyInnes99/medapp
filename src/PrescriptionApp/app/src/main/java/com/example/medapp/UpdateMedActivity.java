@@ -19,6 +19,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -163,23 +164,46 @@ public class UpdateMedActivity extends AppCompatActivity {
 
             databaseHelper.updateMedication(medModel);
             if (quantity != originalQuantity) {
+
+
                 databaseHelper.updateDaysUntilEmpty(medModel);
                 medModel = databaseHelper.selectMedicationFromID(medModel.getMedicationId());
-                GoogleCalendarHelper gch = new GoogleCalendarHelper(UpdateMedActivity.this);
-                gch.updateMedEvents(medModel);
+
+                if(GoogleSignIn.getLastSignedInAccount(UpdateMedActivity.this) != null) {
+                    GoogleCalendarHelper gch = new GoogleCalendarHelper(UpdateMedActivity.this);
+                    gch.addDoseReminder(medModel);
+                }
+
+
             }
 
-            // if user has changes autotake from
-            if(originalAutoTake & !autoTake.isChecked()) {
-                cancelNotifications();
-            }
-            // otherwise, add notifications
-            else if (!originalAutoTake & autoTake.isChecked()) {
-                List<DoseModel> doses = databaseHelper.selectDoseFromMedication(medModel);
-                for(DoseModel dose: doses) {
-                    initialiseNotification(dose);
+            if(medModel.isAutoTake() != originalAutoTake) {
+                // if user has changes autotake, cancel notifications
+                if(!medModel.isAutoTake()) {
+                    cancelNotifications();
+                    List<DoseModel> doses = databaseHelper.selectDoseFromMedication(medModel);
+                    GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(UpdateMedActivity.this);
+
+
+                    if(acct != null) {
+                        GoogleCalendarHelper gch = new GoogleCalendarHelper(UpdateMedActivity.this);
+                        gch.addDoseReminder(medModel);
+                    }
+
                 }
-             }
+                // otherwise, add notifications
+                else if (medModel.isAutoTake()) {
+                    List<DoseModel> doses = databaseHelper.selectDoseFromMedication(medModel);
+                    for(DoseModel dose: doses) {
+                        initialiseNotification(dose);
+                        if(GoogleSignIn.getLastSignedInAccount(UpdateMedActivity.this) != null) {
+                            GoogleCalendarHelper gch = new GoogleCalendarHelper(UpdateMedActivity.this);
+                            gch.deleteDoseEvent(dose);
+
+                        }
+                    }
+                }
+            }
 
             Toast.makeText(UpdateMedActivity.this, "Successfully updated medication", Toast.LENGTH_SHORT).show();
             finish();

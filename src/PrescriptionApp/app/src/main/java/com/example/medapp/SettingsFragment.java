@@ -14,6 +14,7 @@ import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
+import androidx.preference.SwitchPreference;
 import androidx.preference.SwitchPreferenceCompat;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -42,20 +43,17 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         PreferenceCategory googlePreferences = findPreference("google");
         Preference googleLogin = findPreference("login");
         Preference googleSignout = findPreference("logout");
-        Preference doseEvents = findPreference("dose_events");
-        Preference reminderEvents = findPreference("refill_reminders");
+        final SwitchPreferenceCompat doseEvents = findPreference("dose_events");
+        final SwitchPreferenceCompat reminderEvents = findPreference("refill_reminders");
         ListPreference lp = findPreference("reminderDay");
-        SwitchPreferenceCompat calendar = findPreference("calendar");
-
+        final DatabaseHelper databaseHelper = new DatabaseHelper(requireContext());
         final GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(requireContext());
 
         if (acct != null) {
             googlePreferences.removePreference(googleLogin);
             googleSignout.setSummary(String.format("Currently signed in as %s", acct.getDisplayName()));
-            calendar.setChecked(true);
         } else {
             googlePreferences.removePreference(googleSignout);
-            googlePreferences.removePreference(calendar);
             googlePreferences.removePreference(doseEvents);
             googlePreferences.removePreference(reminderEvents);
         }
@@ -94,6 +92,51 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 }
             });
         }
+
+        doseEvents.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                GoogleCalendarHelper gch = new GoogleCalendarHelper(requireContext());
+                List<MedicationModel> meds = databaseHelper.selectAllMedication();
+                if(doseEvents.isChecked()) {
+                    for(MedicationModel med: meds) {
+                        gch.addDoseReminder(med);
+                    }
+                }
+                else {
+                    for(MedicationModel med: meds) {
+                        List<DoseModel> doses = databaseHelper.selectDoseFromMedication(med);
+                        for(DoseModel dose: doses) {
+                            gch.deleteDoseEvent(dose);
+                        }
+                    }
+                }
+
+                return true;
+            }
+        });
+
+        reminderEvents.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                GoogleCalendarHelper gch = new GoogleCalendarHelper(requireContext());
+                List<MedicationModel> meds = databaseHelper.selectAllMedication();
+                if(reminderEvents.isChecked()) {
+                    for(MedicationModel med: meds) {
+                        gch.addRefillEvents(med);
+                    }
+                }
+                else {
+                    for(MedicationModel med: meds) {
+                        gch.deleteRefillEvent(med);
+                        gch.deleteEmptyEvent(med);
+                    }
+                }
+
+                return true;
+            }
+        });
+
     }
 
     /**

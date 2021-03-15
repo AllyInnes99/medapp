@@ -7,6 +7,7 @@ import android.widget.Toast;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.api.client.googleapis.batch.BatchRequest;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.googleapis.testing.auth.oauth2.MockGoogleCredential;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -17,6 +18,7 @@ import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventAttendee;
 import com.google.api.services.calendar.model.EventDateTime;
+import com.google.api.services.calendar.model.Events;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -35,6 +37,7 @@ public class GoogleCalendarHelper {
             new com.google.api.client.http.javanet.NetHttpTransport();
     private static final JacksonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private int refillReminderDays;
+    private Context context;
     private EventAttendee contact;
     private static final String CALENDAR_ID = "primary";
 
@@ -44,6 +47,7 @@ public class GoogleCalendarHelper {
      * @param context the app context
      */
     public GoogleCalendarHelper(Context context) {
+        this.context = context;
         this.databaseHelper = new DatabaseHelper(context);
         try {
             setRefillReminderDays(context);
@@ -62,29 +66,24 @@ public class GoogleCalendarHelper {
                 .build();
     }
 
-    /**
-     * Constructor for unit test purposes - need to have mocks
-     * @param context
-     * @param credential
-     */
-    public GoogleCalendarHelper(Context context, MockGoogleCredential credential) {
-        this.databaseHelper = new DatabaseHelper(context);
-        try {
-            setRefillReminderDays(context);
-        }
-        catch (Exception e) {
-            this.refillReminderDays = 7;
-        }
+    public void purgeAllMedappEvents() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Events events = service.events().list(CALENDAR_ID).execute();
+                    for(Event event: events.getItems()) {
+                        if(event.getSummary().contains("MedApp")) {
+                            service.events().delete(CALENDAR_ID, event.getId()).execute();
+                            Thread.sleep(100);
+                        }
+                    }
+                } catch (IOException | InterruptedException e) {
+                    e.printStackTrace();
+                }
 
-        this.service = new com.google.api.services.calendar.Calendar.Builder(
-                new MockHttpTransport(), JSON_FACTORY, credential)
-                .setApplicationName("MedApp")
-                .build();
-        Log.w("test", service.toString());
-    }
-
-    public com.google.api.services.calendar.Calendar getService() {
-        return this.service;
+            }
+        }).start();
     }
 
     /**
@@ -109,7 +108,6 @@ public class GoogleCalendarHelper {
 
                     for (DoseModel doseModel : doses) {
                         Log.d("MedApp", "deleting dose event");
-                        String calID = doseModel.getCalendarID();
                         service.events().delete(CALENDAR_ID, doseModel.getCalendarID()).execute();
                     }
                 } catch (IOException | NullPointerException e) {
@@ -166,6 +164,12 @@ public class GoogleCalendarHelper {
 
     }
 
+    public void deleteAllRefillEvents() {
+        List<MedicationModel> meds = databaseHelper.selectAllMedication();
+        BatchRequest batch = service.batch();
+
+    }
+
     /**
      * Method that deletes the refill event for a medication
      *
@@ -178,6 +182,21 @@ public class GoogleCalendarHelper {
             public void run() {
                 try {
                     service.events().delete(CALENDAR_ID, medModel.getCalendarRefill()).execute();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+    }
+
+    public void deleteEmptyEvent(final MedicationModel medModel) {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    service.events().delete(CALENDAR_ID, medModel.getCalendarEmpty()).execute();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -371,38 +390,43 @@ public class GoogleCalendarHelper {
      * @param medModel
      */
     public void addDoseReminder(MedicationModel medModel) {
-        List<DoseModel> doseModels = databaseHelper.selectDoseFromMedication(medModel);
-        Calendar c = Calendar.getInstance();
-        for (DoseModel dose : doseModels) {
 
-            Event event = new Event()
-                    .setSummary("MedApp: " + medModel.getName() + " Reminder")
-                    .setDescription("Reminder to take " + dose.getAmount()
-                            + " of " + medModel.getName());
+        boolean t = PreferenceManager.getDefaultSharedPreferences(context)
+                    .getBoolean("dose_events", false);
+        if(!medModel.isAutoTake() && t) {
+            List<DoseModel> doseModels = databaseHelper.selectDoseFromMedication(medModel);
+            Calendar c = Calendar.getInstance();
+            for (DoseModel dose : doseModels) {
 
-            String recurrence;
-            if (dose.isDoseDaily()) {
-                setMedReminderTime(c, event, dose);
-                recurrence = "RRULE:FREQ=DAILY;UNTIL=";
-            } else {
-                Calendar b = nextDayOfWeek(App.days.indexOf(dose.getDay()));
-                setMedReminderTime(b, event, dose);
-                recurrence = "RRULE:FREQ=WEEKLY;UNTIL=";
+                Event event = new Event()
+                        .setSummary("MedApp: " + medModel.getName() + " Reminder")
+                        .setDescription("Reminder to take " + dose.getAmount()
+                                + " of " + medModel.getName());
+
+                String recurrence;
+                if (dose.isDoseDaily()) {
+                    setMedReminderTime(c, event, dose);
+                    recurrence = "RRULE:FREQ=DAILY;UNTIL=";
+                } else {
+                    Calendar b = nextDayOfWeek(App.days.indexOf(dose.getDay()));
+                    setMedReminderTime(b, event, dose);
+                    recurrence = "RRULE:FREQ=WEEKLY;UNTIL=";
+                }
+
+                int daysUntilEmpty = medModel.getDaysUntilEmpty();
+                c.add(Calendar.DATE, daysUntilEmpty);
+                String year = Integer.toString(c.get(Calendar.YEAR));
+                String day = padDate(c.get(Calendar.DATE));
+                String month = padDate(c.get(Calendar.MONTH) + 1);
+                String recurrenceEndDate = year + month + day;
+
+                event.setRecurrence(Collections.singletonList(recurrence + recurrenceEndDate));
+                if (contact != null) {
+                    event.setAttendees(Collections.singletonList(contact));
+                }
+                addDoseEvent(dose, event);
+                c = Calendar.getInstance();
             }
-
-            int daysUntilEmpty = medModel.getDaysUntilEmpty();
-            c.add(Calendar.DATE, daysUntilEmpty);
-            String year = Integer.toString(c.get(Calendar.YEAR));
-            String day = padDate(c.get(Calendar.DATE));
-            String month = padDate(c.get(Calendar.MONTH) + 1);
-            String recurrenceEndDate = year + month + day;
-
-            event.setRecurrence(Collections.singletonList(recurrence + recurrenceEndDate));
-            if (contact != null) {
-                event.setAttendees(Collections.singletonList(contact));
-            }
-            addDoseEvent(dose, event);
-            c = Calendar.getInstance();
         }
     }
 
@@ -413,34 +437,41 @@ public class GoogleCalendarHelper {
      */
     public void addRefillEvents(MedicationModel medModel) {
 
-        // Obtain the date of when the med will be empty
-        Calendar c = Calendar.getInstance();
-        c.add(Calendar.DATE, medModel.getDaysUntilEmpty());
 
-        Event emptyEvent = new Event()
-                .setDescription(medModel.getName() + " will run out of supply today.")
-                .setSummary("MedApp: " + medModel.getName() + " Empty");
+        Boolean t =  PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean("refill_reminders", false);
+        if(t) {
+            // Obtain the date of when the med will be empty
+            Calendar c = Calendar.getInstance();
+            c.add(Calendar.DATE, medModel.getDaysUntilEmpty());
 
-        if (contact != null) {
-            emptyEvent.setAttendees(Collections.singletonList(contact));
-        }
+            Event emptyEvent = new Event()
+                    .setDescription(medModel.getName() + " will run out of supply today.")
+                    .setSummary("MedApp: " + medModel.getName() + " Empty");
 
-
-        setTime(c, emptyEvent);
-        addEmptyEvent(medModel, emptyEvent);
-
-        // Set a refill reminder event to remind users to refill their medication before it becomes empty
-        if (medModel.getDaysUntilEmpty() >= refillReminderDays) {
-            c.add(Calendar.DATE, -refillReminderDays);
-            Event refillEvent = new Event()
-                    .setDescription(getRefillMsg(medModel))
-                    .setSummary("MedApp: " + medModel.getName() + " Refill Reminder");
-            setTime(c, refillEvent);
             if (contact != null) {
-                refillEvent.setAttendees(Collections.singletonList(contact));
+                emptyEvent.setAttendees(Collections.singletonList(contact));
             }
-            addRefillReminderEvent(medModel, refillEvent);
+
+
+            setTime(c, emptyEvent);
+            addEmptyEvent(medModel, emptyEvent);
+
+            // Set a refill reminder event to remind users to refill their medication before it becomes empty
+            if (medModel.getDaysUntilEmpty() >= refillReminderDays) {
+                c.add(Calendar.DATE, -refillReminderDays);
+                Event refillEvent = new Event()
+                        .setDescription(getRefillMsg(medModel))
+                        .setSummary("MedApp: " + medModel.getName() + " Refill Reminder");
+                setTime(c, refillEvent);
+                if (contact != null) {
+                    refillEvent.setAttendees(Collections.singletonList(contact));
+                }
+                addRefillReminderEvent(medModel, refillEvent);
+            }
         }
+
+
     }
 
     private String getRefillMsg(MedicationModel medModel) {
@@ -608,5 +639,7 @@ public class GoogleCalendarHelper {
             this.refillReminderDays = Integer.parseInt(i);
         }
     }
+
+
 
 }
