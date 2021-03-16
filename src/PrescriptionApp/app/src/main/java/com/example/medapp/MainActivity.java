@@ -40,6 +40,12 @@ public class MainActivity extends AppCompatActivity {
         setDailyEventAlarm();
         setRefreshAlarm();
 
+        if(getIntent() != null) {
+            int r = getIntent().getIntExtra("r", R.id.homeFragment);
+            bottomNavigationView.setSelectedItemId(r);
+        }
+
+
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(MainActivity.this);
         if (acct != null) {
             PeopleAPIHelper peopleApi = new PeopleAPIHelper(MainActivity.this);

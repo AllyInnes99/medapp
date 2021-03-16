@@ -38,7 +38,6 @@ public class UpdateMedActivity extends AppCompatActivity {
     SwitchMaterial autoTake;
 
     DatabaseHelper databaseHelper = new DatabaseHelper(UpdateMedActivity.this);
-    int originalQuantity;
     boolean originalAutoTake;
     private static final int DOSE_ACTIVITY_REQUEST_CODE = 42;
     final List<String> medTypes = Arrays.asList("pill(s)", "sachet(s)", "ml(s)", "scoop(s)", "drop(s)");
@@ -76,7 +75,6 @@ public class UpdateMedActivity extends AppCompatActivity {
         // get the medication via ID passed by intent
         int id = getIntent().getIntExtra("medID", 0);
         medModel = databaseHelper.selectMedicationFromID(id);
-        originalQuantity = medModel.getQuantity();
         originalAutoTake = medModel.isAutoTake();
 
         setTitle(String.format("MedApp - Edit %s", medModel.getName()));
@@ -161,21 +159,7 @@ public class UpdateMedActivity extends AppCompatActivity {
             medModel.setMeasurement(selectedMeasurement);
             medModel.setType(selectedType);
             medModel.setAutoTake(autoTake.isChecked());
-
             databaseHelper.updateMedication(medModel);
-            if (quantity != originalQuantity) {
-
-
-                databaseHelper.updateDaysUntilEmpty(medModel);
-                medModel = databaseHelper.selectMedicationFromID(medModel.getMedicationId());
-
-                if(GoogleSignIn.getLastSignedInAccount(UpdateMedActivity.this) != null) {
-                    GoogleCalendarHelper gch = new GoogleCalendarHelper(UpdateMedActivity.this);
-                    gch.addDoseReminder(medModel);
-                }
-
-
-            }
 
             if(medModel.isAutoTake() != originalAutoTake) {
                 // if user has changes autotake, cancel notifications

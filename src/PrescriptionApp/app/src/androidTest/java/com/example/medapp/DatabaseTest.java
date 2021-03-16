@@ -240,7 +240,90 @@ public class DatabaseTest {
     }
 
     @Test
-    public void testUpgradeDb() {
+    public void testTakeMedicationLate() {
+        med = db.selectAllMedication().get(0);
+        DoseModel dose1 = new DoseModel(med.getMedicationId(), "09:20", "Tuesday", 1);
+        db.addDose(dose1);
+        dose1 = db.selectAllDoses().get(0);
+        db.takeMedicationLate(dose1, med);
+        List<MedicationLog> logs = db.selectAllLogs();
+        assertEquals(logs.size(), 1);
+        MedicationLog log = db.selectAllLogs().get(0);
+        assertFalse(log.isOnTime());
+    }
+
+    @Test
+    public void testUpdateLog() {
+        med = db.selectAllMedication().get(0);
+        DoseModel dose1 = new DoseModel(med.getMedicationId(), "09:20", "Tuesday", 1);
+        db.addDose(dose1);
+        dose1 = db.selectAllDoses().get(0);
+        db.takeMedication(dose1, med, true);
+        List<MedicationLog> logs = db.selectAllLogs();
+        assertEquals(logs.size(), 1);
+        MedicationLog log = db.selectAllLogs().get(0);
+        String originalMessage = log.getMsg();
+        log.setMsg("afa3wf");
+        db.updateLog(log);
+        logs = db.selectAllLogs();
+        assertEquals(logs.size(), 1);
+        log = db.selectAllLogs().get(0);
+        assertNotEquals(originalMessage, log.getMsg());
+    }
+
+    @Test
+    public void testUpdateCalendarIDs() {
+
+        String refillId = "a";
+        String emptyId = "b";
+        String doseId = "c";
+
+        med = db.selectAllMedication().get(0);
+        med.setCalendarRefill(refillId);
+        med.setCalendarEmpty(emptyId);
+        DoseModel dose1 = new DoseModel(med.getMedicationId(), "09:20", "Tuesday", 1);
+        db.addDose(dose1);
+        dose1 = db.selectAllDoses().get(0);
+        dose1.setCalendarID(doseId);
+
+        db.updateCalRefillId(med, "d");
+        db.updateEmptyID(med, "d");
+        db.updateDoseCalendarID(dose1, "d");
+
+        med = db.selectAllMedication().get(0);
+        dose1 = db.selectAllDoses().get(0);
+
+        assertNotEquals(med.getCalendarRefill(), refillId);
+        assertNotEquals(med.getCalendarEmpty(), emptyId);
+        assertNotEquals(dose1.getCalendarID(), doseId);
+    }
+
+    @Test
+    public void testDeleteLog() {
+        med = db.selectAllMedication().get(0);
+        DoseModel dose1 = new DoseModel(med.getMedicationId(), "09:20", "Tuesday", 1);
+        db.addDose(dose1);
+        dose1 = db.selectAllDoses().get(0);
+        db.takeMedication(dose1, med, true);
+        List<MedicationLog> logs = db.selectAllLogs();
+        assertEquals(logs.size(), 1);
+        MedicationLog log = db.selectAllLogs().get(0);
+        db.deleteLog(log);
+        logs = db.selectAllLogs();
+        assertEquals(0, logs.size());
+    }
+
+    @Test
+    public void testDoseFromDay() {
+        med = db.selectAllMedication().get(0);
+        DoseModel dose1 = new DoseModel(med.getMedicationId(), "09:20", "Tuesday", 1);
+        db.addDose(dose1);
+
+        List<DoseModel> tuesdayDoses = db.selectDoseFromDay("Tuesday");
+        assertEquals(tuesdayDoses.size(), 1);
+
+        List<DoseModel> sundayDoses = db.selectDoseFromDay("Sunday");
+        assertEquals(sundayDoses.size(), 0);
 
     }
 }

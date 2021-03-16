@@ -3,6 +3,7 @@ package com.example.medapp;
 import android.content.Context;
 import android.content.Intent;
 import android.provider.ContactsContract;
+import android.view.View;
 
 import androidx.test.InstrumentationRegistry;
 import androidx.test.espresso.action.ViewActions;
@@ -67,6 +68,7 @@ public class UpdateMedUITest {
         databaseHelper = new DatabaseHelper(context);
     }
 
+
     @Test
     public void testUpdateMed() throws Exception {
         // Update the name
@@ -125,7 +127,7 @@ public class UpdateMedUITest {
     @Test
     public void testEditDoses() throws Exception {
 
-        DoseModel dose1 = new DoseModel(med.getMedicationId(), "09:20", "Tuesday", 1);
+        DoseModel dose1 = new DoseModel(med.getMedicationId(), "23:59", "Tuesday", 1);
         dose1.setMedicationId(med.getMedicationId());
         databaseHelper.addDose(dose1);
 
@@ -142,7 +144,7 @@ public class UpdateMedUITest {
         onView(withId(R.id.addDoseButton)).perform(ViewActions.click());
         intended(hasComponent(CreateDoseActivity.class.getName()));
 
-        onView(withId(R.id.et_time)).perform(ViewActions.replaceText("10:25"));
+        onView(withId(R.id.et_time)).perform(ViewActions.replaceText("22:59"));
         onView(withId(R.id.et_amount)).perform(ViewActions.replaceText("1"));
         onView(withId(R.id.select_all)).perform(ViewActions.click());
         onView(withId(R.id.btnAdd)).perform(ViewActions.scrollTo(), ViewActions.click());
@@ -156,6 +158,48 @@ public class UpdateMedUITest {
         Thread.sleep(500);
         int noOfDoses = databaseHelper.countDosesFromMed(med);
         assertEquals(noOfDoses, 2);
+
+    }
+
+    @Test
+    public void deleteMedTest() throws InterruptedException {
+        // Click the delete button
+        onView(withId(R.id.btn_del)).perform(ViewActions.scrollTo(), ViewActions.click());
+
+        // Check that med has been deleted
+        Thread.sleep(100);
+        assertEquals(databaseHelper.countMedication(), 0);
+    }
+
+
+
+    @Test
+    public void testUpdateAutoTake() throws InterruptedException {
+
+        DoseModel dose1 = new DoseModel(med.getMedicationId(), "23:59", "Daily", 1);
+        dose1.setMedicationId(med.getMedicationId());
+        databaseHelper.addDose(dose1);
+
+        // click the autotake switch
+        onView(withId(R.id.autotake)).perform(ViewActions.scrollTo(), ViewActions.click());
+        Thread.sleep(100);
+        onView(withId(R.id.btn_update)).perform(ViewActions.scrollTo(), ViewActions.click());
+
+
+        // start activity again
+        Intent i = new Intent();
+        Thread.sleep(100);
+        med = databaseHelper.selectAllMedication().get(0);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        i.putExtra("medID", med.getMedicationId());
+        activityRule.launchActivity(i);
+        Thread.sleep(100);
+
+        // click the autotake switch again
+        onView(withId(R.id.autotake)).perform(ViewActions.scrollTo(), ViewActions.click());
+        Thread.sleep(100);
+        onView(withId(R.id.btn_update)).perform(ViewActions.scrollTo(), ViewActions.click());
+
 
 
     }
