@@ -100,29 +100,70 @@ public class GoogleCalendarHelper {
             public void run() {
                 try {
 
-                    String medRefill = medModel.getCalendarRefill();
-                    Log.d("MedApp", "deleting refill event");
-                    service.events().delete(CALENDAR_ID, medRefill).execute();
-
-                    String medEmpty = medModel.getCalendarEmpty();
-                    Log.d("MedApp", "deleting empty event");
-                    service.events().delete(CALENDAR_ID, medEmpty).execute();
-
                     for (DoseModel doseModel : doses) {
-                        Log.d("MedApp", "deleting dose event");
-                        service.events().delete(CALENDAR_ID, doseModel.getCalendarID()).execute();
+                        Log.d("deletion", "deleting dose event");
+                        deleteDoseEvent(doseModel);
+                        Thread.sleep(200);
                     }
-                } catch (IOException e) {
-                    // If fail, try again
-                    deleteMedEvents(medModel, doses);
+
+                    Log.d("deletion", "deleting refill event");
+                    deleteRefillEvent(medModel);
+                    Thread.sleep(200);
+
+                    Log.d("deletion", "deleting empty event");
+                    deleteEmptyEvent(medModel);
+                    Thread.sleep(200);
+
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.d("deletion", "deletion failed");
                 }
             }
         }).start();
 
     }
 
+    /**
+     * Method that trawls through every event in a users Google Calendar, identified MedApp events,
+     * and deletes them.
+     */
+    public void purgeMedEvents() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Events events = null;
+                try {
+                    events = service.events().list(CALENDAR_ID).setMaxResults(9999).execute();
+                    Log.i("purge", Integer.toString(events.size()));
+                    for(Event event: events.getItems()) {
+                        if(event.getSummary().contains("MedApp")) {
+                            deleteEventFromId(event.getId());
+                            Thread.sleep(250);
+                        }
+                    }
+                } catch (IOException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }).start();
+    }
+
+    /**
+     * Method that deletes an event by ID
+     * @param eventID - the id of the event to be deleted
+     */
+    public void deleteEventFromId(final String eventID) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    service.events().delete(CALENDAR_ID, eventID).execute();
+                } catch (IOException e) {
+                    deleteEventFromId(eventID);
+                }
+            }
+        }).start();
+    }
 
     public void setContact(ContactDetails contact) {
         this.contact = new EventAttendee();
@@ -176,6 +217,10 @@ public class GoogleCalendarHelper {
 
     }
 
+    /**
+     * Method that deletes the med empty event from the Google calendar
+     * @param medModel the med to delete the event of
+     */
     public void deleteEmptyEvent(final MedicationModel medModel) {
 
         new Thread(new Runnable() {
@@ -184,7 +229,7 @@ public class GoogleCalendarHelper {
                 try {
                     service.events().delete(CALENDAR_ID, medModel.getCalendarEmpty()).execute();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    deleteEmptyEvent(medModel);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -444,11 +489,9 @@ public class GoogleCalendarHelper {
             Event emptyEvent = new Event()
                     .setDescription(medModel.getName() + " will run out of supply today.")
                     .setSummary("MedApp: " + medModel.getName() + " Empty");
-
             if (contact != null) {
                 emptyEvent.setAttendees(Collections.singletonList(contact));
             }
-
 
             setTime(c, emptyEvent);
             addEmptyEvent(medModel, emptyEvent);
@@ -470,6 +513,11 @@ public class GoogleCalendarHelper {
 
     }
 
+    /**
+     * Helper method that returns the message for the Calendar refill reminder
+     * @param medModel the med the refill reminder is for
+     * @return String for refill reminder message
+     */
     private String getRefillMsg(MedicationModel medModel) {
         return String.format(medModel.getName() + " will run out of supply in %d days. Please order a new prescription.", refillReminderDays);
 
@@ -641,7 +689,5 @@ public class GoogleCalendarHelper {
             this.refillReminderDays = Integer.parseInt(i);
         }
     }
-
-
 
 }

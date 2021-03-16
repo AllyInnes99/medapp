@@ -49,10 +49,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         final DatabaseHelper databaseHelper = new DatabaseHelper(requireContext());
         final GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(requireContext());
 
+        Preference purge = findPreference("purge");
+
         if (acct != null) {
             googlePreferences.removePreference(googleLogin);
             googleSignout.setSummary(String.format("Currently signed in as %s", acct.getDisplayName()));
         } else {
+            googlePreferences.removePreference(purge);
             googlePreferences.removePreference(googleSignout);
             googlePreferences.removePreference(doseEvents);
             googlePreferences.removePreference(reminderEvents);
@@ -92,6 +95,28 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 }
             });
         }
+
+        purge.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                new MaterialAlertDialogBuilder(requireContext())
+                        .setTitle("Purge all MedApp events")
+                        .setMessage("Are you sure you want to remove every MedApp event from your Google Calendar? This process may take a while.")
+                        .setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                GoogleCalendarHelper gch = new GoogleCalendarHelper(requireContext());
+                                gch.purgeMedEvents();
+                                Toast.makeText(requireContext(), "MedApp events removed from your Google Calendar.", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton("no", null)
+                        .setIcon(android.R.drawable.stat_sys_warning)
+                        .show();
+
+                return true;
+            }
+        });
 
         doseEvents.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override

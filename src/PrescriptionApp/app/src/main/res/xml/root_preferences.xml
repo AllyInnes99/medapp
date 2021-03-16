@@ -1,8 +1,9 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory app:title="Refill Reminders">
 
+
+    <PreferenceCategory app:title="Refill Reminders">
 
         <ListPreference
             app:title="No. of days for refill reminder"
@@ -27,6 +28,11 @@
         <Preference
             app:title="Sign-out of Google"
             app:key="logout">
+        </Preference>
+
+        <Preference
+            app:title="Purge all events from Google Calendar"
+            app:key="purge">
         </Preference>
 
         <SwitchPreferenceCompat

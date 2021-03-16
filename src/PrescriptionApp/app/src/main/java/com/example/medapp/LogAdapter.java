@@ -67,11 +67,7 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.MyViewHolder> {
                                     updateMissedDose(log, medModel);
                                 }
                             })
-                            .setNegativeButton("no", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    Toast.makeText(context, "No", Toast.LENGTH_SHORT).show();
-                                }
-                            })
+                            .setNegativeButton("no", null)
                             .setIcon(android.R.drawable.ic_input_add)
                             .show();
                 } else {
