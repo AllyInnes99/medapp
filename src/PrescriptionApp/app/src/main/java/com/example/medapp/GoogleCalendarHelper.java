@@ -102,17 +102,17 @@ public class GoogleCalendarHelper {
 
                     for (DoseModel doseModel : doses) {
                         Log.d("deletion", "deleting dose event");
-                        deleteDoseEvent(doseModel);
-                        Thread.sleep(200);
+                        deleteDoseEvent(doseModel, 0);
+                        Thread.sleep(250);
                     }
 
                     Log.d("deletion", "deleting refill event");
-                    deleteRefillEvent(medModel);
-                    Thread.sleep(200);
+                    deleteRefillEvent(medModel, 0);
+                    Thread.sleep(250);
 
                     Log.d("deletion", "deleting empty event");
-                    deleteEmptyEvent(medModel);
-                    Thread.sleep(200);
+                    deleteEmptyEvent(medModel, 0);
+                    Thread.sleep(250);
 
                 } catch (Exception e) {
                     Log.d("deletion", "deletion failed");
@@ -176,7 +176,7 @@ public class GoogleCalendarHelper {
      *
      * @param doseModel the medication dose that is to be removed from the user's Google Calendar
      */
-    public void deleteDoseEvent(final DoseModel doseModel) {
+    public void deleteDoseEvent(final DoseModel doseModel, final int depth) {
 
         new Thread(new Runnable() {
             @Override
@@ -184,7 +184,17 @@ public class GoogleCalendarHelper {
                 try {
                     service.events().delete(CALENDAR_ID, doseModel.getCalendarID()).execute();
                 } catch (IOException e) {
-                    deleteDoseEvent(doseModel);
+
+                    // If fail, use exponential backoff
+                    try {
+                        if(depth < 7) {
+                            Thread.sleep((long) Math.pow(2, depth) * 10);
+                            deleteDoseEvent(doseModel, depth + 1);
+                        }
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -200,7 +210,7 @@ public class GoogleCalendarHelper {
      *
      * @param medModel the medication that wants the refill event to be removed
      */
-    public void deleteRefillEvent(final MedicationModel medModel) {
+    public void deleteRefillEvent(final MedicationModel medModel, final int depth) {
 
         new Thread(new Runnable() {
             @Override
@@ -208,7 +218,17 @@ public class GoogleCalendarHelper {
                 try {
                     service.events().delete(CALENDAR_ID, medModel.getCalendarRefill()).execute();
                 } catch (IOException e) {
-                    deleteRefillEvent(medModel);
+
+                    // If fail, use exponential backoff
+                    try {
+                        if(depth < 7) {
+                            Thread.sleep((long) Math.pow(2, depth) * 10);
+                            deleteRefillEvent(medModel, depth + 1);
+                        }
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -221,7 +241,7 @@ public class GoogleCalendarHelper {
      * Method that deletes the med empty event from the Google calendar
      * @param medModel the med to delete the event of
      */
-    public void deleteEmptyEvent(final MedicationModel medModel) {
+    public void deleteEmptyEvent(final MedicationModel medModel, final int depth) {
 
         new Thread(new Runnable() {
             @Override
@@ -229,7 +249,14 @@ public class GoogleCalendarHelper {
                 try {
                     service.events().delete(CALENDAR_ID, medModel.getCalendarEmpty()).execute();
                 } catch (IOException e) {
-                    deleteEmptyEvent(medModel);
+                    try {
+                        if(depth < 7) {
+                            Thread.sleep((long) Math.pow(2, depth) * 10);
+                            deleteEmptyEvent(medModel, depth + 1);
+                        }
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -251,7 +278,7 @@ public class GoogleCalendarHelper {
         }
         // if there can be no refill reminder event, remove existing
         else {
-            deleteRefillEvent(medModel);
+            deleteRefillEvent(medModel, 0);
         }
 
         // update the empty event
@@ -288,7 +315,7 @@ public class GoogleCalendarHelper {
         }
         // if there can be no refill reminder event, remove existing
         else {
-            deleteRefillEvent(medModel);
+            deleteRefillEvent(medModel, 0);
         }
     }
 

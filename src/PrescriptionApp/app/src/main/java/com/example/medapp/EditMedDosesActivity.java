@@ -108,7 +108,7 @@ public class EditMedDosesActivity extends AppCompatActivity {
             notificationManager.cancel(originalDose.getDoseId());
             if (acct != null && originalDose.getCalendarID() != null) {
                 gch = new GoogleCalendarHelper(context);
-                gch.deleteDoseEvent(originalDose);
+                gch.deleteDoseEvent(originalDose, 0);
             }
         }
 

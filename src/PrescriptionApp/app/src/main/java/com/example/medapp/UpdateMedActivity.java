@@ -182,7 +182,7 @@ public class UpdateMedActivity extends AppCompatActivity {
                         initialiseNotification(dose);
                         if(GoogleSignIn.getLastSignedInAccount(UpdateMedActivity.this) != null) {
                             GoogleCalendarHelper gch = new GoogleCalendarHelper(UpdateMedActivity.this);
-                            gch.deleteDoseEvent(dose);
+                            gch.deleteDoseEvent(dose, 0);
 
                         }
                     }

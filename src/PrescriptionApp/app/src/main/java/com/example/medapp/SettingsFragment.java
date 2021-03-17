@@ -132,7 +132,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     for(MedicationModel med: meds) {
                         List<DoseModel> doses = databaseHelper.selectDoseFromMedication(med);
                         for(DoseModel dose: doses) {
-                            gch.deleteDoseEvent(dose);
+                            gch.deleteDoseEvent(dose, 0);
                         }
                     }
                 }
@@ -153,8 +153,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 }
                 else {
                     for(MedicationModel med: meds) {
-                        gch.deleteRefillEvent(med);
-                        gch.deleteEmptyEvent(med);
+                        gch.deleteRefillEvent(med, 0);
+                        gch.deleteEmptyEvent(med, 0);
                     }
                 }
 
@@ -170,7 +170,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     private void signOutOfGoogle() {
 
         // Before signing out, delete med events from Google Calendar
-        GoogleCalendarHelper gch = new GoogleCalendarHelper(requireContext());
+        final GoogleCalendarHelper gch = new GoogleCalendarHelper(requireContext());
         DatabaseHelper databaseHelper = new DatabaseHelper(requireContext());
         List<MedicationModel> meds = databaseHelper.selectAllMedication();
         for(MedicationModel med: meds) {
@@ -195,6 +195,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         Toast.makeText(getActivity(), "Signed out.", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(getActivity(), MainActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        gch.purgeAllMedappEvents();
                         startActivity(intent);
                     }
                 });
