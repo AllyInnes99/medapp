@@ -31,6 +31,7 @@ import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static org.junit.Assert.assertEquals;
 
+@RunWith(AndroidJUnit4.class)
 public class UpdateMedUITest {
 
     private Context context;
@@ -122,6 +123,21 @@ public class UpdateMedUITest {
 
         // Check that there is an visible log entry for the med refill
         onView(withId(R.id.recycler_view)).check(new RecyclerViewItemCountAssertion(1));
+
+        // Now, lets try the removing a quantity from the med quantity
+        int amountToRemove = 4;
+        originalAmount = med.getQuantity();
+        onView(withId(R.id.et_new)).perform(ViewActions.replaceText(Integer.toString(amountToRemove)));
+        Thread.sleep(200);
+        onView(withId(R.id.btn_remove)).perform(ViewActions.click());
+        Thread.sleep(200);
+        onView(withId(R.id.btn_update)).perform(ViewActions.click());
+
+        // Check that the med quantity has been updated as intended
+        med = databaseHelper.selectAllMedication().get(0);
+        assertEquals(originalAmount - amountToRemove, med.getQuantity());
+
+
     }
 
     @Test
