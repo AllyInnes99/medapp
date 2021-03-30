@@ -57,7 +57,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             public boolean onPreferenceClick(Preference preference) {
                 new MaterialAlertDialogBuilder(requireContext())
                         .setTitle("Refresh doses")
-                        .setMessage("Are you sure you want to reset your doses so that they won't be registered as taken anymore? This process may take a while.")
+                        .setMessage("Are you sure you want to reset your doses so that they won't be registered as taken anymore?")
                         .setPositiveButton("yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
