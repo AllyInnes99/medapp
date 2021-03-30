@@ -466,7 +466,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         c.add(Calendar.DATE, -1);
 
         // Get the day as a string
-        String day = App.days.get(calendar.get(c.DAY_OF_WEEK));
+        String day = App.days.get(c.get(Calendar.DAY_OF_WEEK));
 
         // In query, we check taken == 0 as this is how false is represented in SQLite
         String rawQuery = "SELECT * FROM " + DOSE_TABLE +
@@ -765,14 +765,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Method that is called daily to refresh the doses that are to be taken daily so that
-     * they can be taken each day
+     * Method that is called daily to refresh the doses that are to be taken daily and the doses that
+     * were to be taken two days ago so that they can be taken each day
      */
     public void refreshDailyDoses() {
+
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DATE, -2);
+        String day = App.days.get(c.get(Calendar.DAY_OF_WEEK));
         ContentValues cv = new ContentValues();
         cv.put(COL_TAKEN, false);
         SQLiteDatabase db = this.getWritableDatabase();
-        db.update(DOSE_TABLE, cv, COL_DAY + " = 'Daily'", null);
+        db.update(DOSE_TABLE, cv, "(" + COL_DAY + " = '" + day + "' OR " + COL_DAY + " = 'Daily')" , null);
         db.close();
     }
 

@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.widget.Toast;
 
 import androidx.preference.PreferenceManager;
 
@@ -22,13 +23,13 @@ public class DailyEventReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        Toast.makeText(context, "MedApp: Syncing medication", Toast.LENGTH_SHORT).show();
         if (intent.getAction().equals("android.intent.action.NOTIFY")) {
-            //Toast.makeText(context, "MedApp: Syncing medication", Toast.LENGTH_SHORT).show();
             databaseHelper = new DatabaseHelper(context);
             this.context = context;
             autoTakeMedication();
             logMedicationNotTaken();
-            databaseHelper.refreshDailyDoses();
+            databaseHelper.refreshDoses();
             setNotificationsForToday();
             decrementDaysUntilEmpty();
         }
@@ -104,6 +105,7 @@ public class DailyEventReceiver extends BroadcastReceiver {
         Calendar c = Calendar.getInstance();
         c.add(Calendar.DATE, -1);
         int cDay = c.get(Calendar.DAY_OF_WEEK);
+        //Toast.makeText(context, App.days.get(cDay), Toast.LENGTH_SHORT).show();
 
         // Get every medication that is set to be auto-taken
         List<MedicationModel> medModels = databaseHelper.selectAutoTakenMeds();
@@ -113,9 +115,10 @@ public class DailyEventReceiver extends BroadcastReceiver {
             // Get the doses for the med
             List<DoseModel> doseModels = databaseHelper.selectDoseFromMedication(m);
 
+
             for (DoseModel d : doseModels) {
-                String day = d.getDay();
-                if ((App.days.indexOf(day) == cDay || day.equals("Daily")) && !d.isTaken()) {
+                String doseDay = d.getDay();
+                if ((App.days.indexOf(doseDay) == cDay || doseDay.equals("Daily"))) {
                     databaseHelper.takeMedication(d, m);
                 }
             }

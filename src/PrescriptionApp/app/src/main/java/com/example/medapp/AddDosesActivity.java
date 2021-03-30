@@ -112,9 +112,11 @@ public class AddDosesActivity extends AppCompatActivity {
 
         // update days until refill for med
         databaseHelper.updateDaysUntilEmpty(medModel);
-        List<DoseModel> todayDoses = databaseHelper.selectTodayDosesFromMed(medModel);
-        for(DoseModel dose: todayDoses) {
-            initialiseNotification(dose);
+        if(!medModel.isAutoTake()) {
+            List<DoseModel> todayDoses = databaseHelper.selectTodayDosesFromMed(medModel);
+            for(DoseModel dose: todayDoses) {
+                initialiseNotification(dose);
+            }
         }
     }
 

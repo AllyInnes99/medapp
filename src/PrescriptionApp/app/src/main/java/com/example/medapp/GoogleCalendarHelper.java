@@ -14,6 +14,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.testing.http.MockHttpTransport;
 import com.google.api.client.util.DateTime;
+import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventAttendee;
@@ -55,7 +56,7 @@ public class GoogleCalendarHelper {
         catch (Exception e) {
             this.refillReminderDays = 7;
         }
-
+        
         GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2
                 (context, Collections.singleton(CalendarScopes.CALENDAR_EVENTS));
         credential.setSelectedAccount(GoogleSignIn.getLastSignedInAccount(context).getAccount());

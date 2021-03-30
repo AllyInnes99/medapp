@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         navController = Navigation.findNavController(this, R.id.navFragment);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
         setDailyEventAlarm();
-        setRefreshAlarm();
+        //setRefreshAlarm();
 
         if(getIntent() != null) {
             int r = getIntent().getIntExtra("r", R.id.homeFragment);
@@ -96,11 +96,11 @@ public class MainActivity extends AppCompatActivity {
     private void setRefreshAlarm() {
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
-        // Setup calendar obj so that it is set to the coming Monday at 00:00
+        // Setup calendar obj so that it is set to the coming Monday at 00:05
         Calendar c = Calendar.getInstance();
         c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
         c.set(Calendar.HOUR_OF_DAY, 0);
-        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.MINUTE, 5);
         c.set(Calendar.SECOND, 0);
         c.set(Calendar.MILLISECOND, 0);
 
