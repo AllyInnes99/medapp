@@ -114,8 +114,6 @@ public class DailyEventReceiver extends BroadcastReceiver {
 
             // Get the doses for the med
             List<DoseModel> doseModels = databaseHelper.selectDoseFromMedication(m);
-
-
             for (DoseModel d : doseModels) {
                 String doseDay = d.getDay();
                 if ((App.days.indexOf(doseDay) == cDay || doseDay.equals("Daily"))) {

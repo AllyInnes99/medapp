@@ -41,6 +41,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         setPreferencesFromResource(R.xml.root_preferences, rootKey);
         final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(requireContext());
         PreferenceCategory googlePreferences = findPreference("google");
+        Preference refresh = findPreference("refresh");
         Preference googleLogin = findPreference("login");
         Preference googleSignout = findPreference("logout");
         final SwitchPreferenceCompat doseEvents = findPreference("dose_events");
@@ -50,6 +51,27 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         final GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(requireContext());
 
         Preference purge = findPreference("purge");
+
+        refresh.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                new MaterialAlertDialogBuilder(requireContext())
+                        .setTitle("Refresh doses")
+                        .setMessage("Are you sure you want to reset your doses so that they won't be registered as taken anymore? This process may take a while.")
+                        .setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                databaseHelper.refreshDoses();
+                                Toast.makeText(requireContext(), "You have reset all your doses to not be taken", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton("no", null)
+                        .setIcon(android.R.drawable.stat_sys_warning)
+                        .show();
+
+                return true;
+            }
+        });
 
         if (acct != null) {
             googlePreferences.removePreference(googleLogin);
