@@ -89,7 +89,6 @@ public class AddDoseUITest {
 
     }
 
-
     @Test
     public void noDosesTest() {
 
@@ -100,8 +99,5 @@ public class AddDoseUITest {
         onView(withId(R.id.nextButton)).perform(ViewActions.click());
 
     }
-
-
-
 
 }

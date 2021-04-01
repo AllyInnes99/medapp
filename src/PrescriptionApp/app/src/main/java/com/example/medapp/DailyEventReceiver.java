@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.preference.PreferenceManager;
@@ -105,6 +106,8 @@ public class DailyEventReceiver extends BroadcastReceiver {
         Calendar c = Calendar.getInstance();
         c.add(Calendar.DATE, -1);
         int cDay = c.get(Calendar.DAY_OF_WEEK);
+        Log.e("Autotake", App.days.get(cDay));
+
         //Toast.makeText(context, App.days.get(cDay), Toast.LENGTH_SHORT).show();
 
         // Get every medication that is set to be auto-taken
@@ -114,12 +117,19 @@ public class DailyEventReceiver extends BroadcastReceiver {
 
             // Get the doses for the med
             List<DoseModel> doseModels = databaseHelper.selectDoseFromMedication(m);
+            int count = 0;
             for (DoseModel d : doseModels) {
                 String doseDay = d.getDay();
                 if ((App.days.indexOf(doseDay) == cDay || doseDay.equals("Daily"))) {
-                    databaseHelper.takeMedication(d, m);
+                    count += d.getAmount();
                 }
+
             }
+            Toast.makeText(context, "Med: " + m.getName() + " - " + count, Toast.LENGTH_SHORT).show();
+            Log.e("Autotake", "Med: " + m.getName() + " - " + count);
+            m.setQuantity(m.getQuantity() - count);
+            if(m.getQuantity() < 0) m.setQuantity(0);
+            databaseHelper.updateMedication(m);
         }
     }
 
