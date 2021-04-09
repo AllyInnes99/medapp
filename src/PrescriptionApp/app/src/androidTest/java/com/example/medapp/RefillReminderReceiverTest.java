@@ -45,12 +45,12 @@ public class RefillReminderReceiverTest {
         i.putExtra("medId", med.getMedicationId());
         receiver.onReceive(context, i);
         StatusBarNotification[] notifications = notificationManager.getActiveNotifications();
-        boolean notifcationFound = false;
+        boolean notificationFound = false;
         for (StatusBarNotification notification : notifications) {
             if (notification.getId() == -med.getMedicationId()) {
-                notifcationFound = true;
+                notificationFound = true;
             }
         }
-        assertTrue(notifcationFound);
+        assertTrue(notificationFound);
     }
 }

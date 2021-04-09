@@ -165,10 +165,7 @@ public class UpdateMedActivity extends AppCompatActivity {
                 // if user has changes autotake, cancel notifications
                 if(!medModel.isAutoTake()) {
                     cancelNotifications();
-                    List<DoseModel> doses = databaseHelper.selectDoseFromMedication(medModel);
                     GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(UpdateMedActivity.this);
-
-
                     if(acct != null) {
                         GoogleCalendarHelper gch = new GoogleCalendarHelper(UpdateMedActivity.this);
                         gch.addDoseReminder(medModel);

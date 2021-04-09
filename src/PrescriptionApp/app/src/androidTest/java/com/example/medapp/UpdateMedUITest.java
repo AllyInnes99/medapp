@@ -30,6 +30,8 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 
 @RunWith(AndroidJUnit4.class)
 public class UpdateMedUITest {
@@ -179,18 +181,23 @@ public class UpdateMedUITest {
 
     @Test
     public void deleteMedTest() throws InterruptedException {
+        // get current number of meds in database
+        int count = databaseHelper.countMedication();
+
         // Click the delete button
         onView(withId(R.id.btn_del)).perform(ViewActions.scrollTo(), ViewActions.click());
 
         // Check that med has been deleted
         Thread.sleep(100);
-        assertEquals(databaseHelper.countMedication(), 0);
+        assertEquals(count - 1, databaseHelper.countMedication());
     }
 
 
 
     @Test
     public void testUpdateAutoTake() throws InterruptedException {
+
+        boolean original = med.isAutoTake();
 
         DoseModel dose1 = new DoseModel(med.getMedicationId(), "23:59", "Daily", 1);
         dose1.setMedicationId(med.getMedicationId());
@@ -201,11 +208,13 @@ public class UpdateMedUITest {
         Thread.sleep(100);
         onView(withId(R.id.btn_update)).perform(ViewActions.scrollTo(), ViewActions.click());
 
+        // check that autotake val has updated
+        med = databaseHelper.selectAllMedication().get(0);
+        assertNotEquals(original, med.isAutoTake());
 
         // start activity again
         Intent i = new Intent();
         Thread.sleep(100);
-        med = databaseHelper.selectAllMedication().get(0);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         i.putExtra("medID", med.getMedicationId());
         activityRule.launchActivity(i);
@@ -216,8 +225,9 @@ public class UpdateMedUITest {
         Thread.sleep(100);
         onView(withId(R.id.btn_update)).perform(ViewActions.scrollTo(), ViewActions.click());
 
-
-
+        // check that autotake value is back to original
+        med = databaseHelper.selectAllMedication().get(0);
+        assertEquals(original, med.isAutoTake());
     }
 
 }
